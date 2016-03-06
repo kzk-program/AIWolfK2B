@@ -29,9 +29,13 @@ aiwolf.orgさんの人狼知能サーバーに、pythonから接続するため�
 * やる予定のこと
 	* 人狼と狂人のパターン全部数え上げる(饂飩さんの資料参照 http://aiwolf.org/2016/02/29/cedec2015source/ )実装の公開
 	* 運営さんにAnaconda入れるようねだる
-
+	
+* 手伝って欲しいこと
+	* TemplateTalkなんとかのpython版を作る
+	* netのコードをもっとキレイにする
+	 
 * やらない予定のこと
 	* AIWolfServer, AIWolfCommon相当のpython版の作成
 		* pythonな人が多数派になって、Server開発する人がいれば考えてもいいかもですが・・・
 	* Jython対応
-		* 私はnumpy大好き  
+		* 私はnumpy大好きなのでやる気はありません  
