@@ -5,16 +5,16 @@ class BasePlayer(object):
     def __init__(self, game_info, game_setting):
         self.agentIdx = game_info['agent']
     
-    def update(self, game_info, talk_history):
+    def dayStart(self, game_info):
         return None
     
-    def dayStart(self):
+    def dayFinish(self, talk_history, whisper_history):
         return None
     
-    def finish(self):
+    def finish(self, game_info):
         return None
     
-    def vote(self):
+    def vote(self, talk_history, whisper_history):
         return self.agentIdx
     
     def attack(self):
@@ -26,9 +26,9 @@ class BasePlayer(object):
     def divine(self):
         return self.agentIdx
     
-    def talk(self):
+    def talk(self, talk_history, whisper_history):
         return 'Over'
     
-    def whisper(self):
+    def whisper(self, talk_history, whisper_history):
         return 'Over'
 
