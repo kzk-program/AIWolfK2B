@@ -1,7 +1,10 @@
 from aiwolfpy.player import BasePlayer
 import aiwolfpy.templatetalkfactory as ttf
 import aiwolfpy.templatewhisperfactory as twf
+from aiwolfpy.data import RoleList, SpeciesList
 
+Role = RoleList()
+Species = SpeciesList()
 
 
 class SimplePlayer(BasePlayer):
