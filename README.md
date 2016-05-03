@@ -21,25 +21,19 @@ aiwolf.orgさんの人狼知能サーバーに、pythonから接続するため�
 		* サーバーアプリ側のログが見やすいです
   	
 * python版の動かし方
-	* クライアント接続のタイミングで、別プロセスで./run.pyを実行
+	* これをクローン
+	* クライアント接続のタイミングで、別プロセスで./clientstarter.pyを実行
+	* 例：　./clientstarter.py -h localhost -p 10000
 		
 
 * 自分でエージェントを作るには
-	* javaな人の記事を参考に、playerディレクトリにある、BasePlayerを上位互換するクラスを実装してください(詳しくはabout_Player.md 参照)
-		* net部分はそのまま使ってください
+	* javaな人の記事を参考に、myclass/player.pyにある、SimplePlayerを参考に、BasePlayerを継承するクラスを実装してください(詳しくはabout_Player.md 参照)
 	* BasePlayerはAIWolfSharpさんがtwitter上で公開したもののほぼそのままです
-	* ミニ大会のものをold/gat2015に入れてますので、よければそこのソースコードとreadme.md を参考にしてください
+	* ミニ大会のものをold/gat2015に入れてます
 
-* やる予定のこと
-	* 人狼と狂人のパターン全部数え上げる(饂飩さんの資料参照 http://aiwolf.org/2016/02/29/cedec2015source/ )実装の公開
-		* 標準パッケージによるゴリ押し版はold/gat2015参照
-		* numpy版はこれから作ります
-	* 運営さんにAnaconda入れるようねだる
+
 	
-* 手伝って欲しいこと
-	* TemplateTalkなんとかのpython版を作る
-		* 現状、バグを出さないためにtalk/whisperをチェックするようにしています(agree/disagreeは無効化します)
-	* netのコードをもっとキレイにする
+
 	 
 * やらない予定のこと
 	* AIWolfServer, AIWolfCommon相当のpython版の作成

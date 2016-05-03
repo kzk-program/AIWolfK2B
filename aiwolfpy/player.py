@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+"""
+BasePlayer
+
+@author: KeiHarada
+Date:2016/05/03
+"""
+
 
 class BasePlayer(object):
     
@@ -31,4 +39,3 @@ class BasePlayer(object):
     
     def whisper(self, talk_history, whisper_history):
         return 'Over'
-

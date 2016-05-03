@@ -26,6 +26,7 @@ playerクラスが実装すべきメソッド
 * talk/whisper(self, talk\_history, whisper\_history)
 	* 会話／囁き（人狼同士の会話）です
 	* talk/whisperを文字列で返してください
+		* ttf/twfを使うと簡単に作れます（多分）
 	* whisperは人間の場合は空になります
 	* 与えられるのは前回からの差分です
 	* サンプル(jsonのlistで渡します)：[{"agent":9,"content":"Over","day":2,"idx":34},{"agent":13,"content":"Over","day":2,"idx":35},{"agent":5,"content":"Over","day":2,"idx":36},{"agent":6,"content":"Over","day":2,"idx":37},{"agent":3,"content":"Over","day":2,"idx":38},{"agent":11,"content":"Over","day":2,"idx":39},{"agent":15,"content":"Over","day":2,"idx":40},{"agent":14,"content":"Over","day":2,"idx":41},{"agent":2,"content":"Over","day":2,"idx":42},{"agent":1,"content":"Over","day":2,"idx":43},{"agent":4,"content":"Over","day":2,"idx":44}]

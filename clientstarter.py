@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 from __future__ import print_function
 import argparse
-from net.Client import AIWOLFPythonClient
+import aiwolfpy.tcpipclient as client
+
+
 ### begin edit ###
 # import your class here
-from player.base import BasePlayer as AgentClass
+from myclass.myplayer import SimplePlayer as AgentClass
 # your name here
 your_name = 'your_name'
 ### end edit ###
@@ -20,4 +22,4 @@ aiwolf_port = input_args.port
 
 # run
 if __name__ == '__main__':
-    AIWOLFPythonClient(AgentClass, aiwolf_host, aiwolf_port, your_name)
+    client.run(AgentClass, aiwolf_host, aiwolf_port, your_name)

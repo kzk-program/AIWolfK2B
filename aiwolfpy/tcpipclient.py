@@ -1,11 +1,20 @@
+# -*- coding: utf-8 -*-
+"""
+TcpIpClient
+
+@author: KeiHarada
+Date:2016/05/03
+"""
+
+
+
 from __future__ import print_function
 import json
 import socket
 from socket import error as SocketError
 import errno
-from template.template import talk_check, whisper_check
 
-def AIWOLFPythonClient(AgentClass, aiwolf_host, aiwolf_port, agent_name):
+def run(AgentClass, aiwolf_host, aiwolf_port, agent_name):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # connect
     sock.connect((aiwolf_host, aiwolf_port))
@@ -73,9 +82,9 @@ def AIWOLFPythonClient(AgentClass, aiwolf_host, aiwolf_port, agent_name):
                 elif request == 'DIVINE':
                     sock.send(json.dumps({'agentIdx':agent.divine()}, separators=(',', ':')) + '\n')
                 elif request == 'TALK':
-                    sock.send(talk_check(agent.talk(talk_history, whisper_history)) + '\n')
+                    sock.send(agent.talk(talk_history, whisper_history) + '\n')
                 elif request == 'WHISPER':
-                    sock.send(whisper_check(agent.whisper(talk_history, whisper_history)) + '\n')
+                    sock.send(agent.whisper(talk_history, whisper_history) + '\n')
         except SocketError as e:
             if e.errno != errno.ECONNRESET:
                 raise
