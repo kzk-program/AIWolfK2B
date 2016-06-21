@@ -22,6 +22,7 @@ aiwolf.orgさんの人狼知能サーバーに、pythonから接続するため�
   	
 * python版の動かし方
 	* これをクローン
+		* aiwolfpyディレクトリ、myclassディレクトリ、clientstarter.py以外は捨ててOKです
 	* クライアント接続のタイミングで、別プロセスで./clientstarter.pyを実行
 	* 例：　./clientstarter.py -h localhost -p 10000
 		
@@ -29,7 +30,7 @@ aiwolf.orgさんの人狼知能サーバーに、pythonから接続するため�
 * 自分でエージェントを作るには
 	* javaな人の記事を参考に、myclass/player.pyにある、SimplePlayerを参考に、BasePlayerを継承するクラスを実装してください(詳しくはabout_Player.md 参照)
 	* BasePlayerはAIWolfSharpさんがtwitter上で公開したもののほぼそのままです
-	* ミニ大会のものをold/gat2015に入れてます
+	* ミニ大会のものをold/gat2016に入れてます
 
 
 	
