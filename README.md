@@ -28,7 +28,7 @@ aiwolf.orgさんの人狼知能サーバーに、pythonから接続するため�
 		
 
 * 自分でエージェントを作るには
-	* javaな人の記事を参考に、myclass/player.pyにある、SimplePlayerを参考に、BasePlayerを継承するクラスを実装してください(詳しくは[こちら](https://github.com/k-harada/AIWolfPy/html/about_Player.html) 参照)
+	* javaな人の記事を参考に、myclass/player.pyにある、SimplePlayerを参考に、BasePlayerを継承するクラスを実装してください(詳しくは[こちら](http://k-harada.github.io/AIWolfPy/html/about_Player.html) 参照)
 	* BasePlayerはAIWolfSharpさんがtwitter上で公開したもののほぼそのままです
 	* ミニ大会のものをold/gat2016に入れてます
 
