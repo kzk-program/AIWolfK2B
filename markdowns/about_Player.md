@@ -45,3 +45,4 @@ playerクラスが実装すべきメソッド
 	* 何もreturnしないでください
 	* roleMap(正体)がフルで与えられます
   
+ [戻る](https://github.com/k-harada/AIWolfPy)
