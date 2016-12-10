@@ -57,6 +57,7 @@ def run(AgentClass, aiwolf_host, aiwolf_port, agent_name):
                 if whisper_history is None:
                     whisper_history = []
                 # request must exist
+                print(obj_recv['request'])
                 request = obj_recv['request']
                 
                 # run requested
