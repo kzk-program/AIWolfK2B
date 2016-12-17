@@ -4,17 +4,24 @@ TcpIpClient
 
 @author: KeiHarada
 Date:2016/05/03
+UpDate:2016/12/15
 """
-
-
-
-from __future__ import print_function
-import json
+import argparse
 import socket
 from socket import error as SocketError
 import errno
+import json
 
-def run(AgentClass, aiwolf_host, aiwolf_port, agent_name):
+def connect(AgentClass):
+    agent_name = AgentClass.NAME
+    # parse Args
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument('-p', type=int, action='store', dest='port')
+    parser.add_argument('-h', type=str, action='store', dest='hostname')
+    input_args = parser.parse_args()
+    aiwolf_host = input_args.hostname
+    aiwolf_port = input_args.port
+    # socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # connect
     sock.connect((aiwolf_host, aiwolf_port))
@@ -22,7 +29,7 @@ def run(AgentClass, aiwolf_host, aiwolf_port, agent_name):
     while True:
         try:
             # l01:recieve 8KB
-            line_recv = sock.recv(8192)
+            line_recv = sock.recv(8192).decode('utf-8')
             if line_recv == '':
                 break
             buffer_flg = 1
@@ -57,14 +64,14 @@ def run(AgentClass, aiwolf_host, aiwolf_port, agent_name):
                 if whisper_history is None:
                     whisper_history = []
                 # request must exist
-                print(obj_recv['request'])
+                # print(obj_recv['request'])
                 request = obj_recv['request']
                 
                 # run requested
                 if request == 'NAME':
-                    sock.send(agent_name + '\n')
+                    sock.send((agent_name + '\n').encode('utf-8'))
                 elif request == 'ROLE':
-                    sock.send('none\n')
+                    sock.send(('none\n').encode('utf-8'))
                 elif request == 'INITIALIZE':
                     game_setting = obj_recv['gameSetting']
                     agent = AgentClass(game_info, game_setting)
@@ -75,17 +82,17 @@ def run(AgentClass, aiwolf_host, aiwolf_port, agent_name):
                 elif request == 'FINISH':
                     agent.finish(game_info)
                 elif request == 'VOTE':
-                    sock.send(json.dumps({'agentIdx':agent.vote(talk_history, whisper_history)}, separators=(',', ':')) + '\n')
+                    sock.send((json.dumps({'agentIdx':int(agent.vote(talk_history, whisper_history))}, separators=(',', ':')) + '\n').encode('utf-8'))
                 elif request == 'ATTACK':
-                    sock.send(json.dumps({'agentIdx':agent.attack()}, separators=(',', ':')) + '\n')
+                    sock.send((json.dumps({'agentIdx':int(agent.attack())}, separators=(',', ':')) + '\n').encode('utf-8'))
                 elif request == 'GUARD':
-                    sock.send(json.dumps({'agentIdx':agent.guard()}, separators=(',', ':')) + '\n')
+                    sock.send((json.dumps({'agentIdx':int(agent.guard())}, separators=(',', ':')) + '\n').encode('utf-8'))
                 elif request == 'DIVINE':
-                    sock.send(json.dumps({'agentIdx':agent.divine()}, separators=(',', ':')) + '\n')
+                    sock.send((json.dumps({'agentIdx':int(agent.divine())}, separators=(',', ':')) + '\n').encode('utf-8'))
                 elif request == 'TALK':
-                    sock.send(agent.talk(talk_history, whisper_history) + '\n')
+                    sock.send((agent.talk(talk_history, whisper_history) + '\n').encode('utf-8'))
                 elif request == 'WHISPER':
-                    sock.send(agent.whisper(talk_history, whisper_history) + '\n')
+                    sock.send((agent.whisper(talk_history, whisper_history) + '\n').encode('utf-8'))
         except SocketError as e:
             if e.errno != errno.ECONNRESET:
                 raise

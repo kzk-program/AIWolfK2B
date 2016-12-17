@@ -1,18 +1,20 @@
-# -*- coding: utf-8 -*-
-"""
-BasePlayer
+#!/usr/bin/env python
+import aiwolfpy
+import aiwolfpy.templatetalkfactory as ttf
+import aiwolfpy.templatewhisperfactory as twf
 
-@author: KeiHarada
-Date:2016/05/03
-"""
+import numpy as np
+import scipy.sparse as sp
+import sklearn
+import pandas as pd
 
-
-class BasePlayer(object):
+class MyAgent(object):
     
+    NAME = 'aiwolfpy'
     
     def __init__(self, game_info, game_setting):
         self.agentIdx = game_info['agent']
-    
+        
     def dayStart(self, game_info):
         return None
     
@@ -35,7 +37,12 @@ class BasePlayer(object):
         return self.agentIdx
     
     def talk(self, talk_history, whisper_history):
-        return 'Over'
+        return ttf.over()
     
     def whisper(self, talk_history, whisper_history):
-        return 'Over'
+        return twf.over()
+
+# run
+if __name__ == '__main__':
+    aiwolfpy.connect(MyAgent)
+    
