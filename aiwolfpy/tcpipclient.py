@@ -5,6 +5,7 @@ TcpIpClient
 @author: KeiHarada
 Date:2016/05/03
 UpDate:2016/12/15
+UpDate:2017/02/25
 """
 import argparse
 import socket
@@ -12,8 +13,7 @@ from socket import error as SocketError
 import errno
 import json
 
-def connect(AgentClass):
-    agent_name = AgentClass.NAME
+def connect(agent):
     # parse Args
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument('-p', type=int, action='store', dest='port')
@@ -69,30 +69,38 @@ def connect(AgentClass):
                 
                 # run requested
                 if request == 'NAME':
-                    sock.send((agent_name + '\n').encode('utf-8'))
+                    sock.send((agent.getName() + '\n').encode('utf-8'))
                 elif request == 'ROLE':
                     sock.send(('none\n').encode('utf-8'))
                 elif request == 'INITIALIZE':
                     game_setting = obj_recv['gameSetting']
-                    agent = AgentClass(game_info, game_setting)
+                    agent.initialize(game_info, game_setting)
                 elif request == 'DAILY_INITIALIZE':
-                    agent.dayStart(game_info)
+                    agent.update(game_info, talk_history, whisper_history)
+                    agent.dayStart()
                 elif request == 'DAILY_FINISH':
-                    agent.dayFinish(talk_history, whisper_history)
+                    agent.update(game_info, talk_history, whisper_history)
                 elif request == 'FINISH':
-                    agent.finish(game_info)
+                    agent.update(game_info, talk_history, whisper_history)
+                    agent.finish()
                 elif request == 'VOTE':
-                    sock.send((json.dumps({'agentIdx':int(agent.vote(talk_history, whisper_history))}, separators=(',', ':')) + '\n').encode('utf-8'))
+                    agent.update(game_info, talk_history, whisper_history)
+                    sock.send((json.dumps({'agentIdx':int(agent.vote())}, separators=(',', ':')) + '\n').encode('utf-8'))
                 elif request == 'ATTACK':
+                    agent.update(game_info, talk_history, whisper_history)
                     sock.send((json.dumps({'agentIdx':int(agent.attack())}, separators=(',', ':')) + '\n').encode('utf-8'))
                 elif request == 'GUARD':
+                    agent.update(game_info, talk_history, whisper_history)
                     sock.send((json.dumps({'agentIdx':int(agent.guard())}, separators=(',', ':')) + '\n').encode('utf-8'))
                 elif request == 'DIVINE':
+                    agent.update(game_info, talk_history, whisper_history)
                     sock.send((json.dumps({'agentIdx':int(agent.divine())}, separators=(',', ':')) + '\n').encode('utf-8'))
                 elif request == 'TALK':
-                    sock.send((agent.talk(talk_history, whisper_history) + '\n').encode('utf-8'))
+                    agent.update(game_info, talk_history, whisper_history)
+                    sock.send((agent.talk() + '\n').encode('utf-8'))
                 elif request == 'WHISPER':
-                    sock.send((agent.whisper(talk_history, whisper_history) + '\n').encode('utf-8'))
+                    agent.update(game_info, talk_history, whisper_history)
+                    sock.send((agent.whisper() + '\n').encode('utf-8'))
         except SocketError as e:
             if e.errno != errno.ECONNRESET:
                 raise

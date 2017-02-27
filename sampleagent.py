@@ -8,41 +8,52 @@ import scipy.sparse as sp
 import sklearn
 import pandas as pd
 
-class MyAgent(object):
+class SampleAgent(object):
     
-    NAME = 'aiwolfpy'
+    def __init__(self, agent_name):
+        self.agent_name = agent_name
+        pass
+        
+    def getName(self):
+        return self.agent_name
+        
+    def update(self, game_info, talk_history, whisper_history):
+        pass
     
-    def __init__(self, game_info, game_setting):
+    def initialize(self, game_info, game_setting):
         self.agentIdx = game_info['agent']
         
-    def dayStart(self, game_info):
+    def dayStart(self):
         return None
     
-    def dayFinish(self, talk_history, whisper_history):
-        return None
+    def talk(self):
+        return ttf.over()
     
-    def finish(self, game_info):
-        return None
-    
-    def vote(self, talk_history, whisper_history):
+    def whisper(self):
+        return twf.over()
+        
+    def vote(self):
         return self.agentIdx
     
     def attack(self):
         return self.agentIdx
     
-    def guard(self):
-        return self.agentIdx
-    
     def divine(self):
         return self.agentIdx
     
-    def talk(self, talk_history, whisper_history):
-        return ttf.over()
+    def guard(self):
+        return self.agentIdx
     
-    def whisper(self, talk_history, whisper_history):
-        return twf.over()
+    def finish(self):
+        return None
+    
+
+
+agent = SampleAgent('AIWolfPy_sample')
+    
+
 
 # run
 if __name__ == '__main__':
-    aiwolfpy.connect(MyAgent)
+    aiwolfpy.connect(agent)
     
