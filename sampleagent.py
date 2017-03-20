@@ -17,7 +17,7 @@ class SampleAgent(object):
     def getName(self):
         return self.agent_name
         
-    def update(self, game_info, talk_history, whisper_history):
+    def update(self, game_info, talk_history, whisper_history, request):
         pass
     
     def initialize(self, game_info, game_setting):

@@ -8,7 +8,7 @@ aiwolf.orgさんの人狼知能サーバーに、pythonから接続するため�
 
 * version0.4.4 の主な変更点
 	* daily_finishの廃止
-	* updateの追加
+	* updateの追加(requestつき)
 	* connectするものをクラスでなくインスタンスに変更
   
 * 必要な環境
@@ -20,7 +20,7 @@ aiwolf.orgさんの人狼知能サーバーに、pythonから接続するため�
 			* パッケージ等は大会の前に運営さんに確認しましょう、特にtensorflow等、すごいパッケージを使うと大会の運営さんが大変になりますので、早めにお願いしましょう  
 
 * 基本的な動かし方(Mac OSX)
-	* 人狼知能プロジェクトの公式サイト(http://www.aiwolf.org/server/ ) から人狼知能プラットフォーム0.4.xをダウンロード
+	* 人狼知能プロジェクトの公式サイト(http://www.aiwolf.org/server/ ) から人狼知能プラットフォーム0.4.4をダウンロード
 	* サーバーアプリ起動 ./StartServer.sh
 		* Javaアプリが起動するので、人数とportを指定して、Connect
 	* 別のターミナルwindowから、クライアントアプリ起動  ./StartGUIClient.sh 
@@ -42,7 +42,6 @@ aiwolf.orgさんの人狼知能サーバーに、pythonから接続するため�
 * やる予定のこと
 	* エージェントの作り方の親切な文章を書く
 	* 5460通りの計算は公開する
-	* pandasを使ってデータを溜めるところまでは作って公開する
 	
 
 	 
