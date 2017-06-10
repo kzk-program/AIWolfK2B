@@ -7,6 +7,8 @@ Date:2016/05/03
 UpDate:2016/12/15
 UpDate:2017/02/25
 """
+
+from __future__ import print_function, division 
 import argparse
 import socket
 from socket import error as SocketError

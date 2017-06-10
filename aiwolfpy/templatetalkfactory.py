@@ -18,8 +18,8 @@ def divined(target, species):
     return 'DIVINED Agent[' + "{0:02d}".format(target) + '] ' + species
 
 
-def inquested(target, species):
-    return 'INQUESTED Agent[' + "{0:02d}".format(target) + '] ' + species
+def identified(target, species):
+    return 'IDENTIFIED Agent[' + "{0:02d}".format(target) + '] ' + species
 
 
 def guarded(target):
