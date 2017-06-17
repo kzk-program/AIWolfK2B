@@ -3,3 +3,4 @@ aiwolfpy/*
 !aiwolfpy/*.py
 agent_submit/
 AIWolf-ver0.4.8/
+__pycache__/
