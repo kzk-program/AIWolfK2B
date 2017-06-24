@@ -1,6 +1,8 @@
 # AIWolfPy
 
 aiwolf.orgさんの人狼知能サーバーに、pythonから接続するためのパッケージです。　　
+
+詳しくはこちらの[スライド](https://www.slideshare.net/HaradaKei/aiwolfpy-v049)をご確認ください
   
 * version0.4.0 の主な変更点
 	* python3対応しました
@@ -10,6 +12,9 @@ aiwolf.orgさんの人狼知能サーバーに、pythonから接続するため�
 	* daily_finishの廃止
 	* updateの追加(requestつき)
 	* connectするものをクラスでなくインスタンスに変更
+	
+* version0.4.9 の主な変更点
+	* 情報連携をDataFrameがデフォルトになるように変更
   
 * 必要な環境
 	* JRE(JDKが必要だったらゴメンなさい)
@@ -20,7 +25,7 @@ aiwolf.orgさんの人狼知能サーバーに、pythonから接続するため�
 			* パッケージ等は大会の前に運営さんに確認しましょう、特にtensorflow等、すごいパッケージを使うと大会の運営さんが大変になりますので、早めにお願いしましょう  
 
 * 基本的な動かし方(Mac OSX)
-	* 人狼知能プロジェクトの公式サイト(http://www.aiwolf.org/server/ ) から人狼知能プラットフォーム0.4.4をダウンロード
+	* 人狼知能プロジェクトの公式サイト(http://www.aiwolf.org/server/ ) から人狼知能プラットフォーム0.4.Xをダウンロード
 	* サーバーアプリ起動 ./StartServer.sh
 		* Javaアプリが起動するので、人数とportを指定して、Connect
 	* 別のターミナルwindowから、クライアントアプリ起動  ./StartGUIClient.sh 
@@ -31,18 +36,22 @@ aiwolf.orgさんの人狼知能サーバーに、pythonから接続するため�
   	
 * python版の動かし方
 	* これをクローン
-	* クライアント接続のタイミングで、別プロセスで./sampleagent.pyを実行
-	* 例：　./sampleagent.py -h localhost -p 10000
+	* クライアント接続のタイミングで、別プロセスで./python_sample.pyを実行
+	* 例：　./python_sample.py -h localhost -p 10000
 		
 
 * 自分でエージェントを作るには
-	* javaな人の記事を参考に、直接sampleagent.pyをコピーして書き換えてください
+	* javaな人の記事を参考に、直接python_simple_sample.pyをコピーして書き換えてください
+	
+* 大会に参加するには
+	* アカウント登録して、名前とか整合するように書き換えてください
+	* 詳しくは[Slideshareの方](https://www.slideshare.net/HaradaKei/aiwolfpy-v049)をご参考
 
 	 
 * やる予定のこと
-	* エージェントの作り方の親切な文章を書く
-	* 5460通りの計算は公開する
-	
+	* 対戦機能
+	* デバッグ方法の整理
+	* 大会頑張る
 
 	 
 * やらない予定のこと

@@ -12,47 +12,24 @@ myname = 'cash'
 class SampleAgent(object):
     
     def __init__(self, agent_name):
-        # me
-        self.me = {'agentName':agent_name, 'agentIdx':0, 'myRole':'VILLAGER'}
+        # myname
+        self.myname = agent_name
         
-        # parser
-        # JSON -> DataFrame
-        self.parser = aiwolfpy.GameInfoParser()
         
     def getName(self):
-        return self.me['agentName']
+        return self.myname
     
-    def initialize(self, game_info, game_setting):
-        
+    def initialize(self, base_info, diff_data, game_setting):
+        self.base_info = base_info
         # game_setting
         self.game_setting = game_setting
+        # print(base_info)
+        # print(diff_data)
         
-        # base_info
-        self.base_info = dict()
-        for k in ["day", "roleMap", "remainTalkMap", "remainWhisperMap", "statusMap"]:
-            if k in game_info.keys():
-                self.base_info[k] =  game_info[k]
-        
-        self.divined_list = []
-        
-        # me
-        self.me['agentIdx'] = game_info['agent']
-        self.me['myRole'] =  game_info["roleMap"][str(self.me['agentIdx'])]
-        
-        # initialize
-        self.parser.initialize(game_info, game_setting)
-        
-        
-    def update(self, game_info, talk_history, whisper_history, request):
-        
-        # update base_info
-        for k in ["day", "roleMap", "remainTalkMap", "remainWhisperMap", "statusMap"]:
-            if k in game_info.keys():
-                self.base_info[k] =  game_info[k]
-        
-        # update gameDataFrame
-        self.parser.update(game_info, talk_history, whisper_history, request)
-        
+    def update(self, base_info, diff_data, request):
+        self.base_info = base_info
+        # print(base_info)
+        # print(diff_data)
         
     def dayStart(self):
         return None
@@ -64,16 +41,16 @@ class SampleAgent(object):
         return cb.over()
         
     def vote(self):
-        return self.me['agentIdx']
+        return self.base_info['agentIdx']
     
     def attack(self):
-        return self.me['agentIdx']
+        return self.base_info['agentIdx']
     
     def divine(self):
-        return self.me['agentIdx']
+        return self.base_info['agentIdx']
     
     def guard(self):
-        return self.me['agentIdx']
+        return self.base_info['agentIdx']
     
     def finish(self):
         return None
@@ -86,5 +63,5 @@ agent = SampleAgent(myname)
 
 # run
 if __name__ == '__main__':
-    aiwolfpy.connect(agent)
+    aiwolfpy.connect_parse(agent)
     

@@ -43,24 +43,17 @@ class Predictor_15(object):
         self.x_3d = np.zeros((15, 15, self.n_para_3d), dtype='float32')
         self.x_2d = np.zeros((15, self.n_para_2d), dtype='float32')
         
-        self.me = dict()
                 
-    def initialize(self, game_info, game_setting):
+    def initialize(self, base_info, game_setting):
         # game_setting
         self.game_setting = game_setting
-        # me
-        self.me['agentIdx'] = game_info['agent']
-        self.me['myRole'] =  game_info["roleMap"][str(self.me['agentIdx'])]
         
         # base_info
-        self.base_info = dict()
-        for k in ["day", "roleMap", "remainTalkMap", "remainWhisperMap", "statusMap"]:
-            if k in game_info.keys():
-                self.base_info[k] =  game_info[k]
+        self.base_info = base_info
         
         # initialize watashi_ningen
         self.watshi_ningen = np.ones(5460)
-        xv = self.case15.get_case5460_df()["agent_"+str(self.me['agentIdx'])].values
+        xv = self.case15.get_case5460_df()["agent_"+str(self.base_info['agentIdx'])].values
         self.watshi_ningen[xv != 0] = 0.0
         
         # initialize x_3d, x_2d
@@ -193,11 +186,11 @@ class Predictor_15(object):
     def mod_pred(self):
         # watashi ningen
         self.df_pred["pred_wn"] = self.df_pred["pred"]
-        self.df_pred.loc[self.case15.get_case5460_df()["agent_"+str(self.me['agentIdx'])] != 0, "pred_wn"] *= 0.0
+        self.df_pred.loc[self.case15.get_case5460_df()["agent_"+str(self.base_info['agentIdx'])] != 0, "pred_wn"] *= 0.0
         self.df_pred["pred_wn"] /= self.df_pred["pred_wn"].sum()
         # for werewolves
         self.df_pred["pred_ww"] = self.df_pred["pred"]
-        if self.me['myRole'] == "WEREWOLF": 
+        if self.base_info['myRole'] == "WEREWOLF": 
             for i in self.base_info['roleMap'].keys():
                 self.df_pred.loc[self.case15.get_case5460_df()["agent_"+i] != 0, "pred_ww"] *= 0.0
             self.df_pred["pred_ww"] /= self.df_pred["pred_ww"].sum()
