@@ -141,18 +141,7 @@ class Predictor_5(object):
                     elif content[2] == 'WEREWOLF':
                         self.x_3d[gamedf.agent[i] - 1, int(content[1][6:8])-1, 2] = 1
                         self.x_3d[gamedf.agent[i] - 1, int(content[1][6:8])-1, 1] = 0
-                # identified
-                elif content[0] == 'IDENTIFIED':
-                    # regard comingout
-                    self.x_2d[gamedf.agent[i] - 1, 2:5] = 0
-                    self.x_2d[gamedf.agent[i] - 1, 3] = 1
-                    # result
-                    if content[2] == 'HUMAN':
-                        self.x_3d[gamedf.agent[i] - 1, int(content[1][6:8])-1, 3] = 1
-                        self.x_3d[gamedf.agent[i] - 1, int(content[1][6:8])-1, 4] = 0
-                    elif content[2] == 'WEREWOLF':
-                        self.x_3d[gamedf.agent[i] - 1, int(content[1][6:8])-1, 4] = 1
-                        self.x_3d[gamedf.agent[i] - 1, int(content[1][6:8])-1, 3] = 0
+                        
         
     def update_df(self):
         # update 60 dataframe
