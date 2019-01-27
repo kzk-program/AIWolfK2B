@@ -19,9 +19,11 @@ def connect_parse(agent):
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument('-p', type=int, action='store', dest='port')
     parser.add_argument('-h', type=str, action='store', dest='hostname')
+    parser.add_argument('-r', type=str, action='store', dest='role', default='none')
     input_args = parser.parse_args()
     aiwolf_host = input_args.hostname
     aiwolf_port = input_args.port
+    aiwolf_role = input_args.role
     # socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # connect
@@ -76,7 +78,7 @@ def connect_parse(agent):
                 if request == 'NAME':
                     sock.send((agent.getName() + '\n').encode('utf-8'))
                 elif request == 'ROLE':
-                    sock.send(('none\n').encode('utf-8'))
+                    sock.send((aiwolf_role+'\n').encode('utf-8'))
                 elif request == 'INITIALIZE':
                     # game_setting
                     game_setting = obj_recv['gameSetting']
