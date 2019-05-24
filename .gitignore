@@ -1,0 +1,10 @@
+.DS_Store
+aiwolfpy/*
+!aiwolfpy/*.py
+!aiwolfpy/cash/
+aiwolfpy/cash/*
+!aiwolfpy/cash/*.py
+agent_submit/
+AIWolf-ver0.4.9/
+__pycache__/
+old/
