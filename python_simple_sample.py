@@ -81,7 +81,9 @@ parser.add_argument('-r', type=str, action='store', dest='role', default='none')
 input_args = parser.parse_args()
 
 
-client_agent = aiwolfpy.AgentProxy(agent, my_name, input_args.hostname, input_args.port, input_args.role, logger, "pandas")
+client_agent = aiwolfpy.AgentProxy(
+    agent, my_name, input_args.hostname, input_args.port, input_args.role, logger, "pandas"
+)
 
 # run
 if __name__ == '__main__':

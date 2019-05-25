@@ -19,7 +19,7 @@ class AgentProxy(object):
         self.logger = logger
         self.len_whisper_list = 0
 
-    # ここも色々ある
+    # parse and run
     def initialize_agent(self, game_info, game_setting):
         if self.parse_choice == "pandas":
             self.parser.initialize(game_info, game_setting)
@@ -27,7 +27,7 @@ class AgentProxy(object):
             self.base_info['agentIdx'] = game_info['agent']
             self.base_info['myRole'] = game_info["roleMap"][str(game_info['agent'])]
             self.base_info["roleMap"] = game_info["roleMap"]
-            diff_data = self.parser.get_gamedf_diff()
+            diff_data = self.parser.get_game_df_diff()
             self.logger.debug("INITIALIZE")
             self.logger.debug(self.base_info)
             self.logger.debug(diff_data)
@@ -36,14 +36,14 @@ class AgentProxy(object):
         else:
             self.agent.initialize(game_info, game_setting)
 
-    # ここは色々ある
+    # parse and run
     def update_agent(self, game_info, talk_history, whisper_history, request):
         if self.parse_choice == "pandas":
             for k in ["day", "remainTalkMap", "remainWhisperMap", "statusMap"]:
                 if k in game_info.keys():
                     self.base_info[k] = game_info[k]
             self.parser.update(game_info, talk_history, whisper_history, request)
-            diff_data = self.parser.get_gamedf_diff()
+            diff_data = self.parser.get_game_df_diff()
             self.logger.debug(request)
             self.logger.debug(self.base_info)
             self.logger.debug(diff_data)
