@@ -1,7 +1,8 @@
 import socket
-from socket import error as SocketError
+from socket import error as socket_error
 import errno
 import json
+from .gameinfoparser import GameInfoParser
 
 
 # decorator
@@ -14,16 +15,32 @@ class AgentProxy(object):
         self.port = port
         self.role = role
         self.sock = None
+        self.parser = GameInfoParser()
+        self.base_info = dict()
 
     # ここも色々ある
-    def initialize_agent(self, base_info, diff_data, game_setting):
-        self.agent.initialize(base_info, diff_data, game_setting)
-        return None
+    def initialize_agent(self, game_info, game_setting):
+        if True:
+            self.base_info = dict()
+            self.base_info['agentIdx'] = game_info['agent']
+            self.base_info['myRole'] = game_info["roleMap"][str(game_info['agent'])]
+            self.base_info["roleMap"] = game_info["roleMap"]
+            self.agent.initialize(self.base_info,  self.parser.get_gamedf_diff(), game_setting)
+            return None
+        else:
+            self.agent.initialize(game_info, game_setting)
 
     # ここは色々ある
-    def update_agent(self, base_info, diff_data, request):
-        self.agent.update(base_info, diff_data, request)
-        return None
+    def update_agent(self, game_info, talk_history, whisper_history, request):
+        if True:
+            for k in ["day", "remainTalkMap", "remainWhisperMap", "statusMap"]:
+                if k in game_info.keys():
+                    self.base_info[k] = game_info[k]
+            self.parser.update(game_info, talk_history, whisper_history, request)
+            self.agent.update(self.base_info, self.parser.get_gamedf_diff(), request)
+            return None
+        else:
+            self.agent.update(game_info, talk_history, whisper_history, request)
 
     def send_response(self, json_received):
         res_txt = self._get_json(json_received)
@@ -109,7 +126,7 @@ class AgentProxy(object):
                 except ValueError:
                     pass
 
-            except SocketError as e:
+            except socket_error as e:
                 if e.errno != errno.ECONNRESET:
                     raise
                 else:
