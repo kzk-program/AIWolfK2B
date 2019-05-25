@@ -6,7 +6,7 @@ from .gameinfoparser import GameInfoParser
 # decorator
 class AgentProxy(object):
 
-    def __init__(self, agent, my_name, host_name, port, role, parse="pandas", logger=None):
+    def __init__(self, agent, my_name, host_name, port, role, logger, parse="pandas"):
         self.agent = agent
         self.my_name = my_name
         self.host_name = host_name
@@ -17,6 +17,7 @@ class AgentProxy(object):
         self.base_info = dict()
         self.parse_choice = parse
         self.logger = logger
+        self.len_whisper_list = 0
 
     # ここも色々ある
     def initialize_agent(self, game_info, game_setting):
@@ -26,7 +27,11 @@ class AgentProxy(object):
             self.base_info['agentIdx'] = game_info['agent']
             self.base_info['myRole'] = game_info["roleMap"][str(game_info['agent'])]
             self.base_info["roleMap"] = game_info["roleMap"]
-            self.agent.initialize(self.base_info,  self.parser.get_gamedf_diff(), game_setting)
+            diff_data = self.parser.get_gamedf_diff()
+            self.logger.debug("INITIALIZE")
+            self.logger.debug(self.base_info)
+            self.logger.debug(diff_data)
+            self.agent.initialize(self.base_info,  diff_data, game_setting)
             return None
         else:
             self.agent.initialize(game_info, game_setting)
@@ -38,7 +43,11 @@ class AgentProxy(object):
                 if k in game_info.keys():
                     self.base_info[k] = game_info[k]
             self.parser.update(game_info, talk_history, whisper_history, request)
-            self.agent.update(self.base_info, self.parser.get_gamedf_diff(), request)
+            diff_data = self.parser.get_gamedf_diff()
+            self.logger.debug(request)
+            self.logger.debug(self.base_info)
+            self.logger.debug(diff_data)
+            self.agent.update(self.base_info, diff_data, request)
             return None
         else:
             self.agent.update(game_info, talk_history, whisper_history, request)
@@ -55,10 +64,6 @@ class AgentProxy(object):
         game_info = json_received['gameInfo']
         if game_info is None:
             game_info = dict()
-        if 'talkList' in game_info.keys():
-            del game_info['talkList']
-        if 'whisperList' in game_info.keys():
-            del game_info['whisperList']
         # talk_history and whisper_history
         talk_history = json_received['talkHistory']
         if talk_history is None:
@@ -66,15 +71,24 @@ class AgentProxy(object):
         whisper_history = json_received['whisperHistory']
         if whisper_history is None:
             whisper_history = []
+
+        # delete unnecessary talk and whisper
+        if 'talkList' in game_info.keys():
+            del game_info['talkList']
+        if 'whisperList' in game_info.keys():
+            whisper_history = game_info['whisperList'][self.len_whisper_list:]
+            self.len_whisper_list = len(game_info['whisperList'])
+            del game_info['whisperList']
+
         # request must exist
         request = json_received['request']
-        self.logger.debug(request)
-        self.logger.debug(game_info)
-        self.logger.debug(talk_history)
-        self.logger.debug(whisper_history)
+        self.logger.log(1, request)
+        self.logger.log(1, game_info)
+        self.logger.log(1, talk_history)
+        self.logger.log(1, whisper_history)
         if request == 'INITIALIZE':
             game_setting = json_received['gameSetting']
-            self.logger.debug(game_setting)
+            self.logger.log(1, game_setting)
         else:
             game_setting = None
 
@@ -90,6 +104,7 @@ class AgentProxy(object):
             # UPDATE
             self.update_agent(game_info, talk_history, whisper_history, request)
             if request == 'DAILY_INITIALIZE':
+                self.len_whisper_list = 0
                 self.agent.dayStart()
                 return None
             elif request == 'DAILY_FINISH':

@@ -12,10 +12,10 @@ my_name = 'cash'
 
 # logger
 logger = getLogger("aiwolfpy")
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.NOTSET)
 # handler
 stream_handler = StreamHandler()
-stream_handler.setLevel(logging.DEBUG)
+stream_handler.setLevel(logging.NOTSET)
 handler_format = Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 stream_handler.setFormatter(handler_format)
 
@@ -26,6 +26,7 @@ logger.addHandler(stream_handler)
 # file_handler.setLevel(logging.WARNING)
 # file_handler.setFormatter(handler_format)
 # logger.addHandler(file_handler)
+
 
 class SampleAgent(object):
     
@@ -41,13 +42,9 @@ class SampleAgent(object):
         self.base_info = base_info
         # game_setting
         self.game_setting = game_setting
-        # print(base_info)
-        # print(diff_data)
         
     def update(self, base_info, diff_data, request):
         self.base_info = base_info
-        # print(base_info)
-        # print(diff_data)
         
     def dayStart(self):
         return None
@@ -84,7 +81,7 @@ parser.add_argument('-r', type=str, action='store', dest='role', default='none')
 input_args = parser.parse_args()
 
 
-client_agent = aiwolfpy.AgentProxy(agent, my_name, input_args.hostname, input_args.port, input_args.role, "pandas", logger)
+client_agent = aiwolfpy.AgentProxy(agent, my_name, input_args.hostname, input_args.port, input_args.role, logger, "pandas")
 
 # run
 if __name__ == '__main__':

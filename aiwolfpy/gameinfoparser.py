@@ -15,7 +15,6 @@ class GameInfoParser(object):
         self.pd_dict = {"day":[], "type":[], "idx":[], "turn":[], "agent":[], "text":[]}
         self.finish_cnt = 0 
         self.night_info = 0
-        self.len_wl = 0
         
         # for diff
         self.rows_returned = 0
@@ -54,28 +53,25 @@ class GameInfoParser(object):
         
         # talk
         # update talklist
-        if request == 'TALK' or request == 'DAILY_FINISH':
-            for t in talk_history:
-                self.pd_dict["day"].append(t["day"])
-                self.pd_dict["type"].append("talk")
-                self.pd_dict["idx"].append(t["idx"])
-                self.pd_dict["turn"].append(t["turn"])
-                self.pd_dict["agent"].append(t["agent"])
-                self.pd_dict["text"].append(t["text"])
+        for t in talk_history:
+            self.pd_dict["day"].append(t["day"])
+            self.pd_dict["type"].append("talk")
+            self.pd_dict["idx"].append(t["idx"])
+            self.pd_dict["turn"].append(t["turn"])
+            self.pd_dict["agent"].append(t["agent"])
+            self.pd_dict["text"].append(t["text"])
             
         # whisper
         # update whisperlist
-        # never called
-        # if len(whisper_history) > 0:
-        #     for w in whisper_history:
-        #         self.pd_dict["day"].append(w["day"])
-        #         self.pd_dict["type"].append("whisper")
-        #         self.pd_dict["idx"].append(w["idx"])
-        #         self.pd_dict["turn"].append(w["turn"])
-        #         self.pd_dict["agent"].append(w["agent"])
-        #         self.pd_dict["text"].append(w["text"])
+        for w in whisper_history:
+            self.pd_dict["day"].append(w["day"])
+            self.pd_dict["type"].append("whisper")
+            self.pd_dict["idx"].append(w["idx"])
+            self.pd_dict["turn"].append(w["turn"])
+            self.pd_dict["agent"].append(w["agent"])
+            self.pd_dict["text"].append(w["text"])
         
-        elif request == 'DAILY_INITIALIZE':
+        if request == 'DAILY_INITIALIZE':
             
             # VOTE
             if self.night_info == 0:
@@ -156,7 +152,6 @@ class GameInfoParser(object):
                 self.pd_dict["text"].append('Over')
                 
             self.night_info = 0
-            self.len_wl = 0
                 
         # VOTE/EXECUTE before action
         elif request in ['DIVINE', 'GUARD', 'ATTACK', 'WHISPER'] and self.night_info == 0:
@@ -220,19 +215,3 @@ class GameInfoParser(object):
                 self.pd_dict["agent"].append(int(k))
                 self.pd_dict["text"].append('COMINGOUT Agent[' + "{0:02d}".format(int(k)) + '] ' + game_info["roleMap"][k])
             self.finish_cnt += 1
-            
-        # WHISPERLIST
-        if 'whisperList' in game_info.keys():
-            if len(game_info['whisperList']) > self.len_wl:
-                for i in range(self.len_wl, len(game_info['whisperList'])):
-                    w = game_info['whisperList'][i]
-                    self.pd_dict["day"].append(w["day"])
-                    self.pd_dict["type"].append("whisper")
-                    self.pd_dict["idx"].append(w["idx"])
-                    self.pd_dict["turn"].append(w["turn"])
-                    self.pd_dict["agent"].append(w["agent"])
-                    self.pd_dict["text"].append(w["text"])
-                    self.len_wl = len(game_info['whisperList'])  
-                    
-                    
-
