@@ -17,12 +17,13 @@ aiwolf.orgさんの人狼知能サーバーに、pythonから接続するため�
 	* 情報連携をDataFrameがデフォルトになるように変更
   
 * 必要な環境
-	* JRE(JDKが必要だったらゴメンなさい)
+	* ローカルで対戦するためにJDK
 		* 参加するだけならpythonのみでも大丈夫です  
-	* Python
-		* 2.7.12 と 3.5.2で動作確認しています  
+	* Python  
+		* サーバー環境はこちら http://aiwolf.org/python_modules
 		* 標準パッケージ＋numpy, scipy, pandas, sciki-learnの使用を想定しています
 			* パッケージ等は大会の前に運営さんに確認しましょう、特にtensorflow等、すごいパッケージを使うと大会の運営さんが大変になりますので、早めにお願いしましょう  
+			* スレッドの立ち上げは禁止です。numpy, chainerのオプションはサーバー側でみますが、tensorflowは自己責任で対処してください。参考： http://aiwolf.org/archives/1951
 
 * 基本的な動かし方(Mac OSX)
 	* 人狼知能プロジェクトの公式サイト(http://www.aiwolf.org/server/ ) から人狼知能プラットフォーム0.4.Xをダウンロード
