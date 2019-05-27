@@ -4,11 +4,13 @@
 import logging
 from logging import getLogger, StreamHandler, Formatter, FileHandler
 import aiwolfpy
-import aiwolfpy.contentbuilder as cb
 import argparse
 
 # name
 my_name = 'cash'
+
+# content factory
+cf = aiwolfpy.ContentFactory()
 
 # logger
 logger = getLogger("aiwolfpy")
@@ -50,10 +52,10 @@ class SampleAgent(object):
         return None
     
     def talk(self):
-        return cb.over()
+        return cf.over()
     
     def whisper(self):
-        return cb.over()
+        return cf.over()
         
     def vote(self):
         return self.base_info['agentIdx']

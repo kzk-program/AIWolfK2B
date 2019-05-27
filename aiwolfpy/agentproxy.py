@@ -1,9 +1,9 @@
 import socket
 import json
-from .gameinfoparser import GameInfoParser
+from aiwolfpy.gameinfoparser import GameInfoParser
 
 
-# decorator
+# decorator / proxy
 class AgentProxy(object):
 
     def __init__(self, agent, my_name, host_name, port, role, logger, parse="pandas"):
@@ -121,9 +121,9 @@ class AgentProxy(object):
             elif request == 'DIVINE':
                 return json.dumps({'agentIdx': int(self.agent.divine())}, separators=(',', ':'))
             elif request == 'TALK':
-                return self.agent.talk()
+                return self.agent.talk().__str__()
             elif request == 'WHISPER':
-                return self.agent.whisper()
+                return self.agent.whisper().__str__()
 
     def connect_server(self):
         # socket

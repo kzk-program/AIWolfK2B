@@ -1,5 +1,4 @@
-from __future__ import print_function, division 
-from . import contentbuilder 
-from .gameinfoparser import GameInfoParser
-from .agent_proxy import AgentProxy
-from .read_log import read_log
+from aiwolfpy.protocol.contentfactory import ContentFactory
+from aiwolfpy.gameinfoparser import GameInfoParser
+from aiwolfpy.agentproxy import AgentProxy
+from aiwolfpy.read_log import read_log
