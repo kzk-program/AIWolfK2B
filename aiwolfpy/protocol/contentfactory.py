@@ -1,19 +1,51 @@
+from aiwolfpy.util.singleton import Singleton
 from aiwolfpy.protocol.contents import *
 
 
 # content factory
-class ContentFactory(object):
+class ContentFactory(metaclass=Singleton):
     """Factory class for content
     Example c = ContentFactory.estimate(3, "SEER")
     c.get_text() returns "ESTIMATE Agent[03] SEER"
     """
-    # Singleton
-    _instance = None
 
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = object.__new__(cls)
-        return cls._instance
+    @classmethod
+    def verb(cls, *args):
+        assert args[0] in [
+            'ESTIMATE', 'COMINGOUT', 'DIVINATION', 'GUARD', 'VOTE',
+            'ATTACK', 'DIVINED', 'IDENTIFIED', 'GUARDED', 'VOTED',
+            'ATTACKED', 'AGREE', 'DISAGREE', 'Skip', 'Over'
+        ]
+        if args[0] == 'ESTIMATE':
+            return cls.estimate(*args[1:])
+        elif args[0] == 'COMINGOUT':
+            return cls.comingout(*args[1:])
+        elif args[0] == 'DIVINATION':
+            return cls.divination(*args[1:])
+        elif args[0] == 'GUARD':
+            return cls.guard(*args[1:])
+        elif args[0] == 'VOTE':
+            return cls.vote(*args[1:])
+        elif args[0] == 'ATTACK':
+            return cls.attack(*args[1:])
+        elif args[0] == 'DIVINED':
+            return cls.divined(*args[1:])
+        elif args[0] == 'IDENTIFIED':
+            return cls.identified(*args[1:])
+        elif args[0] == 'GUARDED':
+            return cls.guarded(*args[1:])
+        elif args[0] == 'VOTED':
+            return cls.voted(*args[1:])
+        elif args[0] == 'ATTACKED':
+            return cls.attacked(*args[1:])
+        elif args[0] == 'AGREE':
+            return cls.agree(*args[1:])
+        elif args[0] == 'DISAGREE':
+            return cls.disagree(*args[1:])
+        elif args[0] == 'Skip':
+            return cls.skip(*args[1:])
+        elif args[0] == 'Over':
+            return cls.over(*args[1:])
 
     # 2.1
     @classmethod
@@ -135,6 +167,16 @@ class ContentFactory(object):
             subject, verb, talk_number = 'UNSPEC', 'AGREE', args[0]
         else:
             subject, verb, talk_number = args[0], 'AGREE', args[1]
+
+        return AgreeContent(subject, verb, talk_number)
+
+    @classmethod
+    def disagree(cls, *args):
+        assert len(args) == 1 or len(args) == 2
+        if len(args) == 1:
+            subject, verb, talk_number = 'UNSPEC', 'DISAGREE', args[0]
+        else:
+            subject, verb, talk_number = args[0], 'DISAGREE', args[1]
 
         return AgreeContent(subject, verb, talk_number)
 

@@ -94,7 +94,14 @@ class Content(metaclass=ABCMeta):
 
     def get_text(self):
         res = self._get_text()
-        if str(self.subject) == 'UNSPEC' or res == 'Skip' or res == 'Over':
+
+        if 'Skip' in res:
+            assert res == 'Skip'
+            return res
+        elif 'Over' in res:
+            assert res == 'Over'
+            return res
+        elif str(self.subject) == 'UNSPEC':
             return res
         else:
             return str(self.subject) + ' ' + res
