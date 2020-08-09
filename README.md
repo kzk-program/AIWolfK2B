@@ -1,8 +1,8 @@
 # AIWolfPy
 
-This is a package for connecting to the AIWolf.org's AI Werewolf server using python.
+Create python agents that can play Werewolf, following the specifications of the [AIWolf Project](http://aiwolf.org)
 
-This has been forked from the official repository by the AIWolf project, and was originally created by Kei Harada(https://github.com/k-harada).
+This has been forked from the official repository by the AIWolf project, and was originally created by [Kei Harada](https://github.com/k-harada).
 
 # Changelog:
 
