@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 
-# simple version
+# This sample script connects to the AIWolf server, but
+# does not do anything else. It will choose itself as the
+# target for any actions requested by the server, (voting,
+# attacking ,etc) forcing the server to choose a random target.
 import logging
 from logging import getLogger, StreamHandler, Formatter, FileHandler
 import aiwolfpy
 import argparse
 
 # name
-my_name = 'cash'
+myname = 'sample_python'
 
 # content factory
 cf = aiwolfpy.ContentFactory()
@@ -40,35 +43,42 @@ class SampleAgent(object):
     def getName(self):
         return self.my_name
     
+    # new game (no return)
     def initialize(self, base_info, diff_data, game_setting):
         self.base_info = base_info
-        # game_setting
         self.game_setting = game_setting
         
+    # new information (no return)
     def update(self, base_info, diff_data, request):
         self.base_info = base_info
         
+    # Start of the day (no return)
     def dayStart(self):
         return None
-    
+
+    # conversation actions: require a properly formatted
+    # protocol string as the return.
     def talk(self):
         return cf.over()
     
     def whisper(self):
         return cf.over()
         
+    # targetted actions: Require the id of the target
+    # agent as the return
     def vote(self):
         return self.base_info['agentIdx']
-    
+
     def attack(self):
         return self.base_info['agentIdx']
-    
+
     def divine(self):
         return self.base_info['agentIdx']
-    
+
     def guard(self):
         return self.base_info['agentIdx']
-    
+
+    # Finish (no return)
     def finish(self):
         return None
     

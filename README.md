@@ -1,62 +1,43 @@
 # AIWolfPy
 
-aiwolf.orgさんの人狼知能サーバーに、pythonから接続するためのパッケージです。　　
+Create python agents that can play Werewolf, following the specifications of the [AIWolf Project](http://aiwolf.org)
 
-詳しくはこちらの[スライド](https://www.slideshare.net/HaradaKei/aiwolfpy-v049)をご確認ください
-  
-* version0.4.0 の主な変更点
-	* python3対応しました
-	* ファイル構成がかなりシンプルになりました
+This has been forked from the official repository by the AIWolf project, and was originally created by [Kei Harada](https://github.com/k-harada).
 
-* version0.4.4 の主な変更点
-	* daily_finishの廃止
-	* updateの追加(requestつき)
-	* connectするものをクラスでなくインスタンスに変更
-	
-* version0.4.9 の主な変更点
-	* 情報連携をDataFrameがデフォルトになるように変更
-  
-* 必要な環境
-	* ローカルで対戦するためにJDK
-		* 参加するだけならpythonのみでも大丈夫です  
-	* Python  
-		* サーバー環境はこちら http://aiwolf.org/python_modules
-		* 標準パッケージ＋numpy, scipy, pandas, sciki-learnの使用を想定しています
-			* パッケージ等は大会の前に運営さんに確認しましょう、特にtensorflow等、すごいパッケージを使うと大会の運営さんが大変になりますので、早めにお願いしましょう  
-			* スレッドの立ち上げは禁止です。numpy, chainerのオプションはサーバー側でみますが、tensorflowは自己責任で対処してください。参考： http://aiwolf.org/archives/1951
+# Changelog:
 
-* 基本的な動かし方(Mac OSX)
-	* 人狼知能プロジェクトの公式サイト(http://www.aiwolf.org/server/ ) から人狼知能プラットフォーム0.4.Xをダウンロード
-	* サーバーアプリ起動 ./StartServer.sh
-		* Javaアプリが起動するので、人数とportを指定して、Connect
-	* 別のターミナルwindowから、クライアントアプリ起動  ./StartGUIClient.sh 
-		* 別のアプリが起動するので、サーパーのアプリで指定したportにプレイヤーをConnect	
-	* サーバーアプリ側のStart Gameを押す
-		* サーバーを起動したターミナルに完全なログが出ます
-		* サーバーアプリ側のログが見やすいです
-  	
-* python版の動かし方
-	* これをクローン
-	* クライアント接続のタイミングで、別プロセスで./python_sample.pyを実行
-	* 例：　./python_sample.py -h localhost -p 10000
-		
+## Version 0.4.9a
+* Added support material in English
 
-* 自分でエージェントを作るには
-	* javaな人の記事を参考に、直接python_simple_sample.pyをコピーして書き換えてください
-	
-* 大会に参加するには
-	* アカウント登録して、名前とか整合するように書き換えてください
-	* 詳しくは[Slideshareの方](https://www.slideshare.net/HaradaKei/aiwolfpy-v049)をご参考
+## Version 0.4.9
+* Changed differential structure (diff_data) into a DataFrame
 
-	 
-* やる予定のこと
-	* 対戦機能
-	* デバッグ方法の整理
-	* 大会頑張る
+## Version 0.4.4
+* removed daily_finish
+* Added update callback (with request parameter)
+* Connecting is now done through a instance, not a class
 
-	 
-* やらない予定のこと
-	* AIWolfServer, AIWolfCommon相当のpython版の作成
-		* pythonな人が多数派になって、Server開発する人がいれば考えてもいいかもですが・・・
-	* Jython対応
-		* 私はnumpy大好きなのでやる気はありません  
+## Version 0.4.0
+* Support for python3
+* Made file structure much simpler
+
+# Running the agent and the server locally:
+* Download the AIWolf platform from the [AIWolf public website] (http://www.aiwolf.org/server/)
+	* Don't forget that the local AIWolf server requires JDK 11
+* Start the server with `./StartServer.sh`
+	* This runs a Java application. Select the number of players, the connection port, and press "Connect".
+* In another terminal, run the client management application `./StartGUIClient.sh`
+	* Another Java application is started. Select the client jar file (sampleclient.jar), the sample client pass, and the port configured for the server.
+	* Press "Connect" for each instance of the sample agent you wish to connect.
+* Run the python agent from this repository, with the command: `./python_sample.py -h [hostname] -p [port]`
+* On the server application, press "Start Game".
+  * The server application will print the log to the terminal, and also to the application window. Also, a log file will be saved on "./log".
+* You can see a fun visualization using the "log viewer" program.
+
+# Running the agent on the AIWolf competition server:
+* After you create your account in the competition server, make sure your client's name is the same as your account's name.
+* The python packages available at the competition server are listed in this [page](http://aiwolf.org/python_modules)
+* You can expect that the usual packages + numpy, scipy, pandas, scikit-learn are available.
+	* Make sure to check early with the competition runners, specially if you want to use something like an specific version of tensorflow.
+	* The competition rules forbid running multiple threads. Numpy and Chainer are correctly set-up server side, but for tensorflow you must make sure that your program follows this rule. Please see the following [post](http://aiwolf.org/archives/1951)
+* For more information, a tutorial from the original author of this package can be seen in this [slideshare](https://www.slideshare.net/HaradaKei/aiwolfpy-v049) (in Japanese).
