@@ -1,44 +1,61 @@
 #!/usr/bin/env python
-from __future__ import print_function, division 
 
-# this is main script
 # simple version
-
+import logging
+from logging import getLogger, StreamHandler, Formatter, FileHandler
 import aiwolfpy
-import aiwolfpy.contentbuilder as cb
+import argparse
 
-myname = 'cash'
+# name
+my_name = 'cash'
+
+# content factory
+cf = aiwolfpy.ContentFactory()
+
+# logger
+logger = getLogger("aiwolfpy")
+logger.setLevel(logging.NOTSET)
+# handler
+stream_handler = StreamHandler()
+stream_handler.setLevel(logging.NOTSET)
+handler_format = Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+stream_handler.setFormatter(handler_format)
+
+
+logger.addHandler(stream_handler)
+
+# file_handler = FileHandler('aiwolf_game.log')
+# file_handler.setLevel(logging.WARNING)
+# file_handler.setFormatter(handler_format)
+# logger.addHandler(file_handler)
+
 
 class SampleAgent(object):
     
-    def __init__(self, agent_name):
-        # myname
-        self.myname = agent_name
-        
-        
+    def __init__(self):
+        # my name
+        self.base_info = dict()
+        self.game_setting = dict()
+
     def getName(self):
-        return self.myname
+        return self.my_name
     
     def initialize(self, base_info, diff_data, game_setting):
         self.base_info = base_info
         # game_setting
         self.game_setting = game_setting
-        # print(base_info)
-        # print(diff_data)
         
     def update(self, base_info, diff_data, request):
         self.base_info = base_info
-        # print(base_info)
-        # print(diff_data)
         
     def dayStart(self):
         return None
     
     def talk(self):
-        return cb.over()
+        return cf.over()
     
     def whisper(self):
-        return cb.over()
+        return cf.over()
         
     def vote(self):
         return self.base_info['agentIdx']
@@ -56,12 +73,20 @@ class SampleAgent(object):
         return None
     
 
+agent = SampleAgent()
 
-agent = SampleAgent(myname)
-    
+# read args
+parser = argparse.ArgumentParser(add_help=False)
+parser.add_argument('-p', type=int, action='store', dest='port')
+parser.add_argument('-h', type=str, action='store', dest='hostname')
+parser.add_argument('-r', type=str, action='store', dest='role', default='none')
+input_args = parser.parse_args()
 
+
+client_agent = aiwolfpy.AgentProxy(
+    agent, my_name, input_args.hostname, input_args.port, input_args.role, logger, "pandas"
+)
 
 # run
 if __name__ == '__main__':
-    aiwolfpy.connect_parse(agent)
-    
+    client_agent.connect_server()
