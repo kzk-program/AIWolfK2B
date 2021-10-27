@@ -1,10 +1,8 @@
-from __future__ import print_function, division 
-from .tcpipclient import connect
-from .tcpipclient_parsed import connect_parse
-from . import templatetalkfactory 
-from . import templatewhisperfactory 
-from . import contentbuilder 
-from .gameinfoparser import GameInfoParser
-from .read_log import read_log
-
-
+from aiwolfpy.protocol.contentfactory import ContentFactory
+from aiwolfpy.protocol.protocolparser import ProtocolParser
+from aiwolfpy.common.base import agent
+from aiwolfpy.common.base import Role
+from aiwolfpy.common.base import Species
+from aiwolfpy.gameinfoparser import GameInfoParser
+from aiwolfpy.agentproxy import AgentProxy
+from aiwolfpy.read_log import read_log
