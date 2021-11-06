@@ -128,15 +128,20 @@ class AgentProxy(object):
     def connect_server(self):
         # socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.settimeout(0.001)
         # connect
         self.sock.connect((self.host_name, self.port))
         line = ''
 
         while True:
 
-            line += self.sock.recv(8192).decode('utf-8')
-            if line == '':
-                break
+            try:
+                line += self.sock.recv(8192).decode('utf-8')
+                if line == '':
+                    break
+            except socket.timeout:
+                pass
+
             line_list = line.split("\n", 1)
 
             for i in range(len(line_list) - 1):

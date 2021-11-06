@@ -90,11 +90,12 @@ parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument('-p', type=int, action='store', dest='port')
 parser.add_argument('-h', type=str, action='store', dest='hostname')
 parser.add_argument('-r', type=str, action='store', dest='role', default='none')
+parser.add_argument('-n', type=str, action='store', dest='name', default=myname)
 input_args = parser.parse_args()
 
 
 client_agent = aiwolfpy.AgentProxy(
-    agent, my_name, input_args.hostname, input_args.port, input_args.role, logger, "pandas"
+    agent, input_args.name, input_args.hostname, input_args.port, input_args.role, logger, "pandas"
 )
 
 # run
