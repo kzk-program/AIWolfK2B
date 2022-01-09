@@ -145,8 +145,9 @@ class AgentProxy(object):
             line_list = line.split("\n", 1)
 
             for i in range(len(line_list) - 1):
-                json_received = json.loads(line_list[i])
-                self.send_response(json_received)
+                if len(line_list[i]) > 0:
+                    json_received = json.loads(line_list[i])
+                    self.send_response(json_received)
                 line = line_list[-1]
 
             try:
