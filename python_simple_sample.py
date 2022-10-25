@@ -39,6 +39,7 @@ class SampleAgent(object):
         # my name
         self.base_info = dict()
         self.game_setting = dict()
+        self.talked_num = 0
 
     def getName(self):
         return self.my_name
@@ -59,7 +60,13 @@ class SampleAgent(object):
     # conversation actions: require a properly formatted
     # protocol string as the return.
     def talk(self):
-        return cf.over()
+        if self.talked_num & 2 == 0:
+            self.talked_num += 1
+            return 'ESTIMATE Agent[1] BODYGUARD'
+        else:
+            self.talked_num += 1
+            return 'aaa'
+
     
     def whisper(self):
         return cf.over()
