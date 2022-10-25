@@ -60,7 +60,7 @@ class SampleAgent(object):
     # conversation actions: require a properly formatted
     # protocol string as the return.
     def talk(self):
-        if self.talked_num & 2 == 0:
+        if self.talked_num % 2 == 0:
             self.talked_num += 1
             return 'ESTIMATE Agent[1] BODYGUARD'
         else:
