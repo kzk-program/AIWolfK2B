@@ -5,7 +5,7 @@ import random
 subject_dict = {"UNSPEC":["", "俺は", "私は"], "ANY":["誰もが", "みんな", "全員が"]}
 role_dict = {'VILLAGER':['村人'],
 'SEER':['占い師', '占い'], 'BODYGUARD':['ボディーガード','狩人','騎士'],
-'WEREWOLF':['人狼', '狼', '黒'], 'POSSESED':['狂人'],}
+'WEREWOLF':['人狼', '狼', '黒'], 'POSSESSED':['狂人'],}
 speices_dict = {'HUMAN':['白', '人間'], 'WEREWOLF':['人狼', '狼', '黒']}
 
 def speak(text, child=False):
@@ -13,6 +13,12 @@ def speak(text, child=False):
         c = text
     else:
         c = ProtocolParser.parse(text)
+
+    if type(c) != AgreeContent and type(c) != ControlContent:
+        if c.target != "ANY":
+            target = c.target
+        else:
+            target = random.choice(["皆", "みんな", "みなさん"])
     if type(c) == SVTRContent:
         
         if c.role in role_dict:
@@ -26,12 +32,12 @@ def speak(text, child=False):
         if c.verb == "ESTIMATE":
             if c.subject not in subject_dict:
                 subject = c.subject + random.choice(['は', '的には'])
-            candidates = [subject + c.target + "が"+ role + "だと推測する"]
+            candidates = [subject + target + "が"+ role + "だと推測する"]
             
         elif c.verb == "COMINGOUT":
             if c.subject not in subject_dict:
                 subject = c.subject + random.choice(['は'])
-            candidates = [subject + c.target + "が" + role + "だとカミングアウトする"]
+            candidates = [subject + target + "が" + role + "だとカミングアウトする"]
 
     elif type(c) == SVTContent:
         if c.subject in subject_dict:
@@ -40,42 +46,42 @@ def speak(text, child=False):
             subject = c.subject + random.choice(['は'])
 
         verb_dict = {"DIVINATION":["を占う"], "GUARD":["を護衛する"], "VOTE":["に投票する"], "ATTACK":["を襲撃する"], "GUARDED":["を護衛した"], "VOTED":["に投票した"], "ATACKED":["を襲撃した"]}
-        candidates = [subject + c.target + random.choice(verb_dict[c.verb])]
+        candidates = [subject + target + random.choice(verb_dict[c.verb])]
 
         """ if c.verb == "DIVINATION":
             if c.subject not in subject_dict:
                 subject = c.subject + random.choice(['は'])
-            candidates = [subject + c.target + "を占う"]
+            candidates = [subject + target + "を占う"]
         
         elif c.verb == "GUARD":
             if c.subject not in subject_dict:
                 subject = c.subject + random.choice(['は'])
-            candidates = [subject + c.target + "を護衛する"]
+            candidates = [subject + target + "を護衛する"]
         
         elif c.verb == "VOTE":
             if c.subject not in subject_dict:
                 subject = c.subject + random.choice(['は'])
-            candidates = [subject + c.target + "に投票する"]
+            candidates = [subject + target + "に投票する"]
 
         elif c.verb == "ATTACK":
             if c.subject not in  subject_dict:
                 subject = c.subject + random.choice(['は'])
-            candidates = [subject + c.target + "を襲撃する"]
+            candidates = [subject + target + "を襲撃する"]
         
         elif c.verb == "GUARDED":
             if c.subject not in  subject_dict:
                 subject = c.subject + random.choice(['は'])
-            candidates = [subject + c.target + "を護衛した"]
+            candidates = [subject + target + "を護衛した"]
             
         elif c.verb == "VOTED":
             if c.subject not in subject_dict:
                 subject = c.subject + random.choice(['は'])
-            candidates = [subject + c.target + "に投票した"]
+            candidates = [subject + target + "に投票した"]
         
         elif c.verb == "ATTACKED":
             if c.subject not in subject_dict:
                 subject = c.subject+ random.choice(['は'])
-            candidates = [subject + c.target + "を襲撃した"]  """
+            candidates = [subject + target + "を襲撃した"]  """
 
     elif type(c) == SVTSContent:
 
@@ -87,12 +93,12 @@ def speak(text, child=False):
         if c.verb == "DEVINED":
             if c.subject not in subject_dict:
                 subject = c.subject + random.choice(["が"])
-            candidates = [subject + "占った結果"+c.target+"は"+spices + "だった"]
+            candidates = [subject + "占った結果"+target+"は"+spices + "だった"]
             
         elif c.verb == "IDENTIFIED":
             if c.subject not in subject_dict:
                 subject = c.subject + random.choice(["が"])
-            candidates = [subject + "襲われた" + c.target + "を霊媒すると"+spices + "だった"]
+            candidates = [subject + "襲われた" + target + "を霊媒すると"+spices + "だった"]
     
     elif type(c) == AgreeContent:
         if c.subject in subject_dict:
@@ -114,9 +120,9 @@ def speak(text, child=False):
             subject = c.subject + random.choice(["は"])
         sentence = speak(c.get_child(), child=True)
         if c.operator == "REQUEST":
-            candidates = [subject + c.target + "に"+sentence +"よう求める"]
+            candidates = [subject + target + "に"+sentence +"よう求める"]
         elif c.operator == "INQUIRE":
-            candidates = [subject + c.target + "に"+sentence+"か尋ねる"]
+            candidates = [subject + target + "に"+sentence+"か尋ねる"]
     
     elif type(c) == SOS1Content:
         if c.subject in subject_dict:
@@ -165,7 +171,7 @@ def speak(text, child=False):
     return random.choice(candidates)
 
 if __name__ == "__main__":
-    speak('ESTIMATE Agent[10] BODYGUARD')
-    speak('Agent[01] COMINGOUT Agent[03] POSSESSED')
-    speak("AND (VOTE Agent[01]) (REQUEST ANY (VOTE Agent[01]))")
-    speak("Over")
+    print(speak('ESTIMATE Agent[10] BODYGUARD'))
+    print(speak('Agent[01] COMINGOUT Agent[03] POSSESSED'))
+    print(speak("AND (VOTE Agent[01]) (REQUEST ANY (VOTE Agent[01]))"))
+    print(speak("Over"))
