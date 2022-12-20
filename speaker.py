@@ -90,7 +90,7 @@ def speak(text, child=False):
         if c.subject in subject_dict:
             subject = random.choice(subject_dict[c.subject])
         
-        if c.verb == "DEVINED":
+        if c.verb == "DIVINED":
             if c.subject not in subject_dict:
                 subject = c.subject + random.choice(["が"])
             candidates = [subject + "占った結果"+target+"は"+spices + "だった"]
@@ -170,8 +170,31 @@ def speak(text, child=False):
             
     return random.choice(candidates)
 
+def get_test_dataset(prompt):
+    jp_text = speak(prompt)
+    print(f"['{prompt}','{jp_text}'],")
+
 if __name__ == "__main__":
-    print(speak('ESTIMATE Agent[10] BODYGUARD'))
-    print(speak('Agent[01] COMINGOUT Agent[03] POSSESSED'))
-    print(speak("AND (VOTE Agent[01]) (REQUEST ANY (VOTE Agent[01]))"))
-    print(speak("Over"))
+    # print(speak('ESTIMATE Agent[10] BODYGUARD'))
+    # print(speak('Agent[01] COMINGOUT Agent[03] POSSESSED'))
+    # print(speak("AND (VOTE Agent[01]) (REQUEST ANY (VOTE Agent[01]))"))
+    # print(speak("Over"))
+    
+    # speak('ESTIMATE Agent[10] BODYGUARD')
+    # speak('Agent[01] COMINGOUT Agent[03] POSSESSED')
+    # speak("AND (VOTE Agent[01]) (REQUEST ANY (VOTE Agent[01]))")
+    # speak("Over")
+    
+    prompts = [
+        'ESTIMATE Agent[10] BODYGUARD',
+        'Agent[01] COMINGOUT Agent[03] POSSESSED',
+        "Over",
+        'COMINGOUT Agent[01] SEER',
+        "Agent[01] COMINGOUT Agent[01] SEER",
+        "DIVINED Agent[01] HUMAN",
+        "Agent[01] DIVINED Agent[02] WEREWOLF",
+        "GUARD Agent[01]"
+        ]
+    for prompt in prompts:
+        get_test_dataset(prompt)
+        
