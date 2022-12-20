@@ -50,14 +50,17 @@ class SimpleSpeaker(object):
         
         
         try:
-            if (not child) and c.verb == "ESTIMATE" and (c.subject != "UNSPEC" and c.subject != self.me) and c.target != "ANY" and c.target == "WEREWOLF":
-                werewolf = random.choice(self.role_dict['werewolf'])
+            if (not child) and c.verb == "ESTIMATE" and (c.subject != "UNSPEC" and c.subject != self.me) and c.target != "ANY":
+                role = random.choice(self.role_dict[c.role])
                 candidates.append(c.subject + "は"+c.target + "が"+werewolf+"だと思ってるよね")
                 candidates.append(c.subject + "的には"+c.target + "が"+werewolf+"ってなるはず")
-                candidates.append(c.subject + "的には"+c.target + "が黒く見えてるだろう")
+                if c.target == "WEREWOLF":
+                    werewolf = random.choice(self.role_dict['werewolf'])
+                    candidates.append(c.subject + "的には"+c.target + "が黒く見えてるだろう")
                 return random.choice(candidates)
         except AttributeError:
             0
+
 
 
         if type(c) != AgreeContent and type(c) != ControlContent:
