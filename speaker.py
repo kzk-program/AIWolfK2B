@@ -3,9 +3,13 @@ from aiwolfpy.protocol.contents import *
 import random
 
 class SimpleSpeaker(object):
-    def __init__(self, me="Agent[99]"):
+
+    #人力で作っているspeaker
+    #BECAUSEなど入れ子構造では変な日本語喋ってる（要修正）
+
+    def __init__(self, me="Agent[99]"):   #「me」で発話者名を入れることで、meと一致する主語があったとき主語が「俺」などに変わります
             self.subject_dict = {"UNSPEC":["", "俺は", "私は"], "ANY":["誰もが", "みんな", "全員が"]}
-            self.role_dict = {'VILLAGER':['村人', '役なし'],
+            self.role_dict = {'VILLAGER':['村人', '役なし'], 'MEDIUM':["霊媒師", "霊能者"],
             'SEER':['占い師', '占い'], 'BODYGUARD':['ボディーガード','狩人','騎士'],
             'WEREWOLF':['人狼', '狼', '黒'], 'POSSESSED':['狂人'],}
             self.species_dict = {'HUMAN':['白', '人間'], 'WEREWOLF':['人狼', '狼', '黒']}
@@ -26,6 +30,8 @@ class SimpleSpeaker(object):
 
         candidates = []
         #特定の文は丁寧に作る
+
+        #自分主語のESTIMATE 
         try:
             if (not child) and c.verb == "ESTIMATE" and (c.subject == "UNSPEC" or c.subject == self.me) and c.target != "ANY":
                 role = random.choice(self.role_dict[c.role])
@@ -48,12 +54,12 @@ class SimpleSpeaker(object):
             0
 
         
-        
+        #他人主語のESTIMATE
         try:
             if (not child) and c.verb == "ESTIMATE" and (c.subject != "UNSPEC" and c.subject != self.me) and c.target != "ANY":
                 role = random.choice(self.role_dict[c.role])
-                candidates.append(c.subject + "は"+c.target + "が"+werewolf+"だと思ってるよね")
-                candidates.append(c.subject + "的には"+c.target + "が"+werewolf+"ってなるはず")
+                candidates.append(c.subject + "は"+c.target + "が"+c.role+"だと思ってるよね")
+                candidates.append(c.subject + "的には"+c.target + "が"+c.role+"ってなるはず")
                 if c.target == "WEREWOLF":
                     werewolf = random.choice(self.role_dict['werewolf'])
                     candidates.append(c.subject + "的には"+c.target + "が黒く見えてるだろう")
@@ -61,13 +67,36 @@ class SimpleSpeaker(object):
         except AttributeError:
             0
 
+        #自分主語自分目的語のCO
+        try:
+            if (not child) and c.verb=="COMINGOUT" and (c.subject == 'UNSPEC' or c.subject == self.me) and c.target == self.me:
+                role = random.chiice(self.role_dict[c.role])
+                if c.role != 'VILLAGER':
+                    candidates.append("COします!俺は"+role+"です!")
+                    candidates.append(c.role+"COです")
+                    candidates.append(role+"だとカミングアウトします")
+                    candidates.append("俺は"+c.role+"です")
+                    candidates.append("俺が真の"+c.role+"です")   #対抗が出たときの処理にしたいけど、文脈が読み取れないので対抗無しでも言ってしまう
+                else:
+                    candidates.append("私は村人です")
+                    candidates.append("私は村人です、本当です")
+        except AttributeError:
+            0
+    
+        
 
+        
 
-        if type(c) != AgreeContent and type(c) != ControlContent:
+        #ここからは大雑把(日本語的におかしい文が生成される可能性あり)
+        try:
             if c.target != "ANY":
                 target = c.target
             else:
                 target = random.choice(["皆", "みんな", "みなさん"])
+        except AttributeError:
+            0
+
+        
         if type(c) == SVTRContent:
             
             if c.role in self.role_dict:

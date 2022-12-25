@@ -5,12 +5,13 @@ from speaker import SimpleSpeaker
 import glob
 import pickle
 import csv
+from aiwolfpy import ProtocolParser
+from aiwolfpy.protocol.contents import *
+
 
 
 def make_dataset(path, text_set=set()):
-    # Speakerの初期化
-    speaker = SimpleSpeaker()
-    
+
     # Read log file
     df_log = read_log(path)
     # dataframeのカラムtypeがtalkのものを抽出
@@ -18,8 +19,13 @@ def make_dataset(path, text_set=set()):
 
     dataset = []
     for index, row in df_talk.iterrows():
-        prompt = "Agent[{:02d}] ".format(row["agent"]) + row["text"]
-        #print(prompt)
+        #prompt = "Agent[{:02d}] ".format(row["agent"]) + row["text"]
+        prompt = row["text"]   
+        # Speakerの初期化
+        subject = "Agent[{:02d}] ".format(row["agent"])
+        speaker = SimpleSpeaker(me=subject)
+        # print(prompt)
+    
         # AND,OR,NOT, XORは除く
         if "AND" in prompt or "OR" in prompt or "NOT" in prompt or "XOR" in prompt:
             continue
@@ -29,7 +35,7 @@ def make_dataset(path, text_set=set()):
         # REQUEST,INQUIREは除く
         if "REQUEST" in prompt or "INQUIRE" in prompt:
             continue
-        print(prompt)
+        #print(prompt)
         text = speaker.speak(prompt)
         
         if text not in text_set:
@@ -44,9 +50,9 @@ if __name__== "__main__":
     dataset = []
     text_set = set()
     # in_gamelog_glob = "./gamelog/ANAC2020Log/log15/*/game/*.log"
-    in_gamelog_glob = "./gamelog/kakolog/*/*.log"
+    in_gamelog_glob = "./gamelog/kakolog/[0-10]/*.log"
     out_corpus_dir = "./jp2prompt_corpus/kakolog_corpus/"
-    out_filename = "kakolog_corpus"
+    out_filename = "kakolog_corpus_small_me"
     for filename in glob.glob(in_gamelog_glob):
         #print(filename)
         temp_dataset,text_set = make_dataset(filename,text_set)
