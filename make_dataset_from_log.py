@@ -1,12 +1,16 @@
 
 from aiwolfpy import read_log
-import speaker
+import pathlib
+from speaker import SimpleSpeaker
 import glob
 import pickle
 import csv
 
 
 def make_dataset(path, text_set=set()):
+    # Speakerの初期化
+    speaker = SimpleSpeaker()
+    
     # Read log file
     df_log = read_log(path)
     # dataframeのカラムtypeがtalkのものを抽出
@@ -25,7 +29,7 @@ def make_dataset(path, text_set=set()):
         # REQUEST,INQUIREは除く
         if "REQUEST" in prompt or "INQUIRE" in prompt:
             continue
-        
+        print(prompt)
         text = speaker.speak(prompt)
         
         if text not in text_set:
@@ -39,7 +43,11 @@ if __name__== "__main__":
     # データセットを作成するログファイルのパス
     dataset = []
     text_set = set()
-    for filename in glob.glob("./gamelog/ANAC2020Log/log15/*/game/*.log"):
+    # in_gamelog_glob = "./gamelog/ANAC2020Log/log15/*/game/*.log"
+    in_gamelog_glob = "./gamelog/kakolog/*/*.log"
+    out_corpus_dir = "./jp2prompt_corpus/kakolog_corpus/"
+    out_filename = "kakolog_corpus"
+    for filename in glob.glob(in_gamelog_glob):
         #print(filename)
         temp_dataset,text_set = make_dataset(filename,text_set)
         dataset.extend(temp_dataset)
@@ -47,12 +55,15 @@ if __name__== "__main__":
     # for data in dataset:
     #     print(data)
     
+    #ディレクトリの生成
+    pathlib.Path(out_corpus_dir).mkdir(parents=True, exist_ok=True)
+    
+    out_path = out_corpus_dir + out_filename
     # データセットを保存
-    write = csv.writer(open("./dataset_all.csv", "w"))
+    write = csv.writer(open(out_path + ".csv", "w"))
     write.writerows(dataset)
     
-    
-    # with open("./dataset.pkl", "wb") as f:
-    #     pickle.dump(dataset, f)
+    with open(out_path + ".pkl", "wb") as f:
+        pickle.dump(dataset, f)
     
     
