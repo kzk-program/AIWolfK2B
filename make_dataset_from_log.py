@@ -19,27 +19,27 @@ def make_dataset(path, text_set=set()):
 
     dataset = []
     for index, row in df_talk.iterrows():
-        #prompt = "Agent[{:02d}] ".format(row["agent"]) + row["text"]
-        prompt = row["text"]   
+        #protocol = "Agent[{:02d}] ".format(row["agent"]) + row["text"]
+        protocol = row["text"]   
         # Speakerの初期化
         subject = "Agent[{:02d}] ".format(row["agent"])
         speaker = SimpleSpeaker(me=subject)
-        # print(prompt)
+        # print(protocol)
     
         # AND,OR,NOT, XORは除く
-        if "AND" in prompt or "OR" in prompt or "NOT" in prompt or "XOR" in prompt:
+        if "AND" in protocol or "OR" in protocol or "NOT" in protocol or "XOR" in protocol:
             continue
         # DAYは除く
-        if "DAY" in prompt:
+        if "DAY" in protocol:
             continue
         # REQUEST,INQUIREは除く
-        if "REQUEST" in prompt or "INQUIRE" in prompt:
+        if "REQUEST" in protocol or "INQUIRE" in protocol:
             continue
-        #print(prompt)
-        text = speaker.speak(prompt)
+        #print(protocol)
+        text = speaker.speak(protocol)
         
         if text not in text_set:
-            dataset.append([prompt, text])
+            dataset.append([protocol, text])
             text_set.add(text)
     
     return dataset,text_set
@@ -51,7 +51,7 @@ if __name__== "__main__":
     text_set = set()
     # in_gamelog_glob = "./gamelog/ANAC2020Log/log15/*/game/*.log"
     in_gamelog_glob = "./gamelog/kakolog/[0-10]/*.log"
-    out_corpus_dir = "./jp2prompt_corpus/kakolog_corpus/"
+    out_corpus_dir = "./jp2protocol_corpus/kakolog_corpus/"
     out_filename = "kakolog_corpus_small_me"
     for filename in glob.glob(in_gamelog_glob):
         #print(filename)
