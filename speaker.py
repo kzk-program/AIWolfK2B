@@ -41,7 +41,11 @@ class SimpleSpeaker(object):
                 candidates.append(random.choice(self.subject_dict["UNSPEC"]) + c.target+"が"+role+"だと見てる")
                 candidates.append(random.choice(self.subject_dict["UNSPEC"])+ c.target+"が"+role+"だと思うな")
                 candidates.append(c.target+"が"+role+"なんじゃないかな")
-                if c.target == "WEREWOLF":
+                if c.target == "WEREWOLF": 
+                    #TODO:ココらへんの処理問題あるので要修正。
+                    # c.targetはAgent[01]~Agent[15]みたいなのが入るので、役職じゃない。
+                    # 役職にしたければc.roleが使えるはず
+                    # ただそうしても下のself.role_dict['werewolf']でエラーが出るので直してほしい
                     candidates.append(c.target+"は正直"+self.role_dict['werewolf']+"っぽいんだよな")
                     candidates.append(c.target+"、黒目に見える")
                     candidates.append(c.target+"が黒いな")
@@ -50,8 +54,8 @@ class SimpleSpeaker(object):
                     candidates.append(c.target+"が怪しいと思う")
                     candidates.append("俺的には"+c.target+"が怪しいんだよなあ")
                 return random.choice(candidates)
-        except AttributeError:
-            0
+        except AttributeError:#TODO: この書き方しちゃうとプログラムのミスを見逃してしまうので、直したほうがいいかも？
+            pass
 
         
         #他人主語のESTIMATE
@@ -61,16 +65,20 @@ class SimpleSpeaker(object):
                 candidates.append(c.subject + "は"+c.target + "が"+c.role+"だと思ってるよね")
                 candidates.append(c.subject + "的には"+c.target + "が"+c.role+"ってなるはず")
                 if c.target == "WEREWOLF":
+                    #TODO:ココらへんの処理問題あるので要修正。
+                    # c.targetはAgent[01]~Agent[15]みたいなのが入るので、役職じゃない。
+                    # 役職にしたければc.roleが使えるはず
+                    # ただそうしても下のself.role_dict['werewolf']でエラーが出るので直して
                     werewolf = random.choice(self.role_dict['werewolf'])
                     candidates.append(c.subject + "的には"+c.target + "が黒く見えてるだろう")
                 return random.choice(candidates)
-        except AttributeError:
-            0
+        except AttributeError:#TODO: この書き方しちゃうとプログラムのミスを見逃してしまうので、直したほうがいいかも？
+            pass
 
         #自分主語自分目的語のCO
         try:
             if (not child) and c.verb=="COMINGOUT" and (c.subject == 'UNSPEC' or c.subject == self.me) and c.target == self.me:
-                role = random.chiice(self.role_dict[c.role])
+                role = random.choice(self.role_dict[c.role])
                 if c.role != 'VILLAGER':
                     candidates.append("COします!俺は"+role+"です!")
                     candidates.append(c.role+"COです")
@@ -80,8 +88,9 @@ class SimpleSpeaker(object):
                 else:
                     candidates.append("私は村人です")
                     candidates.append("私は村人です、本当です")
-        except AttributeError:
-            0
+                return random.choice(candidates)
+        except AttributeError:#TODO: この書き方しちゃうとプログラムのミスを見逃してしまうので、直したほうがいいかも？
+            pass
     
         
 
@@ -93,7 +102,7 @@ class SimpleSpeaker(object):
                 target = c.target
             else:
                 target = random.choice(["皆", "みんな", "みなさん"])
-        except AttributeError:
+        except AttributeError:#TODO: この書き方しちゃうとプログラムのミスを見逃してしまうので、直したほうがいいかも？
             0
 
         
