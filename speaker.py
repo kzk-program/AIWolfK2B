@@ -32,7 +32,7 @@ class SimpleSpeaker(object):
         #特定の文は丁寧に作る
 
         #自分主語のESTIMATE 
-        try:
+        if type(c) == SVTRContent:
             if (not child) and c.verb == "ESTIMATE" and (c.subject == "UNSPEC" or c.subject == self.me) and c.target != "ANY":
                 role = random.choice(self.role_dict[c.role])
                 candidates.append(c.target+"は"+role+"だと思う")
@@ -41,12 +41,8 @@ class SimpleSpeaker(object):
                 candidates.append(random.choice(self.subject_dict["UNSPEC"]) + c.target+"が"+role+"だと見てる")
                 candidates.append(random.choice(self.subject_dict["UNSPEC"])+ c.target+"が"+role+"だと思うな")
                 candidates.append(c.target+"が"+role+"なんじゃないかな")
-                if c.target == "WEREWOLF": 
-                    #TODO:ココらへんの処理問題あるので要修正。
-                    # c.targetはAgent[01]~Agent[15]みたいなのが入るので、役職じゃない。
-                    # 役職にしたければc.roleが使えるはず
-                    # ただそうしても下のself.role_dict['werewolf']でエラーが出るので直してほしい
-                    candidates.append(c.target+"は正直"+self.role_dict['werewolf']+"っぽいんだよな")
+                if c.role == "WEREWOLF": 
+                    candidates.append(c.target+"は正直"+self.role_dict['WEREWOLF']+"っぽいんだよな")
                     candidates.append(c.target+"、黒目に見える")
                     candidates.append(c.target+"が黒いな")
                     #「人狼OR狂人」ともとれるからびみょい
@@ -54,29 +50,20 @@ class SimpleSpeaker(object):
                     candidates.append(c.target+"が怪しいと思う")
                     candidates.append("俺的には"+c.target+"が怪しいんだよなあ")
                 return random.choice(candidates)
-        except AttributeError:#TODO: この書き方しちゃうとプログラムのミスを見逃してしまうので、直したほうがいいかも？
-            pass
 
         
         #他人主語のESTIMATE
-        try:
+        if type(c) == SVTRContent:
             if (not child) and c.verb == "ESTIMATE" and (c.subject != "UNSPEC" and c.subject != self.me) and c.target != "ANY":
                 role = random.choice(self.role_dict[c.role])
                 candidates.append(c.subject + "は"+c.target + "が"+c.role+"だと思ってるよね")
                 candidates.append(c.subject + "的には"+c.target + "が"+c.role+"ってなるはず")
-                if c.target == "WEREWOLF":
-                    #TODO:ココらへんの処理問題あるので要修正。
-                    # c.targetはAgent[01]~Agent[15]みたいなのが入るので、役職じゃない。
-                    # 役職にしたければc.roleが使えるはず
-                    # ただそうしても下のself.role_dict['werewolf']でエラーが出るので直して
-                    werewolf = random.choice(self.role_dict['werewolf'])
+                if c.role == "WEREWOLF":
                     candidates.append(c.subject + "的には"+c.target + "が黒く見えてるだろう")
                 return random.choice(candidates)
-        except AttributeError:#TODO: この書き方しちゃうとプログラムのミスを見逃してしまうので、直したほうがいいかも？
-            pass
 
         #自分主語自分目的語のCO
-        try:
+        if type(c) == SVTRContent:
             if (not child) and c.verb=="COMINGOUT" and (c.subject == 'UNSPEC' or c.subject == self.me) and c.target == self.me:
                 role = random.choice(self.role_dict[c.role])
                 if c.role != 'VILLAGER':
@@ -89,21 +76,17 @@ class SimpleSpeaker(object):
                     candidates.append("私は村人です")
                     candidates.append("私は村人です、本当です")
                 return random.choice(candidates)
-        except AttributeError:#TODO: この書き方しちゃうとプログラムのミスを見逃してしまうので、直したほうがいいかも？
-            pass
     
         
 
         
 
         #ここからは大雑把(日本語的におかしい文が生成される可能性あり)
-        try:
+        if 'target' in dir(c):
             if c.target != "ANY":
                 target = c.target
             else:
                 target = random.choice(["皆", "みんな", "みなさん"])
-        except AttributeError:#TODO: この書き方しちゃうとプログラムのミスを見逃してしまうので、直したほうがいいかも？
-            0
 
         
         if type(c) == SVTRContent:
