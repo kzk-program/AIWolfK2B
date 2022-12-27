@@ -42,7 +42,7 @@ class SimpleSpeaker(object):
                 candidates.append(random.choice(self.subject_dict["UNSPEC"])+ c.target+"が"+role+"だと思うな")
                 candidates.append(c.target+"が"+role+"なんじゃないかな")
                 if c.role == "WEREWOLF": 
-                    candidates.append(c.target+"は正直"+self.role_dict['WEREWOLF']+"っぽいんだよな")
+                    candidates.append(c.target+"は正直"+random.choice(self.role_dict['WEREWOLF'])+"っぽいんだよな")
                     candidates.append(c.target+"、黒目に見える")
                     candidates.append(c.target+"が黒いな")
                     #「人狼OR狂人」ともとれるからびみょい
