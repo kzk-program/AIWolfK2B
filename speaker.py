@@ -3,9 +3,13 @@ from aiwolfpy.protocol.contents import *
 import random
 
 class SimpleSpeaker(object):
-    def __init__(self, me="Agent[99]"):
+
+    #人力で作っているspeaker
+    #BECAUSEなど入れ子構造では変な日本語喋ってる（要修正）
+
+    def __init__(self, me="Agent[99]"):   #「me」で発話者名を入れることで、meと一致する主語があったとき主語が「俺」などに変わります
             self.subject_dict = {"UNSPEC":["", "俺は", "私は"], "ANY":["誰もが", "みんな", "全員が"]}
-            self.role_dict = {'VILLAGER':['村人', '役なし'],
+            self.role_dict = {'VILLAGER':['村人', '役なし'], 'MEDIUM':["霊媒師", "霊能者"],
             'SEER':['占い師', '占い'], 'BODYGUARD':['ボディーガード','狩人','騎士'],
             'WEREWOLF':['人狼', '狼', '黒'], 'POSSESSED':['狂人'],}
             self.species_dict = {'HUMAN':['白', '人間'], 'WEREWOLF':['人狼', '狼', '黒']}
@@ -26,7 +30,9 @@ class SimpleSpeaker(object):
 
         candidates = []
         #特定の文は丁寧に作る
-        try:
+
+        #自分主語のESTIMATE 
+        if type(c) == SVTRContent:
             if (not child) and c.verb == "ESTIMATE" and (c.subject == "UNSPEC" or c.subject == self.me) and c.target != "ANY":
                 role = random.choice(self.role_dict[c.role])
                 candidates.append(c.target+"は"+role+"だと思う")
@@ -35,8 +41,8 @@ class SimpleSpeaker(object):
                 candidates.append(random.choice(self.subject_dict["UNSPEC"]) + c.target+"が"+role+"だと見てる")
                 candidates.append(random.choice(self.subject_dict["UNSPEC"])+ c.target+"が"+role+"だと思うな")
                 candidates.append(c.target+"が"+role+"なんじゃないかな")
-                if c.target == "WEREWOLF":
-                    candidates.append(c.target+"は正直"+self.role_dict['werewolf']+"っぽいんだよな")
+                if c.role == "WEREWOLF": 
+                    candidates.append(c.target+"は正直"+random.choice(self.role_dict['WEREWOLF'])+"っぽいんだよな")
                     candidates.append(c.target+"、黒目に見える")
                     candidates.append(c.target+"が黒いな")
                     #「人狼OR狂人」ともとれるからびみょい
@@ -44,30 +50,45 @@ class SimpleSpeaker(object):
                     candidates.append(c.target+"が怪しいと思う")
                     candidates.append("俺的には"+c.target+"が怪しいんだよなあ")
                 return random.choice(candidates)
-        except AttributeError:
-            0
 
         
-        
-        try:
+        #他人主語のESTIMATE
+        if type(c) == SVTRContent:
             if (not child) and c.verb == "ESTIMATE" and (c.subject != "UNSPEC" and c.subject != self.me) and c.target != "ANY":
                 role = random.choice(self.role_dict[c.role])
-                candidates.append(c.subject + "は"+c.target + "が"+werewolf+"だと思ってるよね")
-                candidates.append(c.subject + "的には"+c.target + "が"+werewolf+"ってなるはず")
-                if c.target == "WEREWOLF":
-                    werewolf = random.choice(self.role_dict['werewolf'])
+                candidates.append(c.subject + "は"+c.target + "が"+c.role+"だと思ってるよね")
+                candidates.append(c.subject + "的には"+c.target + "が"+c.role+"ってなるはず")
+                if c.role == "WEREWOLF":
                     candidates.append(c.subject + "的には"+c.target + "が黒く見えてるだろう")
                 return random.choice(candidates)
-        except AttributeError:
-            0
 
+        #自分主語自分目的語のCO
+        if type(c) == SVTRContent:
+            if (not child) and c.verb=="COMINGOUT" and (c.subject == 'UNSPEC' or c.subject == self.me) and c.target == self.me:
+                role = random.choice(self.role_dict[c.role])
+                if c.role != 'VILLAGER':
+                    candidates.append("COします!俺は"+role+"です!")
+                    candidates.append(c.role+"COです")
+                    candidates.append(role+"だとカミングアウトします")
+                    candidates.append("俺は"+c.role+"です")
+                    candidates.append("俺が真の"+c.role+"です")   #対抗が出たときの処理にしたいけど、文脈が読み取れないので対抗無しでも言ってしまう
+                else:
+                    candidates.append("私は村人です")
+                    candidates.append("私は村人です、本当です")
+                return random.choice(candidates)
+    
+        
 
+        
 
-        if type(c) != AgreeContent and type(c) != ControlContent:
+        #ここからは大雑把(日本語的におかしい文が生成される可能性あり)
+        if 'target' in dir(c):
             if c.target != "ANY":
                 target = c.target
             else:
                 target = random.choice(["皆", "みんな", "みなさん"])
+
+        
         if type(c) == SVTRContent:
             
             if c.role in self.role_dict:
@@ -94,7 +115,7 @@ class SimpleSpeaker(object):
             else:
                 subject = c.subject + random.choice(['は'])
                 
-            verb_dict = {"DIVINATION":["を占う", "の役を見る"], "GUARD":["を護衛する", "を守る", "を護衛先に指定する"], "VOTE":["に投票する", "に入れる","を吊る"], "ATTACK":["を襲撃する", "殺す", "襲う"], "GUARDED":["を護衛した", "を守った", "を護衛先に選択した"], "VOTED":["に投票した","に入れた" ,"を吊ろうとした"], "ATACKED":["を襲撃した", "を殺した", "を襲った"]}
+            verb_dict = {"DIVINATION":["を占う", "の役を見る"], "GUARD":["を護衛する", "を守る", "を護衛先に指定する"], "VOTE":["に投票する", "に入れる","を吊る"], "ATTACK":["を襲撃する", "を殺す", "を襲う"], "GUARDED":["を護衛した", "を守った", "を護衛先に選択した"], "VOTED":["に投票した","に入れた" ,"を吊ろうとした"], "ATACKED":["を襲撃した", "を殺した", "を襲った"]}
             candidates = [subject + target + random.choice(verb_dict[c.verb])]
 
             """ if c.verb == "DIVINATION":
@@ -111,7 +132,6 @@ class SimpleSpeaker(object):
                 if c.subject not in self.subject_dict:
                     subject = c.subject + random.choice(['は'])
                 candidates = [subject + target + "に投票する"]
-
             elif c.verb == "ATTACK":
                 if c.subject not in  self.subject_dict:
                     subject = c.subject + random.choice(['は'])
@@ -248,4 +268,3 @@ if __name__ == "__main__":
         ]
     for prompt in prompts:
         get_test_dataset(prompt)
-        
