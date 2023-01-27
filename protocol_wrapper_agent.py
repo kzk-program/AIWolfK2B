@@ -9,7 +9,8 @@ from logging import FileHandler, Formatter, StreamHandler, getLogger
 import aiwolfpy
 import pandas as pd
 from python_simple_protocol_agent import SampleAgent  # 試しに使うprotocol用のエージェント
-from speaker import SimpleSpeaker
+from speaker import SimpleSpeaker # プロトコルを自然言語に変換するクラス
+from jp_to_protocol import JPToProtocolConverter,BertForSequenceClassificationMultiLabel # 自然言語をプロトコルに変換するクラス
 from OKAMI import OKAMI
 
 
@@ -22,6 +23,7 @@ class ProtocolWrapperAgent:
         self.request = None
         self.diff_data = None
         self.protocol_to_NL_converter = None
+        self.NL_to_protocol_converter = JPToProtocolConverter()
 
     def initialize(self, base_info, diff_data, game_setting):
         self.base_info = base_info
@@ -30,6 +32,7 @@ class ProtocolWrapperAgent:
         self.agent.initialize(base_info, p_diff_data, game_setting)
         # converterの初期化
         self.protocol_to_NL_converter = SimpleSpeaker(me="Agent[{:02d}]".format(base_info["agentIdx"]))
+        self.NL_to_protocol_converter = JPToProtocolConverter()
 
     def update(self, base_info, diff_data, request):
         self.base_info = base_info
@@ -49,9 +52,16 @@ class ProtocolWrapperAgent:
     # 自然言語をプロトコルに変換
     def convert_NL_to_protocol(self, NL_text):
         # NLをプロトコルに変換
-        # TODO: ここに変換のコードを書く
-        test_protocol_text_options = ["COMINGOUT Agent[01] SEER","VOTE Agent[04]","REQUEST ANY (VOTE Agent[01])"]
-        return random.choice(test_protocol_text_options)
+        # # TODO: ここに変換のコードを書く
+        # test_protocol_text_options = ["COMINGOUT Agent[01] SEER","VOTE Agent[04]","REQUEST ANY (VOTE Agent[01])"]
+        # return random.choice(test_protocol_text_options)
+        if NL_text == "":
+            return ""
+        #print("NL_text:",NL_text)
+        #print("type(NL_text):",type(NL_text))
+        prompts = self.NL_to_protocol_converter.convert(NL_text)
+        #print("prompts:",prompts)
+        return prompts[0]
         
     
     # プロトコルを自然言語に変換
@@ -102,7 +112,7 @@ if __name__ == '__main__':
     logger.addHandler(stream_handler)   
 
     # name
-    myname = 'sample_python'
+    myname = 'sample_python1'
     
     #protocol_agent = SampleAgent()
     protocol_agent= OKAMI("OKAMI")
