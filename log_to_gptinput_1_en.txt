@@ -1,0 +1,148 @@
+Day 1
+[02]: I am a fortune teller.
+[04]: [02]: I doubt it.
+[03]: I am a fortune teller.
+[01]: I am a fortune teller.
+[03]: You divined [02] and the result was black.
+[01]: You divined [03] and the result was black.
+[05]: >>[04]: Why are you suspicious of [02]?
+[02]: I read [03] and the result was human.
+[03]: I think [02] is a fortuneteller, because [02] has revealed me as white.
+[04]: >>[05]: I think [02] is a fortuneteller, because [02] made a fortune-telling CO.
+[01]: Since [02] revealed [03] as white, I think [02] is a fortuneteller.
+[03]: I doubt [02] is a fortuneteller.
+[01]: >>[03]: Who do you think is the villager?
+[02]: >>[03] why am I suspicious?
+[04]: >>[03] why is [02] suspicious?
+[03]: [02]: I'm suspicious of you.
+[05]: I doubt [04].
+[02]: >>[03]: Why am I suspicious?
+04]: >>[05] I think [02] is a fortuneteller, since [02] has been CO'd. [03]: >>[04]: I think [02] is a fortuneteller.
+[03]: >>[01] Since [01] blacked me out, I think [03] is a villager.
+[05]: >>[02] Who do you vote for?
+[01]: >>[03] Why are you suspicious of [02]?
+[02]: >>[05] I think [02] is a werewolf because I am not a werewolf. I vote for [02].
+[05]: I doubt [04] is a werewolf.
+[01]: Skip.
+[04]: >>[05] I think [02] is a fortuneteller, since [02] has just announced his CO.
+[03]: >>[04] I think [02] is a werewolf because [02] CO'd as a fortuneteller.
+[04]: >>[05] Why am I suspicious?
+[05]: Skip.
+[03]: >>[05] Why am I suspicious of [04]?
+[01]: >>[05] why is [04] suspicious?
+[02]: I will be hung tomorrow.
+[04]: >>[05] I think [02] is a werewolf because [03] said [02] is a werewolf.
+[02]: >>[05] I think [02] is a werewolf because [03] said I was a werewolf. I vote for [02].
+[05]: >>[01] Since I am a villager, do you think [04] is a villager?
+[03]: >>[01] I said [02] is a werewolf, so I guess [02] is a werewolf.
+[01]: >>[04] Who do you vote for?
+[03]: >>[01] Since [01] blacked me out, I guess [03] is a villager.
+[02]: >>[05] I think [02] is a werewolf because [04] said I was a werewolf. I vote for [02].
+[01]: >>[05] I think [04] is a madman.
+[05]: >>[03] Since I'm a villager, do you think [04] is a villager?
+[04]: >>[01] I said [02] is a werewolf, so I think [02] is a werewolf. I vote for [02].
+[04]: >>[05] I said [02] was a werewolf, so I think [02] is a werewolf.
+[03]: >>[04] I said [02] was a werewolf, so I guess [02] is a werewolf.
+[02]: >>[05] I said [02] was a werewolf, so I think [02] is a werewolf. I vote for [02].
+[05]: I doubt [02] is a werewolf.
+[01]: >>[05]: I think [04] is a lunatic.
+[04]: >>[05] Why is [02] suspicious?
+[01]: >>[02] Who would you vote for?
+[02]: >>[05] Why am I suspicious of me?
+[03]: >>[05] Why is [02] suspicious?
+[03]: >>[01] Since [01] blacked me out, I think [03] is a villager.
+[02]: >>[01] I think [02] is a werewolf because [01] said I was a werewolf. I vote for [02].
+[05]: >>[01] Since I am a villager, do you think [04] is a villager?
+[04]: >>[01] I think [02] is a werewolf because [02] said [02] is a werewolf. I vote for [02].
+[01]: >>[05] I think [04] is a madman.
+[01]: >>[02] I heard that earlier.
+[02]: >>[05] I think [02] is a werewolf, since you said I was a werewolf. I vote for [02].
+[05]: >>[03] Since [02] said [02] is a werewolf, do you think [02] is a werewolf?
+[03]: >>[01] You reconsidered. Since [02] said [02] was a werewolf, do you think [02] is a werewolf?
+[04]: >>[05] Since [02] said [02] was a werewolf, I think [02] is a werewolf.
+[05]: >>[03] Since I am a villager, do you think [04] is a villager?
+[04]: >>[01] I said [02] is a werewolf, so I think [02] is a werewolf. I vote for [02].
+[02]: >>[01] I think [02] is a werewolf because [03] said I was a werewolf. I vote for [02].
+[01]: >>[03] You heard that earlier.
+[03]: >>[04] You reconsidered. Since [02] said [02] is a werewolf, I think [02] is a werewolf.
+[04]: >>[05] I said [02] was a werewolf, so I think [02] is a werewolf.
+[03]: >>[05] I'm the madman, so I guess [04] is the madman.
+[02]: >>[05] I think [02] is a werewolf because [03] said I was a werewolf. I vote for [02].
+[01]: >>[04] You heard that earlier.
+[05]: >>[04] Since [02] said [02] is a werewolf, do you think [02] is a werewolf?
+[04]: >>[01] Since [02] said [02] is a werewolf, do you think [02] is a werewolf? I vote for [02].
+[02]: >>[01] I said I was a werewolf, so I think [02] is a werewolf. I vote for [02].
+[05]: I doubt [02] is a werewolf.
+[01]: >>[05]: You heard that earlier.
+[03]: >>[01] Since [01] blacked me out, I think [03] is a villager.
+[01]: >>[05] Why is [02] suspicious?
+[04]: >>[05] I think [02] is a werewolf because [02] said [02] was a werewolf.
+[03]: >>[01] You reconsidered. Since [02] said [02] was a werewolf, I think [02] is a werewolf.
+[02]: >>[05] I said [02] was a werewolf, so I think [02] is a werewolf. I vote for [02].
+[03]: >>[04] You reconsidered. Since [02] said [02] is a werewolf, I think [02] is a werewolf.
+[05]: >>[01] Since I am a villager, do you think [04] is a villager?
+[02]: >>[01] Since [04] said I am a werewolf, I think [02] is a werewolf. I vote for [02].
+[04]: >>[01] I said [02] was a werewolf, so I think [02] is a werewolf. I vote for [02].
+[02]: >>[05] I think [02] is a werewolf because [04] said I was a werewolf. I vote for [02].
+[01]: >>[02] You heard that earlier.
+[04]: >>[05] I said [02] was a werewolf, so I think [02] is a werewolf.
+[03]: >>[05] I'm the madman, so I guess [04] is the madman.
+[05]: >>[01] Since [04] said [02] is a werewolf, do you think [02] is a werewolf?
+Vote for [01]: [03].
+Vote for [02]: [03]
+Votes for [03]: [02]
+[04] voting for: [02]
+[05] Votes for: [01]
+[01] Votes for: [05]
+[02] Votes for: [05]
+[03] Votes for: [05]
+[04] Votes for: [03]
+[05] Votes for: [02]
+Day 2
+[01]: You divined [03] and the result was black.
+[03]: You divined [02] and the result was black.
+[03]: [02] is suspicious.
+[04]: >>[03]: Why is [02] suspicious?
+[01]: >>[03] Why is [02] suspicious?
+[03]: >>[01] I think [02] is a werewolf because [02] said [02] was a werewolf.
+[03]: >>[04] [02] [02] said [02] was a werewolf, so I think [02] is a werewolf.
+[01]: >>[05] Who do you think is the villager?
+[03]: >>[01] I said [02] was a werewolf, so I think [02] is a werewolf.
+[03]: >>[04] I said [02] was a werewolf, so I think [02] is a werewolf.
+[03]: >>[05] Who would you vote for?
+[03]: >>[02] Who do you think is the villager?
+[01]: >>[04] Who do you think is the villager.
+[03]: >>[01] I said [02] is a werewolf, so I guess [02] is a werewolf.
+[01]: >>[03] Who do you think is the villager?
+[04]: >>[01] I think [04] is the villager, man.
+[04]: >>[01] I think [04] is a villager.
+[03]: >>[04] I said [02] was a werewolf, so I think [02] is a werewolf.
+[01]: I doubt [03] is.
+[03]: >>[01] why am I suspicious?
+[04]: >>[01] why is [03] suspicious?
+[01]: >>[04] I think [03] is a werewolf, because [02] put [03] in white.
+[04]: >>[01] I think [04] is a villager.
+[03]: >>[01] I think [03] is a villager because [01] blacked me out.
+[03]: >>[01] You reconsidered. I said [02] was a werewolf, so I guess [02] is a werewolf.
+[03]: >>[04] You reconsidered. I said [02] was a werewolf, so I guess [02] is a werewolf.
+[01]: >>[03] who do you think is suspicious?
+[04]: >>[02] who do you think is suspicious?
+[03]: >>[01] Since [01] blacked me out, I think [03] is a villager.
+[04]: >>[01] I think [04] is a villager.
+[01]: >>[04] I think [03] is a werewolf, because [02] put [03] in the black.
+[03]: >>[01] You reconsidered. I said [02] was a werewolf, so I think [02] is a werewolf.
+Vote for [01]: [04]
+[03] Vote for: [01]
+[04] Votes for: [03]
+[01] Votes for: [03]
+[03] Votes for: [04]
+[04] Votes for: [03] Votes for: [04] Votes for: [03] Votes for: [03] Votes for: [04
+Day 3
+Werewolf was [01].
+The fortune teller was [02].
+Madman was [03].
+Villagers were [04].
+Villagers were [05].
+
+
+Translated with www.DeepL.com/Translator (free version)
