@@ -1,2 +1,4 @@
 gamelog/
 jp2prompt_corpus/
+*.pyc
+__pycache__/
