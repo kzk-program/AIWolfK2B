@@ -27,6 +27,10 @@ class AgentProxy(object):
             self.base_info['agentIdx'] = game_info['agent']
             self.base_info['myRole'] = game_info["roleMap"][str(game_info['agent'])]
             self.base_info["roleMap"] = game_info["roleMap"]
+            #OKAMIのバージョン互換性のために、game_settingのroleMapを変換
+            for k in ["day", "remainTalkMap", "remainWhisperMap", "statusMap"]:
+                        if k in game_info.keys():
+                            self.base_info[k] =  game_info[k]
             diff_data = self.parser.get_game_df_diff()
             self.logger.debug("INITIALIZE")
             self.logger.debug(self.base_info)

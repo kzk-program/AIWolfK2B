@@ -56,8 +56,8 @@ class SimpleSpeaker(object):
         if type(c) == SVTRContent:
             if (not child) and c.verb == "ESTIMATE" and (c.subject != "UNSPEC" and c.subject != self.me) and c.target != "ANY":
                 role = random.choice(self.role_dict[c.role])
-                candidates.append(c.subject + "は"+c.target + "が"+c.role+"だと思ってるよね")
-                candidates.append(c.subject + "的には"+c.target + "が"+c.role+"ってなるはず")
+                candidates.append(c.subject + "は"+c.target + "が"+role+"だと思ってるよね")
+                candidates.append(c.subject + "的には"+c.target + "が"+role+"ってなるはず")
                 if c.role == "WEREWOLF":
                     candidates.append(c.subject + "的には"+c.target + "が黒く見えてるだろう")
                 return random.choice(candidates)
@@ -68,10 +68,10 @@ class SimpleSpeaker(object):
                 role = random.choice(self.role_dict[c.role])
                 if c.role != 'VILLAGER':
                     candidates.append("COします!俺は"+role+"です!")
-                    candidates.append(c.role+"COです")
+                    candidates.append(role+"COです")
                     candidates.append(role+"だとカミングアウトします")
-                    candidates.append("俺は"+c.role+"です")
-                    candidates.append("俺が真の"+c.role+"です")   #対抗が出たときの処理にしたいけど、文脈が読み取れないので対抗無しでも言ってしまう
+                    candidates.append("俺は"+role+"です")
+                    candidates.append("俺が真の"+role+"です")   #対抗が出たときの処理にしたいけど、文脈が読み取れないので対抗無しでも言ってしまう
                 else:
                     candidates.append("私は村人です")
                     candidates.append("私は村人です、本当です")
@@ -163,7 +163,7 @@ class SimpleSpeaker(object):
             if c.verb == "DIVINED":
                 if c.subject not in self.subject_dict:
                     subject = c.subject + random.choice(["が"])
-                candidates = [subject + "占った結果"+target+"は"+spices + "だった", "占い結果は"+spices + "だった"]
+                candidates = [subject + "占った結果"+target+"は"+spices + "だった", target+"の占い結果は"+spices + "だった"]
                 
             elif c.verb == "IDENTIFIED":
                 if c.subject not in self.subject_dict:
