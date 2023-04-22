@@ -1,4 +1,10 @@
+tmp/
 gamelog/
-jp2prompt_corpus/
+jp2protocol_corpus/
+
+*.egg-info/
+*__pycache__/
+
 *.pyc
-__pycache__/
+
+.python-version
