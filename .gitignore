@@ -6,6 +6,7 @@ jp2protocol_corpus/
 *__pycache__/
 
 *.pyc
+*.pth
 
 .python-version
 
