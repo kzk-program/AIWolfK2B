@@ -8,7 +8,7 @@ from logging import FileHandler, Formatter, StreamHandler, getLogger
 
 import aiwolfpy
 import pandas as pd
-from python_simple_protocol_agent import SampleAgent  # 試しに使うprotocol用のエージェント
+from aiwolfk2b.agentLPS.python_simple_protocol_agent import SampleAgent  # 試しに使うprotocol用のエージェント
 from aiwolfk2b.agentLPS.speaker import SimpleSpeaker # プロトコルを自然言語に変換するクラス
 from aiwolfk2b.agentLPS.jp_to_protocol import JPToProtocolConverter,BertForSequenceClassificationMultiLabel # 自然言語をプロトコルに変換するクラス
 from OKAMI import OKAMI
