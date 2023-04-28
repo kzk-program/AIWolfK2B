@@ -1,0 +1,3 @@
+[submodule "AIWolfPy"]
+	path = AIWolfPy
+	url = https://github.com/HoneyMack/AIWolfPy
