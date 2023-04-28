@@ -5,6 +5,10 @@ import pytorch_lightning as pl
 
 from aiwolfpy.protocol.contents import *
 
+#現在のプログラムが置かれているディレクトリを取得
+import os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
 # データセットの前処理
 # 分類するラベルのリスト
 subject_list = [
@@ -227,7 +231,7 @@ class JPToProtocolConverter:
         self.tokenizer = BertJapaneseTokenizer.from_pretrained(MODEL_NAME)
 
         # モデルの読み込み
-        best_model_path = "./jp2protocol_model/bert_scml20230128.pth"
+        best_model_path = current_dir+"/jp2protocol_model/bert_scml20230128.pth"
         self.bert_scml = torch.load(best_model_path)
         self.bert_scml = self.bert_scml.cuda()
 
