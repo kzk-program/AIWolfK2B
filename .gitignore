@@ -8,3 +8,6 @@ jp2protocol_corpus/
 *.pyc
 
 .python-version
+
+#環境は各自で作成するので、gitでは管理しない
+env_k2b/
