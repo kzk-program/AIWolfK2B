@@ -1,0 +1,66 @@
+type,text
+introduction,
+tweet,
+divine_WEREWOLF,DIVINED [0] WEREWOLF
+divine_HUMAN,DIVINED [0] HUMAN
+d1t1,
+d2t1,
+declare_VOTE,VOTE [0]
+ask_WHO_LIKE_WOLF,
+answer_WHO_LIKE_WOLF,ESTIMATE Agent[[1]] WEREWOLF
+CO<3,
+CO=2,
+CO=3,
+CO>3,
+thankESTIMATE_HUMAN,
+thankSEER,ESTIMATE [0] SEER
+thankESTIMATE_SEER,ESTIMATE [0] VILLAGER
+protestSEER,ESTIMATE [0] POSSESSED
+protestSEERs,
+protestESTIMATE,
+doubt_reason,
+divine_reason,
+comingout_SEER,COMINGOUT [-1] SEER
+comingout_POSSESSED,COMINGOUT [-1] POSSESSED
+comingout_WEREWOLF,COMINGOUT [-1] WEREWOLF
+tweet_POSSESSED,
+thanks_doubt_me,
+estimate_human,ESTIMATE [0] VILLAGER
+agree_vote,VOTE [0]
+disagree_vote,
+execute_remaining_2,
+execute_remaining_1,
+trust_who,ESTIMATE [0] VILLAGER
+black_by_all,VOTE [0]
+white_by_all,ESTIMATE [0] VILLAGER
+black>2,
+black=0,
+R_i_divined_as_human,ESTIMATE [0] VILLAGER
+R_i_divined_as_human(fake),ESTIMATE [0] VILLAGER
+R_divined_me_human,ESTIMATE [0] SEER
+R_seems_to_be_true_seer,ESTIMATE [0] SEER
+R_estimated_me_human,
+R_sync_vote,
+R_desync_vote,
+R_estimated_me_werewolf,
+R_requested_vote,
+R_divined_as_werewolf,
+R_seems_to_be_fake_seer,
+R_voted_me,
+R_voted_who_i_love,
+R_voted_who_i_hate,
+R_divined_me_werewolf,
+R_i_divined_as_werewolf,
+R_i_divined_as_werewolf(fake),
+R_you_said_black_but_not,
+R_none,
+agree_seer_roller,
+disagree_seer_roller,
+R_roller_reg,
+R_roller_irreg,
+received_WOLF_CO_as_nonPP,ESTIMATE [0] WEREWOLF
+received_WOLF_CO_as_PP,ESTIMATE [0] POSSESSED
+FEEL_WORST,VOTE [0]
+FEEL_BAD,VOTE [0]
+ask_HOW_DO_YOU_FEEL,
+hagurakasi,
