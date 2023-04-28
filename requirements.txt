@@ -1,0 +1,10 @@
+#BERT学習用
+torch==2.0.0
+torchvision==0.15.1
+torchaudio==2.0.1
+transformers==4.28.1
+fugashi==1.2.1
+ipadic==1.0.0
+pytorch-lightning==2.0.2
+#OKAMI用
+numexpr==2.8.4
