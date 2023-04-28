@@ -227,7 +227,7 @@ class JPToProtocolConverter:
         self.tokenizer = BertJapaneseTokenizer.from_pretrained(MODEL_NAME)
 
         # モデルの読み込み
-        best_model_path = "/home/takuya/HDD1/work/AI_Wolf/AIWolfK2B/jp2protocol_model/bert_scml20230128.pth"
+        best_model_path = "./jp2protocol_model/bert_scml20230128.pth"
         self.bert_scml = torch.load(best_model_path)
         self.bert_scml = self.bert_scml.cuda()
 
