@@ -30,8 +30,8 @@
 ```bash
 git clone https://github.com/kzk-program/AIWolfK2B
 cd [path to AIWolfK2B]
-#現状動くブランチがfeature/okuboなのでブランチを切り替え
-git checkout feature/okubo
+#ブランチを切り替え
+git checkout develop
 #submoduleの初期化
 git submodule init
 git submodule update
