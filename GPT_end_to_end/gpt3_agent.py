@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# This sample script connects to the AIWolf server, but
-# does not do anything else. It will choose itself as the
-# target for any actions requested by the server, (voting,
-# attacking ,etc) forcing the server to choose a random target.
+#This code is originated from python_simple_sample.py
+
 import logging
 import openai
 import Levenshtein
@@ -35,6 +33,7 @@ logger.addHandler(stream_handler)
 # file_handler.setFormatter(handler_format)
 # logger.addHandler(file_handler)
 
+# Accumulate game informatin which was sent from server, and convert it to text, then send it to GPT-3.
 class GameInfoAccumulater:
     def __init__(self, base_info):
         self.role_to_japanese = {"WEREWOLF":"人狼", "POSSESSED":"狂人", "SEER":"占い師", "VILLAGER":"村人", "BODYGUARD":"騎士", "MEDIUM":"霊媒師"}
@@ -65,35 +64,46 @@ class GameInfoAccumulater:
                 text += str(row.type) + ", " +"Agent[{:02d}]: ".format(row["agent"]) + str(row.text) + "\n"
         return text
 
-        
+# GPT3
 class AIChat:
     def __init__(self):
         openai.api_key = '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'
-        log_paths = ['C:/Users/MEIP-users/Documents/aiwolf/AIWolfPy/log_to_gptinput_1_en.txt']
-        self.examples = "人狼ゲームを行います。以下に人狼ゲームの例を見せます。\n"
+        #log_paths = ['./werewolf_jp_examples/examples_for_gptinput_1.txt']
+        log_paths = []
+        self.examples = "人狼ゲームを行います。\n"
         for i, log_path in enumerate(log_paths):
-            self.examples += str(i) + "個目の例です。"
+            self.examples += str(i) + "個目の人狼ゲームの例を見せます。"
             with open(log_path, 'r', encoding="utf-8") as f:
                 self.examples += f.read()
-        self.examples += "では、これから人狼ゲームを始めます。"
+        self.examples += "では、これから人狼ゲームを始めます。\n"
     
     def speak(self, context):
+        #send context to GPT-3, and return response
         response = openai.Completion.create(engine="text-davinci-003",
             prompt=self.examples+context,
             max_tokens=50,
             temperature=0.5)
-        
+        with open("log_sending_to_gpt.txt", 'a', encoding="utf-8") as f:
+            f.write("---------------\n")
+            f.write("sent context:\n")
+            f.write(self.examples + context)
+            f.write("\n")
+            f.write("response:\n")
+            f.write(response['choices'][0]['text'])
         return response['choices'][0]['text']
         # sleep(1)
         # return "a"
 
+
+# 
 class SampleAgent(object):
     
     def __init__(self):
         # my name
         self.base_info = dict()
         self.game_setting = dict()
-        self.talked_num = 0
+        self.my_name = myname
+        self.talked_num_today = 0
         self.aichat = AIChat()
 
     def getName(self):
@@ -113,23 +123,34 @@ class SampleAgent(object):
 
     # Start of the day (no return)
     def dayStart(self):
+        #reset the number of talks
+        self.talked_num_today = 0
         return None
 
     # conversation actions: require a properly formatted
-    # protocol string as the return.
     def talk(self):
+        if self.talked_num_today >= 3:
+            return cf.over()
+        else:
+            self.talked_num_today += 1
+
+        # get game information
         now_context = self.gameinfo.get_all_context()
+        # speak using GPT-3
         return self.aichat.speak(now_context + "Agent[{:02d}]: ".format(self.base_info['agentIdx']))
 
-    
+    # whisper: speak between werewolves
     def whisper(self):
+        # just say "Over"
         return cf.over()
         
     # targetted actions: Require the id of the target
     # agent as the return
     def vote(self):
         now_context = self.gameinfo.get_all_context()
-        chat_vote = self.aichat.speak(now_context + "人狼は+")
+        # this is not appropriate if the agent is in the werewolf team.
+        chat_vote = self.aichat.speak(now_context + "今生き残っているエージェントの中で人狼だと最も疑わしい一人は、")
+        # vote for the agent who is the most similar to the message fron GPT-3
         min_val = 10000
         min_arg = -1
         for i in range(5):
