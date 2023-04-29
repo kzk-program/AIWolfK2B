@@ -67,7 +67,8 @@ class GameInfoAccumulater:
 # GPT3
 class AIChat:
     def __init__(self):
-        openai.api_key = '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'
+        with open("../openai_api_key.txt", "r") as f:
+            openai.api_key = f.read()
         #log_paths = ['./werewolf_jp_examples/examples_for_gptinput_1.txt']
         log_paths = []
         self.examples = "人狼ゲームを行います。\n"
