@@ -24,6 +24,7 @@ from collections import deque
 <day_number> ::= 1 | 2 | ...
 <ID_number> ::= 1 | 2 | ...
 """
+#TODO:カッコがある文はバグるので要修正
 
 agent_list = ["Agent[{:02d}]".format(i) for i in range(1, 16)]
 day_list = [f"day{i}" for i in range(1, 100)] # ここでは上限を100に設定していますが、適宜変更してください
