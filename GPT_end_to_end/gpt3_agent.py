@@ -92,7 +92,7 @@ class AIChat:
             temperature=0.5)
         
         # GPTとの通信内容を保存しておく
-        # with open(Path(__file__).resolve().parent / 'log_sending_to_gpt/.txt', 'a', encoding="utf-8") as f:
+        # with open(Path(__file__).resolve().parent / 'log_sending_to_gpt.txt', 'a', encoding="utf-8") as f:
         #     f.write("---------------\n")
         #     f.write("sent context:\n")
         #     f.write(self.examples + context)
