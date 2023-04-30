@@ -5,7 +5,7 @@ from collections import deque
 
 """
     もととなる文法
-<sentence> ::= Skip | Over | [Agent <agent_number>| ANY | UNSPEC] <VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY>
+<sentence> ::= Skip | Over | [Agent <agent_number>| ANY | eps] <VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY>
 <VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY> ::= [ESTIMATE | COMMINGOUT] <TR> |[DIVINATION | GUARD | VOTE | ATTACK | GUARDED | VOTED | ATTACKED] <T> | [DIVINED | IDENTIFIED] <TSp> | [ AGREE |  DISAGREE] <talk_number> | [REQUEST | INQUIRE] <TSe> | NOT (<sentence>) | [BECAUSE | XOR] <S2> | [ AND | OR] <SS> | DAY <day_number> (<sentence>)
 <TR> ::= [Agent <agent_number> | ANY] <role>
 <T> ::= Agent <agent_number> | ANY
@@ -44,14 +44,20 @@ def is_agent_num(string):
 
 def parse_sentence(sentence:deque)->list:
     if len(sentence) == 0:
-        return ["Skip", "Over", "ANY", "UNSPEC"] + agent_list
+        return ["Skip", "Over", "ANY", ""] + agent_list
     
     token = sentence.popleft()
     if token in ["Skip", "Over"]:
         return []
     elif is_agent_num(token):
         return parse_VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY(sentence)
-    elif token in ["ANY", "UNSPEC"]:
+    elif token in ["ANY"]:
+        return parse_VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY(sentence)
+    elif token in ["ESTIMATE", "COMMINGOUT", "DIVINATION", "GUARD", "VOTE", 
+                "ATTACK", "GUARDED", "VOTED", "ATTACKED", "DIVINED", "IDENTIFIED"] \
+                + ["AGREE", "DISAGREE"] + ["REQUEST", "INQUIRE"] + ["NOT"] \
+                + ["BECAUSE", "XOR"] + ["AND", "OR"] + ["DAY"]:
+        sentence.appendleft(token)
         return parse_VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY(sentence)
     else:
         raise ValueError("invalid token: {}".format(token))
@@ -214,4 +220,20 @@ if __name__ == "__main__":
     # 使用例2
     partial_sentence = "Agent[04] AGREE day4"
     print(f"{partial_sentence}:",get_next_token(partial_sentence))
+    # 使用例3
+    partial_sentence = "Agent[05] BECAUSE Agent[06]"
+    print(f"{partial_sentence}:",get_next_token(partial_sentence))
+    # 使用例4
+    partial_sentence = "BECAUSE Agent[06]"
+    print(f"{partial_sentence}:",get_next_token(partial_sentence))
+    # 使用例5
+    partial_sentence = "Agent[07] BECAUSE"
+    print(f"{partial_sentence}:",get_next_token(partial_sentence))
+    # 使用例6
+    partial_sentence = "VOTE Agent[01]"
+    print(f"{partial_sentence}:",get_next_token(partial_sentence))
+    # 使用例7
+    partial_sentence = "VOTE"
+    print(f"{partial_sentence}:",get_next_token(partial_sentence))
+    
     
