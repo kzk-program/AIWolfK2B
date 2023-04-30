@@ -3,6 +3,7 @@ openAIAPIkey.txt
 
 # log file
 log_sending_to_gpt.txt
+log.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
