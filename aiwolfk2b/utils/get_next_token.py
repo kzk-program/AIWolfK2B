@@ -6,15 +6,16 @@ from collections import deque
 """
     もととなる文法
 <sentence> ::= Skip | Over | [Agent <agent_number>| ANY | eps] <VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY>
-<VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY> ::= [ESTIMATE | COMMINGOUT] <TR> |[DIVINATION | GUARD | VOTE | ATTACK | GUARDED | VOTED | ATTACKED] <T> | [DIVINED | IDENTIFIED] <TSp> | [ AGREE |  DISAGREE] <talk_number> | [REQUEST | INQUIRE] <TSe> | NOT (<sentence>) | [BECAUSE | XOR] <S2> | [ AND | OR] <SS> | DAY <day_number> (<sentence>)
+<bracket_sentence>::=(Skip) | (Over) | ([Agent <agent_number>| ANY | eps] <VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY>)
+<VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY> ::= [ESTIMATE | COMMINGOUT] <TR> |[DIVINATION | GUARD | VOTE | ATTACK | GUARDED | VOTED | ATTACKED] <T> | [DIVINED | IDENTIFIED] <TSp> | [AGREE | DISAGREE] <talk_number> | [REQUEST | INQUIRE] <TSe> | NOT <bracket_sentence> | [BECAUSE | XOR] <S2> | [ AND | OR] <SS> | DAY <day_number> <bracket_sentence>
 <TR> ::= [Agent <agent_number> | ANY] <role>
 <T> ::= Agent <agent_number> | ANY
 <TSp> ::= [Agent <agent_number> | ANY] <species>
-<TSe> ::= [Agent <agent_number> | ANY] (<sentence>)
-<S2> ::=  (Skip | Over | [Agent <agent_number>| ANY | UNSPEC] <VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY>) (<sentence>)
-<SS> ::= (Skip | Over | [Agent <agent_number>| ANY | UNSPEC] <VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY>) <recsentence>
-<recsentence> ::= (Skip | Over | [Agent <agent_number>| ANY | UNSPEC] <VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY>) <rec2sentence>
-<rec2sentence> ::= (Skip | Over | [Agent <agent_number>| ANY | UNSPEC] <VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY>) <rec2sentence> | eps
+<TSe> ::= [Agent <agent_number> | ANY] <bracket_sentence>
+<S2> ::= <bracket_sentence> <bracket_sentence>
+<SS> ::= <bracket_sentence> <recsentence>
+<recsentence> ::= <bracket_sentence> <rec2sentence>
+<rec2sentence> ::= <bracket_sentence> <rec2sentence> | eps
 
 
 <species> ::= HUMAN | WEREWOLF | ANY
@@ -31,6 +32,11 @@ day_list = [f"day{i}" for i in range(1, 100)] # ここでは上限を100に設�
 day_number_list = [f"{i}" for i in range(1, 100)] # ここでは上限を100に設定していますが、適宜変更してください
 ID_list =  [f"ID:{i}" for i in range(1, 100)] # ここでは上限を100に設定していますが、適宜変更してください
 
+verb_list = ["ESTIMATE", "COMMINGOUT", "DIVINATION", "GUARD", "VOTE", 
+                "ATTACK", "GUARDED", "VOTED", "ATTACKED", "DIVINED", "IDENTIFIED"] \
+                + ["AGREE", "DISAGREE"] + ["REQUEST", "INQUIRE"] + ["NOT"] \
+                + ["BECAUSE", "XOR"] + ["AND", "OR"] + ["DAY"]
+
 def get_next_token(partial_sentence: str):
     partial_sentence = partial_sentence.split()
     #queueに変換
@@ -45,7 +51,7 @@ def is_agent_num(string):
 
 def parse_sentence(sentence:deque)->list:
     if len(sentence) == 0:
-        return ["Skip", "Over", "ANY", ""] + agent_list
+        return ["Skip", "Over", "ANY"] + agent_list + verb_list
     
     token = sentence.popleft()
     if token in ["Skip", "Over"]:
@@ -54,12 +60,26 @@ def parse_sentence(sentence:deque)->list:
         return parse_VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY(sentence)
     elif token in ["ANY"]:
         return parse_VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY(sentence)
-    elif token in ["ESTIMATE", "COMMINGOUT", "DIVINATION", "GUARD", "VOTE", 
-                "ATTACK", "GUARDED", "VOTED", "ATTACKED", "DIVINED", "IDENTIFIED"] \
-                + ["AGREE", "DISAGREE"] + ["REQUEST", "INQUIRE"] + ["NOT"] \
-                + ["BECAUSE", "XOR"] + ["AND", "OR"] + ["DAY"]:
+    elif token in verb_list:
         sentence.appendleft(token)
         return parse_VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY(sentence)
+    else:
+        raise ValueError("invalid token: {}".format(token))
+    
+def parse_brackets_sentence(sentence:deque) ->list:
+    if len(sentence) == 0:
+        return ["(Skip)","(Over)"] + ["(ANY"] + ["(" + a for a in agent_list] +["("+ v for v in verb_list]
+    
+    token = sentence.popleft()
+    if token in ["(Skip)", "(Over)"]:
+        return []
+    elif is_agent_num(token[1:]) or token in ["(ANY"]:
+        ret = parse_VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY(sentence)
+        return [t+")" for t in ret]
+    elif token[1:] in verb_list:
+        sentence.appendleft(token[1:])
+        ret = parse_VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY(sentence)
+        return [t+")" for t in ret]
     else:
         raise ValueError("invalid token: {}".format(token))
 
@@ -82,7 +102,7 @@ def parse_VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY(sentence:deque)->list:
     elif token in ["REQUEST", "INQUIRE"]:
         return parse_TSe(sentence)
     elif token in ["NOT"]:
-        return parse_sentence(sentence)
+        return parse_brackets_sentence(sentence)
     elif token in ["BECAUSE", "XOR"]:
         return parse_S2(sentence)
     elif token in ["AND", "OR"]:
@@ -135,27 +155,25 @@ def parse_TSe(sentence:deque)->list:
     if len(sentence) == 0:
         return ["ANY"] + agent_list
     token = sentence.popleft()
-    if is_agent_num(token):
-        return parse_sentence(sentence)
-    elif token == "ANY":
-        return parse_sentence(sentence)
+    if is_agent_num(token) or token == "ANY":
+        return parse_brackets_sentence(sentence)
     else:
         raise ValueError("invalid token: {}".format(token))
 
 def parse_S2(sentence:deque)->list:
     if len(sentence) == 0:
-        return parse_sentence(sentence)
+        return parse_brackets_sentence(sentence)
     
-    ret = parse_sentence(sentence)
+    ret = parse_brackets_sentence(sentence)
     if ret != []:
         return ret
     else:
-        return parse_sentence(sentence)
+        return parse_brackets_sentence(sentence)
 
 def parse_SS(sentence:deque)->list:
     if len(sentence) == 0:
-        return parse_sentence(sentence)
-    ret = parse_sentence(sentence)
+        return parse_brackets_sentence(sentence)
+    ret = parse_brackets_sentence(sentence)
     if ret != []:
         return ret
     else:
@@ -163,9 +181,9 @@ def parse_SS(sentence:deque)->list:
     
 def parse_recsentence(sentence:deque)->list:
     if len(sentence) == 0:
-        return parse_sentence(sentence)
+        return parse_brackets_sentence(sentence)
     
-    ret = parse_sentence(sentence)
+    ret = parse_brackets_sentence(sentence)
     if ret != []:
         return ret
     else:
@@ -173,9 +191,9 @@ def parse_recsentence(sentence:deque)->list:
 
 def parse_rec2sentence(sentence:deque)->list:
     if len(sentence) == 0:
-        return parse_sentence(sentence) + [""]
+        return parse_brackets_sentence(sentence) + [""]
     
-    ret = parse_sentence(sentence)
+    ret = parse_brackets_sentence(sentence)
     if ret != []:
         return ret
     return parse_rec2sentence(sentence)
@@ -207,10 +225,10 @@ def parse_talk_number(sentence:deque)->list:
 
 def parse_day_number(sentence:deque)->list:
     if len(sentence) == 0:
-        return ID_list
+        return day_number_list
     token = sentence.popleft()
-    if token in ID_list:
-        return parse_sentence(sentence)
+    if token in day_number_list:
+        return parse_brackets_sentence(sentence)
     else:
         raise ValueError("invalid token: {}".format(token))
     
@@ -222,10 +240,10 @@ if __name__ == "__main__":
     partial_sentence = "Agent[04] AGREE day4"
     print(f"{partial_sentence}:",get_next_token(partial_sentence))
     # 使用例3
-    partial_sentence = "Agent[05] BECAUSE Agent[06]"
+    partial_sentence = "Agent[05] BECAUSE (Agent[06]"
     print(f"{partial_sentence}:",get_next_token(partial_sentence))
     # 使用例4
-    partial_sentence = "BECAUSE Agent[06]"
+    partial_sentence = "BECAUSE (Agent[06]"
     print(f"{partial_sentence}:",get_next_token(partial_sentence))
     # 使用例5
     partial_sentence = "Agent[07] BECAUSE"
