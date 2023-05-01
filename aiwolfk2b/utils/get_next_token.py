@@ -75,10 +75,12 @@ def parse_brackets_sentence(sentence:deque) ->list:
         return []
     elif is_agent_num(token[1:]) or token in ["(ANY"]:
         ret = parse_VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY(sentence)
+        return ret
         return [t+")" for t in ret]
     elif token[1:] in verb_list:
         sentence.appendleft(token[1:])
         ret = parse_VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY(sentence)
+        return ret
         return [t+")" for t in ret]
     else:
         raise ValueError("invalid token: {}".format(token))
@@ -254,5 +256,7 @@ if __name__ == "__main__":
     # 使用例7
     partial_sentence = "VOTE"
     print(f"{partial_sentence}:",get_next_token(partial_sentence))
-    
+    # 使用例8:TODO:ちゃんと動くようにする
+    partial_sentence = "AND (NOT (VOTE Agent[01])) (VOTE Agent[02])"
+    print(f"{partial_sentence}:",get_next_token(partial_sentence))
     
