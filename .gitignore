@@ -12,3 +12,5 @@ jp2protocol_corpus/
 
 #環境は各自で作成するので、gitでは管理しない
 env_k2b/
+#学習記録も各自管理なので、gitでは管理しない
+*wandb/
