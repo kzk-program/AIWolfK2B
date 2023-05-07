@@ -231,7 +231,7 @@ class LL1Grammar:
 
         return next_terminals
     
-def aiwolf_protocol_grammar():
+def aiwolf_protocol_grammar()->LL1Grammar:
     """
     sentence ::= Skip | Over | Agent [agent_number] VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY | ANY VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY | VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY 
     VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ::= ESTIMATE TR | COMINGOUT TR | DIVINATION T | GUARD T | VOTE T | ATTACK T | GUARDED T | VOTED T | ATTACKED T 
@@ -298,7 +298,7 @@ def aiwolf_protocol_grammar():
     return grammar
 
     
-def test_LL1Grammar1():
+def test_LL1Grammar1()->LL1Grammar:
     print("case 1")
     grammar = LL1Grammar(
         non_terminals={'E', 'T', 'F', 'E1', 'T1'},
@@ -316,7 +316,7 @@ def test_LL1Grammar1():
     
     return grammar
 
-def test_LL1Grammar2():
+def test_LL1Grammar2()->LL1Grammar:
     print("case 2")
     non_terminals = {'S', 'A', 'B'}
     terminals = {'a', 'b', 'c', 'd', 'ε'}
@@ -332,7 +332,7 @@ def test_LL1Grammar2():
     return grammar
     
 
-def test_print_LL1Grammer(grammar:LL1Grammar):
+def test_print_LL1Grammer(grammar:LL1Grammar)->None:
     print(grammar)
     print("first sets:",grammar.first_sets)
     print("follow sets:",grammar.follow_sets)
@@ -345,13 +345,13 @@ def test_LL1Grammars():
     test_LL1Grammar2()
     
 #テスト
-def test_parser(grammar:LL1Grammar, input_str: str):
+def test_parser(grammar:LL1Grammar, input_str: str)->None:
     print("parser test")
     next_terminals = grammar.parse(input_str)
     print(next_terminals)
 
 #パーサーのテスト
-def test_grammar_parsers():
+def test_grammar_parsers()->None:
     grammar2 = test_LL1Grammar2()
     aiwolf_grammar = aiwolf_protocol_grammar()
     test_parser(grammar2, "a")
@@ -365,12 +365,12 @@ def test_grammar_parsers():
     test_parser(aiwolf_grammar, "REQUEST ANY ( DISAGREE day 1 ID 1 0 )")
 
 #テスト
-def test_get_next_terminals(grammar:LL1Grammar, input_str: str):
+def test_get_next_terminals(grammar:LL1Grammar, input_str: str)->None:
     print("next terminals")
     next_terminals = grammar.get_next_terminals(grammar, input_str)
     print(next_terminals)
 
-def test_grammar_get_next_terminals():
+def test_grammar_get_next_terminals()->None:
     grammar2 = test_LL1Grammar2()
     aiwolf_grammar = aiwolf_protocol_grammar()
     test_get_next_terminals(grammar2, "a")
@@ -411,12 +411,12 @@ def convert_ll1_to_protocol(s : str) -> str:
     
     return s
     
-def convert_agent(s):
+def convert_agent(s:str)->str:
     # 文字列中の '[' と ']' を半角スペース ' ' に変換
     s = s.replace('[', ' ').replace(']', '')
     return s
 
-def revert_agent(s):
+def revert_agent(s:str)->str:
     # "Agent [数字]" を "Agent[数字]" に変換する正規表現
     pattern = r"(Agent) (\d+)"
 
@@ -435,17 +435,17 @@ def revert_agent(s):
 
     return s
 
-def convert_parentheses(s):
+def convert_parentheses(s:str)->str:
     # '(' と ')' の前後に半角スペース ' ' を追加
     s = s.replace('(', '( ').replace(')', ' )')
     return s
 
-def revert_parentheses(s):
+def revert_parentheses(s:str)->str:
     # '(' と ')' の前後の半角スペース ' ' を削除
     s = s.replace('( ', '(').replace(' )', ')')
     return s
 
-def convert_day(s):
+def convert_day(s:str)->str:
     # "day[数字]" を "day [各数字]" に変換する正規表現
     pattern = r"(day)(\d+)"
 
@@ -481,7 +481,7 @@ def convert_day(s):
     return s
     
     
-def revert_day(s):
+def revert_day(s:str)->str:
     # "day [各数字]" を "day[数字]" に変換する正規表現
     pattern = r"(day)(?:\s+(\d))+"
 
@@ -514,7 +514,7 @@ def revert_day(s):
 
     return s
 
-def convert_ID(s):
+def convert_ID(s:str)->str:
     # 文字列中の 'ID:' を'ID ' に変換
     s = s.replace('ID:', 'ID ')
     # "ID [数字]" を "ID [各数字]" に変換する正規表現
@@ -535,7 +535,7 @@ def convert_ID(s):
 
     return s
 
-def revert_ID(s):
+def revert_ID(s:str)->str:
     # "ID [各数字]" を "ID[数字]" に変換する正規表現
     pattern = r"(ID)(?:\s+(\d))+"
 
