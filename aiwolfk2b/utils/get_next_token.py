@@ -1,5 +1,6 @@
 from typing import Dict, List, Set, Deque, Tuple
 from collections import deque
+import re
 
 #LL(1)文法を扱うクラス
 class LL1Grammar:
@@ -379,15 +380,142 @@ def test_grammar_get_next_terminals():
         
     
 #元々のプロトコルをパースできる表現に変更
-def process_string(s : str) -> str:
-    # 文字列中の '[' と ']' を半角スペース ' ' に変換
-    s = s.replace('[', ' ').replace(']', ' ')
+def convert_protocol_to_ll1(s : str) -> str:
+    #Agentの表記を変更： "Agent[数字]" を "Agent [数字]" に変換
+    s = convert_agent(s)
+    # '(' と ')' の前後に半角スペース ' ' を追加
+    s = convert_parentheses(s)
+    #日付の表記を変更： "day[数字]" を "day [各数字]" に変換
+    s = convert_day(s)
+    #IDの表記を変更： "ID[数字]" を "ID [各数字]" に変換
+    s = convert_ID(s)
 
+    return s
+
+#パースできる表現を元々のプロトコルに戻す
+def convert_ll1_to_protocol(s : str) -> str:
+    #Agentの表記を変更： "Agent [数字]" を "Agent[数字]" に変換
+    s = revert_agent(s)
+    # '(' と ')' の前後の半角スペース ' ' を削除
+    s = revert_parentheses(s)
+    #日付の表記を変更："day [各数字]" を "day[数字]" に変換
+    s = revert_day(s)
+    #IDの表記を変更："ID [各数字]" を "ID:[数字]" に変換
+    s = revert_ID(s)
+    
+    return s
+    
+def convert_agent(s):
+    # 文字列中の '[' と ']' を半角スペース ' ' に変換
+    s = s.replace('[', ' ').replace(']', '')
+    return s
+
+def revert_agent(s):
+    # "Agent [数字]" を "Agent[数字]" に変換する正規表現
+    pattern = r"(Agent) (\d+)"
+
+    # 文字列内のパターンにマッチする部分を変換する関数
+    agent_str =""
+    digits = ""
+    def replace_func(match):
+        agent_str = match.group(1)
+        digits = match.group(2)
+
+        return f"{agent_str}[{digits}]"
+    print(agent_str, digits)
+
+    # 文字列内のパターンにマッチする部分を変換
+    s = re.sub(pattern, replace_func, s)
+
+    return s
+
+def convert_parentheses(s):
     # '(' と ')' の前後に半角スペース ' ' を追加
     s = s.replace('(', '( ').replace(')', ' )')
+    return s
+
+def revert_parentheses(s):
+    # '(' と ')' の前後の半角スペース ' ' を削除
+    s = s.replace('( ', '(').replace(' )', ')')
+    return s
+
+def convert_day(s):
+    # "day[数字]" を "day [各数字]" に変換する正規表現
+    pattern = r"(day)(\d+)"
+
+    # 文字列内のパターンにマッチする部分を変換する関数
+    def replace_func(match):
+        day_str = match.group(1)
+        digits = match.group(2)
+
+        # 数字を1桁ずつスペースで区切る
+        spaced_digits = ' '.join(list(digits))
+
+        return f"{day_str} {spaced_digits}"
+
+    # 文字列内のパターンにマッチする部分を変換
+    s = re.sub(pattern, replace_func, s)
 
     return s
     
+    
+def revert_day(s):
+    # "day [各数字]" を "day[数字]" に変換する正規表現
+    pattern = r"(day)(?:\s+(\d))+"
+
+    # 文字列内のパターンにマッチする部分を変換する関数
+    def replace_func(match):
+        day_str = match.group(1)
+
+        # スペースで区切られた数字を連結
+        concatenated_digits = ''.join(match.groups()[1:])
+
+        return f"{day_str}{concatenated_digits}"
+
+    # 文字列内のパターンにマッチする部分を変換
+    s = re.sub(pattern, replace_func, s)
+
+    return s
+
+def convert_ID(s):
+    # 文字列中の 'ID:' を'ID ' に変換
+    s = s.replace('ID:', 'ID ')
+    # "ID [数字]" を "ID [各数字]" に変換する正規表現
+    pattern = r"(ID)(\d+)"
+
+    # 文字列内のパターンにマッチする部分を変換する関数
+    def replace_func(match):
+        ID_str = match.group(1)
+        digits = match.group(2)
+
+        # 数字を1桁ずつスペースで区切る
+        spaced_digits = ' '.join(list(digits))
+
+        return f"{ID_str} {spaced_digits}"
+
+    # 文字列内のパターンにマッチする部分を変換
+    s = re.sub(pattern, replace_func, s)
+
+    return s
+
+def revert_ID(s):
+    # "ID [各数字]" を "ID[数字]" に変換する正規表現
+    pattern = r"(ID)(?:\s+(\d))+"
+
+    # 文字列内のパターンにマッチする部分を変換する関数
+    def replace_func(match):
+        ID_str = match.group(1)
+        # スペースで区切られた数字を連結
+        concatenated_digits = ''.join(match.groups()[1:])
+
+        return f"{ID_str}{concatenated_digits}"
+
+    # 文字列内のパターンにマッチする部分を変換
+    s = re.sub(pattern, replace_func, s)
+
+    # 文字列中の 'ID' を'ID:' に変換
+    s = s.replace('ID', 'ID:')
+    return s
     
 if __name__ == "__main__":
     #first_set, follow_set, parse_tableのテスト
@@ -399,26 +527,36 @@ if __name__ == "__main__":
     
     # 使用例1
     partial_sentence = "Agent[01] ESTIMATE Agent[02]"
-    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(process_string(partial_sentence)))
+    #convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence)) == partial_sentenceかどうかを確認
+    assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
+    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
     # 使用例2
-    partial_sentence = "Agent[04] AGREE day 4"
-    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(process_string(partial_sentence)))
+    partial_sentence = "Agent[04] AGREE day4"
+    assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
+    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
+    
     # 使用例3
     partial_sentence = "Agent[05] BECAUSE (Agent[06]"
-    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(process_string(partial_sentence)))
+    assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
+    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
     # 使用例4
     partial_sentence = "BECAUSE (Agent[06]"
-    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(process_string(partial_sentence)))
+    assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
+    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
     # 使用例5
     partial_sentence = "Agent[07] BECAUSE"
-    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(process_string(partial_sentence)))
+    assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
+    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
     # 使用例6
     partial_sentence = "VOTE Agent[01]"
-    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(process_string(partial_sentence)))
+    assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
+    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
     # 使用例7
     partial_sentence = "VOTE"
-    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(process_string(partial_sentence)))
+    assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
+    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
     # 使用例8:
     partial_sentence = "AND (NOT (VOTE Agent[01])) (VOTE Agent[02])"
-    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(process_string(partial_sentence)))
+    assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
+    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
     
