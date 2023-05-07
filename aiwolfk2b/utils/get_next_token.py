@@ -192,6 +192,9 @@ class LL1Grammar:
                 if rule == "":
                     if "ε" in self.first_sets[top]:
                         continue
+                    print(f"top:{top} and current_input:{current_input}")
+                    print(f"stack:{stack}")
+                    print(f"input_symbols:{input_symbols}")
                     raise Exception("error: no production rule")
                 else:
                     prod_symbols = rule.split()
@@ -204,6 +207,9 @@ class LL1Grammar:
                 elif top == "ε":
                     stack.pop()
                 else:
+                    print(f"top:{top} and current_input:{current_input}")
+                    print(f"stack:{stack}")
+                    print(f"input_symbols:{input_symbols}")
                     raise Exception("error: no production rule")
                 
         next_terminals:Set = set()
@@ -228,16 +234,16 @@ class LL1Grammar:
 def aiwolf_protocol_grammar():
     """
     sentence ::= Skip | Over | Agent [agent_number] VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY | ANY VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY | VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY 
-    VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ::= ESTIMATE TR | COMMINGOUT TR | DIVINATION T | GUARD T | VOTE T | ATTACK T | GUARDED T | VOTED T | ATTACKED T 
+    VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ::= ESTIMATE TR | COMINGOUT TR | DIVINATION T | GUARD T | VOTE T | ATTACK T | GUARDED T | VOTED T | ATTACKED T 
             | DIVINED TSp | IDENTIFIED TSp | AGREE talk_number | DISAGREE talk_number | REQUEST TSe | INQUIRE TSe | NOT ( sentence ) 
             | BECAUSE ( S2 | XOR ( S2 | AND ( SS | OR ( SS | DAY number ( sentence )
     TR ::= Agent agent_number role | ANY role 
     T ::= Agent agent_number | ANY
     TSp ::= Agent agent_number species | ANY species 
     TSe ::= Agent agent_number ( sentence ) | ANY ( sentence )
-    S2 ::= Skip ) | Over ) | Agent agent_number VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( sentence ) | ANY VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( sentence ) | VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( sentence )
+    S2 ::= Skip ) ( sentence ) | Over ) ( sentence ) | Agent agent_number VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( sentence ) | ANY VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( sentence ) | VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( sentence )
 
-    SS ::= Skip ) | Over ) | Agent agent_number VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( recsentence | ANY VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( recsentence | VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( recsentence 
+    SS ::= Skip ) ( recsentence | Over ) ( recsentence | Agent agent_number VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( recsentence | ANY VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( recsentence | VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( recsentence 
     recsentence ::= Skip ) | Over ) | Agent agent_number VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( rec2sentence | ANY VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( rec2sentence | VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) rec2sentence 
     rec2sentence ::= Skip ) | Over ) | Agent agent_number  VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( rec2sentence | ANY VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( rec2sentence | VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( rec2sentence | )
 
@@ -252,7 +258,7 @@ def aiwolf_protocol_grammar():
     non_terminals = {"sentence","VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY","TR","T","TSp","TSe","S2","SS",
                     "recsentence","rec2sentence","species","role",
                     "talk_number","agent_number","number","rec_number"}
-    terminals = {"Skip", "Over", "Agent","ESTIMATE", "COMMINGOUT", "DIVINATION", "GUARD", "VOTE", 
+    terminals = {"Skip", "Over", "Agent","ESTIMATE", "COMINGOUT", "DIVINATION", "GUARD", "VOTE", 
                     "ATTACK", "GUARDED", "VOTED", "ATTACKED", "DIVINED", "IDENTIFIED","AGREE", "DISAGREE", 
                     "REQUEST", "INQUIRE", "NOT", "BECAUSE", "XOR", "AND", "OR", "DAY",
                     "HUMAN", "WEREWOLF", "ANY", 
@@ -263,15 +269,15 @@ def aiwolf_protocol_grammar():
     start_symbol = "sentence"
     production_rules = {
         "sentence": ["Skip", "Over", "Agent agent_number VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY", "ANY VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY", "VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY"],
-        "VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY": ["ESTIMATE TR", "COMMINGOUT TR", "DIVINATION T", "GUARD T", "VOTE T", "ATTACK T", "GUARDED T", "VOTED T", "ATTACKED T", 
+        "VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY": ["ESTIMATE TR", "COMINGOUT TR", "DIVINATION T", "GUARD T", "VOTE T", "ATTACK T", "GUARDED T", "VOTED T", "ATTACKED T", 
                                             "DIVINED TSp", "IDENTIFIED TSp", "AGREE talk_number", "DISAGREE talk_number", "REQUEST TSe", "INQUIRE TSe", "NOT ( sentence )", 
                                             "BECAUSE ( S2", "XOR ( S2", "AND ( SS", "OR ( SS", "DAY number ( sentence )"],
         "TR": ["Agent agent_number role", "ANY role"],
         "T": ["Agent agent_number", "ANY"],
         "TSp": ["Agent agent_number species", "ANY species"],
         "TSe": ["Agent agent_number ( sentence )", "ANY ( sentence )"],
-        "S2" : ["Skip )", "Over )", "Agent agent_number VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( sentence )", "ANY VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( sentence )", "VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( sentence )"],
-        "SS" : ["Skip )", "Over )", "Agent agent_number VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( recsentence", "ANY VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( recsentence", "VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( recsentence"],
+        "S2" : ["Skip ) ( sentence )", "Over ) ( sentence )", "Agent agent_number VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( sentence )", "ANY VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( sentence )", "VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( sentence )"],
+        "SS" : ["Skip ) ( recsentence", "Over ) ( recsentence", "Agent agent_number VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( recsentence", "ANY VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( recsentence", "VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( recsentence"],
         "recsentence" :["Skip )", "Over )", "Agent agent_number VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( rec2sentence", "ANY VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( rec2sentence", "VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( rec2sentence"],
         "rec2sentence":["Skip )", "Over )", "Agent agent_number VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( rec2sentence", "ANY VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( rec2sentence", "VTR_VT_VTS_AGG_OTS_OS1_OS2_OSS_DAY ) ( rec2sentence", ")"],
         "species": ["HUMAN", "WEREWOLF", "ANY"],
@@ -455,6 +461,22 @@ def convert_day(s):
 
     # 文字列内のパターンにマッチする部分を変換
     s = re.sub(pattern, replace_func, s)
+    
+    # "DAY [数字]" を "DAY [各数字]" に変換する正規表現
+    pattern = r"(DAY) (\d+)"
+
+    # 文字列内のパターンにマッチする部分を変換する関数
+    def replace_func(match):
+        day_str = match.group(1)
+        digits = match.group(2)
+
+        # 数字を1桁ずつスペースで区切る
+        spaced_digits = ' '.join(list(digits))
+
+        return f"{day_str} {spaced_digits}"
+
+    # 文字列内のパターンにマッチする部分を変換
+    s = re.sub(pattern, replace_func, s)
 
     return s
     
@@ -474,6 +496,21 @@ def revert_day(s):
 
     # 文字列内のパターンにマッチする部分を変換
     s = re.sub(pattern, replace_func, s)
+    
+    # "DAY [各数字]" を "DAY [数字]" に変換する正規表現
+    pattern = r"(DAY)(?:\s+(\d))+"
+
+    # 文字列内のパターンにマッチする部分を変換する関数
+    def replace_func(match):
+        day_str = match.group(1)
+
+        # スペースで区切られた数字を連結
+        concatenated_digits = ''.join(match.groups()[1:])
+
+        return f"{day_str} {concatenated_digits}"
+
+    # 文字列内のパターンにマッチする部分を変換
+    s = re.sub(pattern, replace_func, s)
 
     return s
 
@@ -481,7 +518,7 @@ def convert_ID(s):
     # 文字列中の 'ID:' を'ID ' に変換
     s = s.replace('ID:', 'ID ')
     # "ID [数字]" を "ID [各数字]" に変換する正規表現
-    pattern = r"(ID)(\d+)"
+    pattern = r"(ID) (\d+)"
 
     # 文字列内のパターンにマッチする部分を変換する関数
     def replace_func(match):
@@ -518,45 +555,76 @@ def revert_ID(s):
     return s
     
 if __name__ == "__main__":
-    #first_set, follow_set, parse_tableのテスト
-    test_LL1Grammars()
-    #パーサーのテスト
-    test_grammar_parsers()
+    # #first_set, follow_set, parse_tableのテスト
+    # test_LL1Grammars()
+    # #パーサーのテスト
+    # test_grammar_parsers()
     
     aiwolf_grammar = aiwolf_protocol_grammar()
     
-    # 使用例1
-    partial_sentence = "Agent[01] ESTIMATE Agent[02]"
-    #convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence)) == partial_sentenceかどうかを確認
-    assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
-    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
-    # 使用例2
-    partial_sentence = "Agent[04] AGREE day4"
-    assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
-    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
+    # # 使用例1
+    # partial_sentence = "Agent[01] ESTIMATE Agent[02]"
+    # #convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence)) == partial_sentenceかどうかを確認
+    # assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
+    # print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
+    # # 使用例2
+    # partial_sentence = "Agent[04] AGREE day4"
+    # assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
+    # print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
     
-    # 使用例3
-    partial_sentence = "Agent[05] BECAUSE (Agent[06]"
-    assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
-    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
-    # 使用例4
-    partial_sentence = "BECAUSE (Agent[06]"
-    assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
-    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
-    # 使用例5
-    partial_sentence = "Agent[07] BECAUSE"
-    assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
-    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
-    # 使用例6
-    partial_sentence = "VOTE Agent[01]"
-    assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
-    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
-    # 使用例7
-    partial_sentence = "VOTE"
-    assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
-    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
-    # 使用例8:
-    partial_sentence = "AND (NOT (VOTE Agent[01])) (VOTE Agent[02])"
-    assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
-    print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
+    # # 使用例3
+    # partial_sentence = "Agent[05] BECAUSE (Agent[06]"
+    # assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
+    # print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
+    # # 使用例4
+    # partial_sentence = "BECAUSE (Agent[06]"
+    # assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
+    # print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
+    # # 使用例5
+    # partial_sentence = "Agent[07] BECAUSE"
+    # assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
+    # print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
+    # # 使用例6
+    # partial_sentence = "VOTE Agent[01]"
+    # assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
+    # print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
+    # # 使用例7
+    # partial_sentence = "VOTE"
+    # assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
+    # print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
+    # # 使用例8:
+    # partial_sentence = "AND (NOT (VOTE Agent[01])) (VOTE Agent[02])"
+    # assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
+    # print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
     
+    # protocol_generatorによって生成した文をパースしてみる
+    print("check ")
+    from protocol_generator import ProtocolGenerator
+    import random
+    generator = ProtocolGenerator(agent_num=5,max_day_numbers=15, max_ID_numbers=15)
+    
+    sentences_length_list = generator.generate_sentence(7)
+    for sentence,length in sentences_length_list:
+        #ランダムに文の長さを決めて文を生成
+        #先端の空白を削除
+        sentence = sentence.strip()
+        sentence_split = convert_protocol_to_ll1(sentence).replace("  "," ").strip()
+        sentence_split = sentence_split.split(' ')
+        #print(sentence_split)
+        stop_index = random.randint(0,len(sentence_split))
+        partial_sentence = " ".join(sentence_split[:stop_index]).strip()
+        try:
+            next_terminals = aiwolf_grammar.get_next_terminals(partial_sentence)
+        except Exception as e:
+            print( f"sentence:{sentence} \n partial_sentence:{partial_sentence} \n sentence_split:{sentence_split} \n stop_index:{stop_index}")
+            print(e)
+            raise e
+        if stop_index == len(sentence_split):
+            assert "ε" in next_terminals or not next_terminals, f"next_terminals:{next_terminals} \n sentence:{sentence} \n partial_sentence:{partial_sentence} \n sentence_split:{sentence_split} \n stop_index:{stop_index}"
+        else:
+            assert sentence_split[stop_index] in next_terminals, f"{sentence_split[stop_index]} not in {next_terminals} \n sentence:{sentence} \n partial_sentence:{partial_sentence} \n sentence_split:{sentence_split} \n stop_index:{stop_index}"
+
+    # # protocol_generator.pyで引っかかった文のデバッグ->OK
+    # partial_sentence = "NOT (Agent[01] BECAUSE (Over) (Skip"
+    # assert (convert_ll1_to_protocol(convert_protocol_to_ll1(partial_sentence))== partial_sentence)
+    # print(f"{partial_sentence}:",aiwolf_grammar.get_next_terminals(convert_protocol_to_ll1(partial_sentence)))
