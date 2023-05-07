@@ -40,6 +40,8 @@ class JpProtocolDataset(Dataset):
         
         protocol = str(self.target_protocol[index])
         protocol = convert_protocol_to_ll1(protocol).strip()
+        #小文字に変換
+        protocol = protocol.lower()
         protocol = ' '.join(protocol.split())
             
         source = self.tokenizer.batch_encode_plus([nl], max_length=self.source_len, pad_to_max_length=True, return_tensors='pt', truncation=True)
@@ -131,16 +133,16 @@ def main():
     # WandB – Config is a variable that holds and saves hyperparameters and inputs
     # Defining some key variables that will be used later on in the training  
     config = wandb.config          # Initialize config
-    config.TRAIN_BATCH_SIZE = 2    # input batch size for training (default: 64)
-    config.VALID_BATCH_SIZE = 2    # input batch size for testing (default: 1000)
-    config.TRAIN_EPOCHS = 2        # number of epochs to train (default: 10)
+    config.TRAIN_BATCH_SIZE = 32    # input batch size for training (default: 64)
+    config.VALID_BATCH_SIZE = 32    # input batch size for testing (default: 1000)
+    config.TRAIN_EPOCHS = 10        # number of epochs to train (default: 10)
     config.VAL_EPOCHS = 1 
     config.LEARNING_RATE = 1e-4    # learning rate (default: 0.01)
     config.SEED = 42               # random seed (default: 42)
     
     
     config.NL_MAX_LEN = 512
-    config.PROTOCOL_MAX_LEN = 50
+    config.PROTOCOL_MAX_LEN = 128
 
     # Set random seeds and deterministic pytorch for reproducibility
     torch.manual_seed(config.SEED) # pytorch random seed
@@ -148,13 +150,13 @@ def main():
     torch.backends.cudnn.deterministic = True
 
     # tokenzier for encoding the text
-    tokenizer = T5Tokenizer.from_pretrained("t5-small")
+    #tokenizer = T5Tokenizer.from_pretrained("t5-small")
     
 
     # Importing and Pre-Processing the domain data
     # Selecting the needed columns only. 
     # Adding the summarzie text in front of the text. This is to format the dataset similar to how T5 model was trained for summarization task. 
-    df = pd.read_csv('/home/takuya/HDD1/work/AI_Wolf/2023S_AIWolfK2B/tmp/data/protocol_jp_dataset_small.csv',encoding='utf-8')
+    df = pd.read_csv('/root/work/AIWolfK2B/data/protocol_jp_dataset_all.csv',encoding='utf-8')
     
     df.columns = ['protocol','natural_language']
     
@@ -209,13 +211,17 @@ def main():
         train(epoch, tokenizer, model, device, training_loader, optimizer)
 
 
+    #モデルを学習させた時刻を末尾に追加して保存
+    import datetime
+    torch.save(model.state_dict(),f"/root/work/AIWolfK2B/models/model_weight_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.pth")
+
     # Validation loop and saving the resulting file with predictions and acutals in a dataframe.
     # Saving the dataframe as predictions.csv
     print('Now generating summaries on our fine tuned model for the validation dataset and saving it in a dataframe')
     for epoch in range(config.VAL_EPOCHS):
         predictions, actuals = validate(epoch, tokenizer, model, device, val_loader)
         final_df = pd.DataFrame({'Generated Text':predictions,'Actual Text':actuals})
-        final_df.to_csv('/home/takuya/HDD1/work/AI_Wolf/2023S_AIWolfK2B/tmp/models/listener_predictions.csv')
+        final_df.to_csv('/root/work/AIWolfK2B/models/listener_predictions_all.csv')
         print('Output Files generated for review')
 
 if __name__ == '__main__':
