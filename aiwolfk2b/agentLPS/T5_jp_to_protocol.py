@@ -121,7 +121,7 @@ class T5JPToProtocolConverter(JPToProtocolConverter):
         ])
         
     def convert(self, text_list: List[str]) -> List[str]:
-        input = self.tokenizer.batch_encode_plus(text_list, max_length=512, pad_to_max_length=True, return_tensors='pt', truncation=True)
+        input = self.tokenizer.batch_encode_plus(text_list, max_length=512, padding='max_length', return_tensors='pt', truncation=True)
         
         outputs = self.model.generate(
         input["input_ids"],
@@ -130,7 +130,8 @@ class T5JPToProtocolConverter(JPToProtocolConverter):
         num_return_sequences=1,
         no_repeat_ngram_size=1,
         remove_invalid_values=True,
-        logits_processor=self.logits_processor
+        logits_processor=self.logits_processor,
+        max_length = 64,
         )
         
         return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
