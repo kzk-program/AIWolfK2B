@@ -52,7 +52,10 @@ class ConstrainedLogitsProcessor(LogitsProcessor):
                 print("possible_terminals:",possible_terminals)
                 for terminal in possible_terminals:
                     terminal_tokens = self.tokenizer.encode(terminal)
-                    possible_tokens_ids.add(terminal_tokens[1 + 0])
+                    next_token_id = 0
+                    if terminal_tokens[0] == 262:
+                        next_token_id += 1
+                    possible_tokens_ids.add(terminal_tokens[next_token_id])
                 
             #最後のトークンが空白
             elif input_ids[idx][-1] == self.space_token_id:
@@ -61,7 +64,10 @@ class ConstrainedLogitsProcessor(LogitsProcessor):
                 print("possible_terminals:",possible_terminals)
                 for terminal in possible_terminals:
                     terminal_tokens = self.tokenizer.encode(terminal)
-                    possible_tokens_ids.add(terminal_tokens[1 + 0])
+                    next_token_id = 0
+                    if terminal_tokens[0] == 262:
+                        next_token_id += 1
+                    possible_tokens_ids.add(terminal_tokens[next_token_id])
                     
             #最後のトークンが空白でない場合は単語の生成中なので最後の単語を削除し、得られる終端記号の候補の中から部分文字列になっているものを取り出すand 空白の追加
             else:
@@ -69,7 +75,9 @@ class ConstrainedLogitsProcessor(LogitsProcessor):
                 last_terminal = protocol_split[-1]
                 # print("last_terminal:",last_terminal)
                 last_terminal_tokens = self.tokenizer.encode(last_terminal)
-                last_terminal_tokens_len = len(last_terminal_tokens)
+                if last_terminal_tokens[0] == 262:
+                    last_terminal_tokens = last_terminal_tokens[1:]
+                last_terminal_tokens_len = len(last_terminal_tokens) -1
 
                 possible_terminals = self.grammar.get_next_terminals(" ".join(protocol_split[:-1]))
                 # print("possible_terminals:",possible_terminals)
@@ -84,7 +92,10 @@ class ConstrainedLogitsProcessor(LogitsProcessor):
                             possible_tokens_ids.add(self.space_token_id)
                         else:
                             terminal_tokens = self.tokenizer.encode(terminal)
-                            possible_tokens_ids.add(terminal_tokens[last_terminal_tokens_len -1])
+                            next_token_id = last_terminal_tokens_len
+                            if terminal_tokens[0] == 262:
+                                terminal_tokens = terminal_tokens[1:]
+                            possible_tokens_ids.add(terminal_tokens[next_token_id])
                             
             #もし、得られる終端記号の候補がない場合は、終了記号を追加
             if len(possible_tokens_ids) == 0:
