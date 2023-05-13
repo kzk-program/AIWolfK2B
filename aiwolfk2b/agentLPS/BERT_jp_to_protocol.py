@@ -2,6 +2,7 @@
 import torch
 from transformers import BertJapaneseTokenizer, BertModel
 import pytorch_lightning as pl
+from jp_to_protocol_converter import JPToProtocolConverter
 
 from aiwolfpy.protocol.contents import *
 
@@ -223,7 +224,7 @@ def calc_protocol_from_scores(scores):
     return protocol
 
 
-class JPToProtocolConverter:
+class BERTJPToProtocolConverter(JPToProtocolConverter):
     def __init__(self):
         # 日本語の事前学習モデルを指定
         MODEL_NAME = "cl-tohoku/bert-base-japanese-whole-word-masking"
