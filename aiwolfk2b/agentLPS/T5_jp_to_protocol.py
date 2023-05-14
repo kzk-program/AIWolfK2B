@@ -118,8 +118,6 @@ class T5JPToProtocolConverter(JPToProtocolConverter):
         self.model_path = MODEL_PATH
         
         self.model:T5ForConditionalGeneration = T5ForConditionalGeneration.from_pretrained(MODEL_NAME)
-        if model_path != "":
-            self.model.load_state_dict(torch.load(MODEL_PATH,map_location=torch.device(device)))
         self.tokenizer:T5Tokenizer = T5Tokenizer.from_pretrained(MODEL_NAME)
         
         # プロトコル変換用に文法の準備
@@ -132,6 +130,9 @@ class T5JPToProtocolConverter(JPToProtocolConverter):
         new_tokens = self.protocol_grammar.terminals - set(self.tokenizer.get_vocab().keys())
         self.tokenizer.add_tokens(list(new_tokens))
         self.model.resize_token_embeddings(len(self.tokenizer))
+        #学習したモデルがあれば読み込む
+        if MODEL_PATH != "":
+            self.model.load_state_dict(torch.load(MODEL_PATH,map_location=torch.device(device)))
         
     def convert(self, text_list: List[str]) -> List[str]:
         input = self.tokenizer.batch_encode_plus(text_list, max_length=128, padding='max_length', return_tensors='pt', truncation=True)
