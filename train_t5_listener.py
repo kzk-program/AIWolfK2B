@@ -41,7 +41,7 @@ class JpProtocolDataset(Dataset):
         protocol = str(self.target_protocol[index])
         protocol = convert_protocol_to_ll1(protocol).strip()
         #小文字に変換
-        protocol = protocol.lower()
+        #protocol = protocol.lower()
         protocol = ' '.join(protocol.split())
             
         source = self.tokenizer.batch_encode_plus([nl], max_length=self.source_len, pad_to_max_length=True, return_tensors='pt', truncation=True)
@@ -127,6 +127,13 @@ def main():
     model :T5ForConditionalGeneration = T5ForConditionalGeneration.from_pretrained(PRETRAINED_MODEL_NAME)
     tokenizer :T5Tokenizer = T5Tokenizer.from_pretrained(PRETRAINED_MODEL_NAME)
     
+    # プロトコル変換用に文法の準備
+    protocol_grammar: LL1Grammar = aiwolf_protocol_grammar()
+    #トークナイザーにLL1文法の終端記号を追加し、モデルのトークナイザーをリサイズ
+    new_tokens = protocol_grammar.terminals - set(tokenizer.get_vocab().keys())
+    tokenizer.add_tokens(list(new_tokens))
+    model.resize_token_embeddings(len(tokenizer))
+    
     # WandB – Initialize a new run
     wandb.init(project="jp_protocol_translation")
 
@@ -137,12 +144,12 @@ def main():
     config.VALID_BATCH_SIZE = 32    # input batch size for testing (default: 1000)
     config.TRAIN_EPOCHS = 10        # number of epochs to train (default: 10)
     config.VAL_EPOCHS = 1 
-    config.LEARNING_RATE = 1e-4    # learning rate (default: 0.01)
+    config.LEARNING_RATE = 1e-3    # learning rate (default: 0.01)
     config.SEED = 42               # random seed (default: 42)
     
     
     config.NL_MAX_LEN = 512
-    config.PROTOCOL_MAX_LEN = 128
+    config.PROTOCOL_MAX_LEN = 32
 
     # Set random seeds and deterministic pytorch for reproducibility
     torch.manual_seed(config.SEED) # pytorch random seed
@@ -156,7 +163,7 @@ def main():
     # Importing and Pre-Processing the domain data
     # Selecting the needed columns only. 
     # Adding the summarzie text in front of the text. This is to format the dataset similar to how T5 model was trained for summarization task. 
-    df = pd.read_csv('/root/work/AIWolfK2B/data/protocol_jp_dataset_all.csv',encoding='utf-8')
+    df = pd.read_csv('./data/protocol_jp_dataset_all.csv',encoding='utf-8')
     
     df.columns = ['protocol','natural_language']
     
