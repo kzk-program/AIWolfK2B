@@ -39,6 +39,8 @@ class ConstrainedLogitsProcessor(LogitsProcessor):
         #一度文章に変換
         protocol_batch = self.tokenizer.batch_decode(input_ids,skip_special_tokens=True)
         valid_tokens_ids = []
+        agent_numbers_ids_1_15 = {2072, 1905, 2078, 2458, 2357, 2195, 2227, 2246, 2224,333,359,350,491,506,423}
+        numbers_ids_0_9 = {942, 291, 293, 294, 306, 320, 331, 334, 337, 341}
         #各文章をスペースで分割
         for idx,protocol in enumerate(protocol_batch):
             possible_tokens_ids = set()
@@ -49,15 +51,19 @@ class ConstrainedLogitsProcessor(LogitsProcessor):
             if protocol == "":
                 #最初に来るトークンの候補を取得
                 possible_terminals = self.grammar.first_sets[self.grammar.start_symbol]
-                print("possible_terminals:",possible_terminals)
+                # print("possible_terminals:",possible_terminals)
                 for terminal in possible_terminals:
                     terminal_token_id = self.tokenizer.convert_tokens_to_ids(terminal)
                     possible_tokens_ids.add(terminal_token_id)
-            #最後のトークンが262の場合、次にありえるトークンを設定
-            elif input_ids[idx][-1] == 262:
-                #")"が該当する
-                possible_tokens_ids.add(268)#")"
-            
+            #最後のトークンが"day"の場合、次にありえるトークンを設定
+            elif input_ids[idx][-1] == 2726: # "day" <-> 2726
+                possible_tokens_ids.add(262)#" " <-> 262
+            #最後のトークンが01~15の場合、次にありえるトークンを設定
+            elif input_ids[idx][-1] in agent_numbers_ids_1_15:
+                possible_tokens_ids.add(262)#" " <-> 262
+            #最後のトークンが01~09の場合、次にありえるトークンを設定
+            elif input_ids[idx][-1] in numbers_ids_0_9:
+                possible_tokens_ids.add(262)#" " <-> 262
             
             # #最後のトークンが262の場合、次にありえるトークンを設定
             # elif input_ids[idx][-1] == 262:
@@ -73,13 +79,18 @@ class ConstrainedLogitsProcessor(LogitsProcessor):
             #次に来る終端記号がそのまま続く
             else:    
                 possible_terminals = self.grammar.get_next_terminals(protocol)
-                print("possible_terminals:",possible_terminals)
+                # print("possible_terminals:",possible_terminals)
                 for terminal in possible_terminals:
                     terminal_token_id = self.tokenizer.convert_tokens_to_ids(terminal)
                     if terminal != "(":
                         possible_tokens_ids.add(terminal_token_id)
                     elif terminal == ")":
-                        possible_tokens_ids.add(262) #"number )"を実現するために、262を追加
+                        if input_ids[idx][-1] == 262: #すでに　空白(262)がある場合
+                            possible_tokens_ids.add(268)
+                        else:
+                            possible_tokens_ids.add(262) #"number )"を実現するために、262を追加
+                    elif terminal == "ε":
+                        possible_tokens_ids.add(self.tokenizer.eos_token_id)
                     else:
                         possible_tokens_ids.add(290)
                     
@@ -93,7 +104,7 @@ class ConstrainedLogitsProcessor(LogitsProcessor):
 
         #print("eos_token_id:{}".format(self.tokenizer.eos_token_id))
         print("valid_token_ids:{}".format(valid_tokens_ids))
-        print("scores.shape:{}".format(scores.shape))
+        # print("scores.shape:{}".format(scores.shape))
 
         for batch_idx in range(scores.shape[0]):
             for token_id in range(scores.shape[1]):
@@ -110,7 +121,7 @@ class T5JPToProtocolConverter(JPToProtocolConverter):
         else:
             MODEL_NAME = model_name
         if model_path == "default":
-            MODEL_PATH = current_dir + "/jp2protocol_model/t5_upper_20230507.pth"
+            MODEL_PATH = current_dir + "/jp2protocol_model/t5_upper_20230514_1.pth"
         else:
             MODEL_PATH = model_path
             
@@ -138,15 +149,17 @@ class T5JPToProtocolConverter(JPToProtocolConverter):
         input = self.tokenizer.batch_encode_plus(text_list, max_length=128, padding='max_length', return_tensors='pt', truncation=True)
         
         outputs = self.model.generate(
-        input["input_ids"],
+        inputs=input["input_ids"],
+        attention_mask=input["attention_mask"],
         #force_words_ids=self.force_words_ids,
         num_beams=5,
+        do_sample=True,
         num_return_sequences=1,
-        no_repeat_ngram_size=4,
+        no_repeat_ngram_size=0,
         remove_invalid_values=True,
         logits_processor=self.logits_processor,
         max_length = 16,
-        early_stopping=True
+        early_stopping=True,
         )
         
         return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
