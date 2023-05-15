@@ -59,10 +59,12 @@ class ConstrainedLogitsProcessor(LogitsProcessor):
             elif input_ids[idx][-1] == 2726: # "day" <-> 2726
                 possible_tokens_ids.add(262)#" " <-> 262
             #最後のトークンが01~15の場合、次にありえるトークンを設定
-            elif input_ids[idx][-1] in agent_numbers_ids_1_15:
+            elif int(input_ids[idx][-1]) in agent_numbers_ids_1_15:
+                # print("in agent_numbers_ids_1_15")
                 possible_tokens_ids.add(262)#" " <-> 262
-            #最後のトークンが01~09の場合、次にありえるトークンを設定
-            elif input_ids[idx][-1] in numbers_ids_0_9:
+            #最後のトークンが0~9の場合、次にありえるトークンを設定
+            elif int(input_ids[idx][-1]) in numbers_ids_0_9:
+                # print("in numbers_ids_0_9")
                 possible_tokens_ids.add(262)#" " <-> 262
             
             # #最後のトークンが262の場合、次にありえるトークンを設定
@@ -82,8 +84,8 @@ class ConstrainedLogitsProcessor(LogitsProcessor):
                 # print("possible_terminals:",possible_terminals)
                 for terminal in possible_terminals:
                     terminal_token_id = self.tokenizer.convert_tokens_to_ids(terminal)
-                    if terminal != "(":
-                        possible_tokens_ids.add(terminal_token_id)
+                    if terminal == "(":
+                        possible_tokens_ids.add(290)
                     elif terminal == ")":
                         if input_ids[idx][-1] == 262: #すでに　空白(262)がある場合
                             possible_tokens_ids.add(268)
@@ -92,7 +94,7 @@ class ConstrainedLogitsProcessor(LogitsProcessor):
                     elif terminal == "ε":
                         possible_tokens_ids.add(self.tokenizer.eos_token_id)
                     else:
-                        possible_tokens_ids.add(290)
+                        possible_tokens_ids.add(terminal_token_id)
                     
                     
                             
@@ -121,7 +123,7 @@ class T5JPToProtocolConverter(JPToProtocolConverter):
         else:
             MODEL_NAME = model_name
         if model_path == "default":
-            MODEL_PATH = current_dir + "/jp2protocol_model/t5_upper_20230514_1.pth"
+            MODEL_PATH = current_dir + "/jp2protocol_model/t5_upper_20230514_3.pth"
         else:
             MODEL_PATH = model_path
             
@@ -153,10 +155,11 @@ class T5JPToProtocolConverter(JPToProtocolConverter):
         attention_mask=input["attention_mask"],
         #force_words_ids=self.force_words_ids,
         num_beams=5,
-        do_sample=True,
+        temperature=1,
+        #do_sample=True,
         num_return_sequences=1,
         no_repeat_ngram_size=0,
-        remove_invalid_values=True,
+        remove_invalid_values=False,
         logits_processor=self.logits_processor,
         max_length = 16,
         early_stopping=True,
@@ -171,32 +174,32 @@ def unit_test_T5JPToProtocolConverter():
     # 入力する文章
     text_list = [
         "Agent[03]はAgent[08]が狼だと推測する",
-        "Agent[06]はAgent[06]が占い師だとカミングアウトする",
-        "Agent[12]が占った結果Agent[10]は人狼だった",
-        "Agent[12]が占った結果Agent[10]は人間だった",
-        "Agent[08]が襲われたAgent[05]を霊媒すると人間だった",
-        "Agent[05]はAgent[10]を護衛した",
-        "Agent[10]はAgent[12]に投票する",
-        "Agent[06]はAgent[08]が狼だと思う",
-        "私が占い師です",
-        "Agent[12]が占った結果、Agent[10]は人狼でした",
-        "Agent[12]が占った結果、Agent[10]は人間でした",
-        "Agent[12]がAgent[05]を霊媒すると人間でした",
-        "Agent[12]はAgent[10]を守った",
-        "Agent[10]はAgent[12]に投票します",
-        "Agent[08]が狼だと思う",
-        "私が占い師です",
-        "占った結果、Agent[10]は人狼でした",
-        "占った結果、Agent[10]は人間でした",
-        "Agent[05]を霊媒すると人間でした",
-        "私はAgent[10]を守った",
-        "私はAgent[12]に投票します",
+        # "Agent[06]はAgent[06]が占い師だとカミングアウトする",
+        # "Agent[12]が占った結果Agent[10]は人狼だった",
+        # "Agent[12]が占った結果Agent[10]は人間だった",
+        # "Agent[08]が襲われたAgent[05]を霊媒すると人間だった",
+        # "Agent[05]はAgent[10]を護衛した",
+        # "Agent[10]はAgent[12]に投票する",
+        # "Agent[06]はAgent[08]が狼だと思う",
+        # "私が占い師です",
+        # "Agent[12]が占った結果、Agent[10]は人狼でした",
+        # "Agent[12]が占った結果、Agent[10]は人間でした",
+        # "Agent[12]がAgent[05]を霊媒すると人間でした",
+        # "Agent[12]はAgent[10]を守った",
+        # "Agent[10]はAgent[12]に投票します",
+        # "Agent[08]が狼だと思う",
+        # "私が占い師です",
+        # "占った結果、Agent[10]は人狼でした",
+        # "占った結果、Agent[10]は人間でした",
+        # "Agent[05]を霊媒すると人間でした",
+        # "私はAgent[10]を守った",
+        # "私はAgent[12]に投票します",
     ]
     protocol = converter.convert([text])
     print("one text:",protocol)
     
-    # protocols = converter.convert(text_list)
-    # print("text_list:", protocols)
+    protocols = converter.convert(text_list)
+    print("text_list:", protocols)
 
 if __name__ == "__main__":
     # 単体テストコード
