@@ -9,7 +9,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 class AIChat:
     def __init__(self):
         with open(current_dir + 'openAIAPIkey.txt', "r") as f:
-            openai.api_key = f.read()
+            openai.api_key = f.read().strip()
         #log_paths = ['./werewolf_jp_examples/examples_for_gptinput_1.txt']
         log_paths = []
         self.examples = "人狼ゲームを行います。\n"
