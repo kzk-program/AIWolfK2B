@@ -58,6 +58,7 @@ class SimpleSpeaker(object):
                 role = random.choice(self.role_dict[c.role])
                 candidates.append(c.subject + "は"+c.target + "が"+role+"だと思ってるよね")
                 candidates.append(c.subject + "的には"+c.target + "が"+role+"ってなるはず")
+
                 if c.role == "WEREWOLF":
                     candidates.append(c.subject + "的には"+c.target + "が黒く見えてるだろう")
                 return random.choice(candidates)
@@ -115,7 +116,7 @@ class SimpleSpeaker(object):
             else:
                 subject = c.subject + random.choice(['は'])
                 
-            verb_dict = {"DIVINATION":["を占う", "の役を見る"], "GUARD":["を護衛する", "を守る", "を護衛先に指定する"], "VOTE":["に投票する", "に入れる","を吊る"], "ATTACK":["を襲撃する", "殺す", "襲う"], "GUARDED":["を護衛した", "を守った", "を護衛先に選択した"], "VOTED":["に投票した","に入れた" ,"を吊ろうとした"], "ATACKED":["を襲撃した", "を殺した", "を襲った"]}
+            verb_dict = {"DIVINATION":["を占う", "の役を見る"], "GUARD":["を護衛する", "を守る", "を護衛先に指定する"], "VOTE":["に投票する", "に入れる","を吊る"], "ATTACK":["を襲撃する", "を殺す", "を襲う"], "GUARDED":["を護衛した", "を守った", "を護衛先に選択した"], "VOTED":["に投票した","に入れた" ,"を吊ろうとした"], "ATACKED":["を襲撃した", "を殺した", "を襲った"]}
             candidates = [subject + target + random.choice(verb_dict[c.verb])]
 
             """ if c.verb == "DIVINATION":
@@ -132,7 +133,6 @@ class SimpleSpeaker(object):
                 if c.subject not in self.subject_dict:
                     subject = c.subject + random.choice(['は'])
                 candidates = [subject + target + "に投票する"]
-
             elif c.verb == "ATTACK":
                 if c.subject not in  self.subject_dict:
                     subject = c.subject + random.choice(['は'])
@@ -269,4 +269,3 @@ if __name__ == "__main__":
         ]
     for prompt in prompts:
         get_test_dataset(prompt)
-        

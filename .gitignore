@@ -1,6 +1,18 @@
+#APIkey
+openAIAPIkey.txt
+
+# log file
+log_sending_to_gpt.txt
+log.txt
+
 tmp/
 gamelog/
 jp2protocol_corpus/
+
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+*$py.class
+
 
 *.egg-info/
 *__pycache__/

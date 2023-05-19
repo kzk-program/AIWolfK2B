@@ -100,3 +100,40 @@ export PYTHONPATH="${PYTHONPATH}:${PWD}/../AIWolfK2B/OKAMI"
 - 上はLinuxでの実行方法を示したものです。他のOSを使う場合はコマンドを適宜修正する必要があります。
 - pythonの仮想環境を新たに作ってそこにパッケージをインストールしたほうが良いです。
 - AutoStarter.shを実行するために、権限を変更する必要があるかもしれません。
+
+## GPT_end_to_endの実行方法
+
+### OpenAI APIを用意する
+
+1. [https://openai.com/blog/openai-api](https://openai.com/blog/openai-api) から新規登録する
+2. 右上の自分のアカウントをクリック→View API keys
+3. Create new secret keyをクリック
+4. なんでもいいのでAPIキーを命名
+5. APIキーをコピーしてどこかに保存しておく。(Doneを押すともうキーを見れなくなるので、そうなったらもう1個発行してください)
+
+### 実行
+
+1. GPT_end_to_endにあるgpt3_agent.pyと同じ階層に新しいtxtファイル「openAIAPIkey.txt」を作り、用意したChatGPTのAPIキーを貼り付ける。
+2. AutoStarter.iniにgpt3_agent.pyを追加する。(一つだけgpt3_agentで、他はagentLPSでやるのが今のところおすすめ)
+    
+    ```
+    PythonPlayer4,python,../AIWolfK2B/aiwolfk2b/GPT_end_to_end/gpt3_agent.py
+    ```
+    
+3. AutoStartr.iniのgameを書き換えて試合数を1試合にしておく(これをしないとGPTの使用料がかさむ)
+
+```jsx
+game = 1
+```
+
+4. 以下を実行　(conda等の開発環境を用意している場合はそこにインストール)
+
+```bash
+pip install openai
+pip install Levenshtein
+```
+
+5. AutoStarter.shを走らせる
+```bash
+./AutoStarter.sh
+```
