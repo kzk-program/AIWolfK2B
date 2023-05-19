@@ -1,43 +1,139 @@
-# AIWolfPy
+# プログラムの動かし方
 
-Create python agents that can play Werewolf, following the specifications of the [AIWolf Project](http://aiwolf.org)
+# インストール
 
-This has been forked from the official repository by the AIWolf project, and was originally created by [Kei Harada](https://github.com/k-harada).
+## 人狼知能プラットフォームのインストール
 
-# Changelog:
+1. [aiwolf-ver0.6.3.zip](http://aiwolf.org/server)をダウンロードして作業フォルダに展開
+2. SampleSetting.cfgの以下の部分を変更
+    
+    ```bash
+    ...
+    # 発話文字列の違反チェックを行うかどうか
+    # whether or not the text in talk/whisper is validated
+    isValidateUtterance = true # false -> true
+    
+    ...
+    # リクエスト応答時間の上限(ms)
+    # time limit for the response to the request(ms)
+    timeLimit = 10000 # 1000 -> 10000
+    ...
+    ```
+    
+    ※日本語でのやり取りではprotocolの構文チェックを無効にする必要があり、日本語での処理には時間がかかるので、リクエスト応答時間の上限を十倍にしている。
+    
 
-## Version 0.4.9a
-* Added support material in English
+## AIWolfK2Bのインストール
 
-## Version 0.4.9
-* Changed differential structure (diff_data) into a DataFrame
+以下のコマンドを作業フォルダで行い、リポジトリをクローンしてくる
 
-## Version 0.4.4
-* removed daily_finish
-* Added update callback (with request parameter)
-* Connecting is now done through a instance, not a class
+```bash
+git clone https://github.com/kzk-program/AIWolfK2B
+cd [path to AIWolfK2B]
+#ブランチを切り替え
+git checkout develop
+#submoduleの初期化
+git submodule init
+git submodule update
+```
 
-## Version 0.4.0
-* Support for python3
-* Made file structure much simpler
+実行に必要なパッケージをインストール
 
-# Running the agent and the server locally:
-* Download the AIWolf platform from the [AIWolf public website] (http://www.aiwolf.org/server/)
-	* Don't forget that the local AIWolf server requires JDK 11
-* Start the server with `./StartServer.sh`
-	* This runs a Java application. Select the number of players, the connection port, and press "Connect".
-* In another terminal, run the client management application `./StartGUIClient.sh`
-	* Another Java application is started. Select the client jar file (sampleclient.jar), the sample client pass, and the port configured for the server.
-	* Press "Connect" for each instance of the sample agent you wish to connect.
-* Run the python agent from this repository, with the command: `./python_sample.py -h [hostname] -p [port]`
-* On the server application, press "Start Game".
-  * The server application will print the log to the terminal, and also to the application window. Also, a log file will be saved on "./log".
-* You can see a fun visualization using the "log viewer" program.
+```bash
+cd [path to AIWolfK2B]
+pip install AIWolfPy/
+pip install -e .
+```
 
-# Running the agent on the AIWolf competition server:
-* After you create your account in the competition server, make sure your client's name is the same as your account's name.
-* The python packages available at the competition server are listed in this [page](http://aiwolf.org/python_modules)
-* You can expect that the usual packages + numpy, scipy, pandas, scikit-learn are available.
-	* Make sure to check early with the competition runners, specially if you want to use something like an specific version of tensorflow.
-	* The competition rules forbid running multiple threads. Numpy and Chainer are correctly set-up server side, but for tensorflow you must make sure that your program follows this rule. Please see the following [post](http://aiwolf.org/archives/1951)
-* For more information, a tutorial from the original author of this package can be seen in this [slideshare](https://www.slideshare.net/HaradaKei/aiwolfpy-v049) (in Japanese).
+### agentLPSのモデルのダウンロード
+
+[リンク](https://drive.google.com/file/d/1bdND3nUUORjQyAkipM_NAEuglDpH54bC/view?usp=share_link)からモデルのパラメータ「bert_scml20230128.pth」をダウンロードし、以下のように配置する。
+
+```bash
+[path to your working directory]/AIWolfK2B/aiwolfk2b/agentLPS/jp2protocol_model/bert_scml20230128.pth
+```
+
+以上によりインストールは終了
+
+インストール終了後のディレクトリ構成は以下になる
+
+```bash
+.
+├── AIWolfK2B
+│   ├── aiwolfk2b
+│   ├── aiwolfk2b.egg-info
+│   ├── AIWolfPy
+│   ├── build
+│   ├── env_k2b
+│   └── OKAMI
+└── AIWolf-ver0.6.3
+```
+
+# 実行方法
+
+## AutoStarterを用いた実行方法
+
+### 準備
+
+AutoStarterを使って実行するためには、AutoStarter.iniで実行するエージェントのパスを指定する必要があるので、これを準備する。
+
+例えば、agentLPSを動かしたい場合、以下の文をAutoStarter.iniに追加する。
+
+```bash
+PythonPlayer4,python,../AIWolfK2B/aiwolfk2b/agentLPS/protocol_wrapper_agent.py
+```
+
+### 実行
+
+```bash
+cd [path to AIWolf-ver0.6.3]
+#プログラムの実行に必要なパスを通す
+export PYTHONPATH="${PYTHONPATH}:${PWD}/../AIWolfK2B/OKAMI"
+
+#プログラムを実行
+./AutoStarter.sh
+```
+
+# 注意事項
+
+- agentLPSを動かすためには、VRAM 2GB以上のGPUが必要です。
+- 上はLinuxでの実行方法を示したものです。他のOSを使う場合はコマンドを適宜修正する必要があります。
+- pythonの仮想環境を新たに作ってそこにパッケージをインストールしたほうが良いです。
+- AutoStarter.shを実行するために、権限を変更する必要があるかもしれません。
+
+## GPT_end_to_endの実行方法
+
+### OpenAI APIを用意する
+
+1. [https://openai.com/blog/openai-api](https://openai.com/blog/openai-api) から新規登録する
+2. 右上の自分のアカウントをクリック→View API keys
+3. Create new secret keyをクリック
+4. なんでもいいのでAPIキーを命名
+5. APIキーをコピーしてどこかに保存しておく。(Doneを押すともうキーを見れなくなるので、そうなったらもう1個発行してください)
+
+### 実行
+
+1. GPT_end_to_endにあるgpt3_agent.pyと同じ階層に新しいtxtファイル「openAIAPIkey.txt」を作り、用意したChatGPTのAPIキーを貼り付ける。
+2. AutoStarter.iniにgpt3_agent.pyを追加する。(一つだけgpt3_agentで、他はagentLPSでやるのが今のところおすすめ)
+    
+    ```
+    PythonPlayer4,python,../AIWolfK2B/aiwolfk2b/GPT_end_to_end/gpt3_agent.py
+    ```
+    
+3. AutoStartr.iniのgameを書き換えて試合数を1試合にしておく(これをしないとGPTの使用料がかさむ)
+
+```jsx
+game = 1
+```
+
+4. 以下を実行　(conda等の開発環境を用意している場合はそこにインストール)
+
+```bash
+pip install openai
+pip install Levenshtein
+```
+
+5. AutoStarter.shを走らせる
+```bash
+./AutoStarter.sh
+```
