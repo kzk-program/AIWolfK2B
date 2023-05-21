@@ -5,6 +5,7 @@ import re
 from selenium import webdriver
 import chromedriver_binary  # Adds chromedriver binary to path
 import time
+import random
 
 class GameLogParser:
     def __init__(self, url: str, output_file: str):
@@ -294,7 +295,8 @@ class GameLogParser:
                             '平和な朝を迎えました': 'no one died',
                             '投票時間になりました。時間内に処刑の対象を決定してください': 'vote start',
                             "引き分けのため、再投票になりました": 'vote restart',
-                            "村民の多くがスキップを選択しました。": 'skiped and begin to vote'}
+                            "村民の多くがスキップを選択しました。": 'skiped and begin to vote',
+                            "生存者全員が廃村に同意しました。": "game is canceled by all players"}
         skip_results = ["GMの処理により","夜が開けようとしている",
                         "以下のとおり、名前をランダムに割当てました",
                         "この村ではランダムにCNが割当てられています。",
@@ -343,7 +345,7 @@ if __name__ == '__main__':
     url_prefix = "https://ruru-jinro.net/"
 
     #スクレイピング
-    for i in range(1,3):
+    for i in range(4,5):
         try:
             url_base = f"https://ruru-jinro.net/searchresult.jsp?st={i}&sort=NUMBER"
             driver = webdriver.Chrome()
@@ -378,4 +380,4 @@ if __name__ == '__main__':
                     output_file = f"/home/takuya/HDD1/work/AI_Wolf/2023S_AIWolfK2B/aiwolfk2b/utils/output/log_{number_str}.txt"
                     parser = GameLogParser(url, output_file)
                     parser.parse()
-                    time.sleep(10)
+                    time.sleep(30 + random.random() * 10)
