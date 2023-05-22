@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import requests
-from bs4 import BeautifulSoup, ResultSet
+from bs4 import BeautifulSoup, ResultSet, Tag
 import re
 from selenium import webdriver
 import chromedriver_binary  # Adds chromedriver binary to path
 import time
 import random
+from typing import List
 
 class GameLogParser:
     def __init__(self, url: str, output_file: str):
@@ -19,7 +20,7 @@ class GameLogParser:
         self.output_buffer = []
         self.output_buffer.append("url," + url)
         
-    def add_output(self, data):
+    def add_output(self, data:str):
         print(data)
         self.output_buffer.append(data)
             
@@ -47,7 +48,7 @@ class GameLogParser:
             
         self.output_file()
 
-    def parse_end_game_info(self, end_game_divs):
+    def parse_end_game_info(self, end_game_divs: ResultSet):
         # ゲーム終了時の情報を取得
         for div in end_game_divs:
             class_name = div.get('class')[0]
@@ -58,13 +59,13 @@ class GameLogParser:
             else:
                 raise Exception(f"error: div class is {class_name}")
 
-    def parse_end_day(self, div):
+    def parse_end_day(self, div: Tag):
         # ゲーム終了時点の日数を取得
         day_text = div.get_text(",").split(",")[1]
         # 日数は「%d日目」の形式なので、正規表現で取得
         self.end_day = int(re.findall(r'\d+', day_text)[0])
 
-    def parse_game_result(self, div):
+    def parse_game_result(self, div: Tag):
         rows = div.table.tbody.find_all("tr", recursive=False)[1:]
         for row in rows:
             if row.find("td", class_="cn") is not None:
@@ -74,7 +75,7 @@ class GameLogParser:
             elif row.find("td", class_="cs") is not None:
                 self.parse_game_end(row)
 
-    def parse_player_message(self, row):
+    def parse_player_message(self, row: Tag):
         speaker = row.find('span', class_='name').text
         message = row.find('td', class_='cc').text
         # 独り言か判定して場合分け
@@ -89,7 +90,7 @@ class GameLogParser:
                 speaker_idx = "0"
             self.add_output(f"{self.end_day},talk,{speaker_idx},{speaker},{message}")
 
-    def parse_game_end(self, row):
+    def parse_game_end(self, row: Tag):
         if row.find("span", class_="result") is not None:
             self.parse_winner(row)
         elif row.find("span", class_="death") is not None:
@@ -97,7 +98,7 @@ class GameLogParser:
         elif "この村は廃村になりました……。ペナルティはありません。" in row.text:
             self.add_output("game is canceled")
 
-    def parse_winner(self, row):
+    def parse_winner(self, row: Tag):
         self.add_output("after talk")
         self.add_output("game end")
         winner = row.find("span", class_="result").text
@@ -111,7 +112,7 @@ class GameLogParser:
 
         self.add_output(f"{self.end_day},winner,{winner}")
 
-    def parse_death(self, row):
+    def parse_death(self, row: Tag):
         result = row.find("span", class_="death")
         victim = result.find('span', class_='name').text
         death_results = {'処刑されました': 'executed',
@@ -126,7 +127,7 @@ class GameLogParser:
         else:
             raise Exception(f"error: result is {result.text}")
 
-    def parse_in_game_info(self, in_game_divs):
+    def parse_in_game_info(self, in_game_divs:ResultSet):
         for div in in_game_divs:
             class_name = div.get('class')[0]
             if class_name == 'd12150':
@@ -136,7 +137,7 @@ class GameLogParser:
             else:
                 raise Exception(f"error: div class is {class_name}")
 
-    def parse_day_info(self, div):
+    def parse_day_info(self, div: Tag):
         day_text = div.get_text()
         self.day = int(re.findall(r'\d+', day_text)[0])
         if "昼" in day_text:
@@ -150,7 +151,7 @@ class GameLogParser:
         else:
             raise Exception(f"error: day_text is {day_text}")
 
-    def parse_log_info(self, div):
+    def parse_log_info(self, div: Tag):
         if self.is_day:
             self.parse_day_log_info(div)
         elif self.before_game:
@@ -158,7 +159,7 @@ class GameLogParser:
         else:
             self.parse_night_log_info(div)
 
-    def parse_day_log_info(self, div):
+    def parse_day_log_info(self, div: Tag):
         self.add_output("day end")
         rows = div.table.tbody.find_all("tr", recursive=False)[1:]
         for row in rows:
@@ -175,7 +176,7 @@ class GameLogParser:
             else:
                 raise Exception(f"error: row is {row.text}")
     
-    def parse_night_log_info(self, div):
+    def parse_night_log_info(self, div: Tag):
         self.add_output("night end")
         rows = div.table.tbody.find_all("tr", recursive=False)[1:]
         for row in rows:
@@ -194,7 +195,7 @@ class GameLogParser:
             else:
                 raise Exception(f"error: row is {row.text}")
         
-    def parse_vote_result(self, row):
+    def parse_vote_result(self, row: Tag):
         player_votes = row.find("td", class_="cv").table.tbody.find_all("tr",recursive=False)
         for vote in player_votes:
             columns = vote.find_all("td")
@@ -218,7 +219,7 @@ class GameLogParser:
             
             self.game_status_dict[source] = player_role
 
-    def parse_day_talk(self, div):
+    def parse_day_talk(self, div: Tag):
         #会話を取得
         speaker = div.find('span', class_='name').text
         message = div.find('td', class_='cc').text
@@ -236,7 +237,7 @@ class GameLogParser:
             self.add_output(f"{self.day},talk,{speaker_idx},{speaker},{message}")
 
 
-    def parse_spirit_talk(self, row):
+    def parse_spirit_talk(self, row: Tag):
         #霊界の会話
         speaker = row.find('span', class_='name').text
         message = row.find('td', class_='ccd').text
@@ -255,7 +256,7 @@ class GameLogParser:
             #独り言
             self.add_output(f"{self.day},soliloquy,{speaker},{message}")
         
-    def parse_action(self,row):
+    def parse_action(self,row: Tag):
         action = row.find("td", class_="ca")
         names = action.find_all('span', class_='name')
         first_name = names[0].text
@@ -268,18 +269,21 @@ class GameLogParser:
             self.add_output(f"{self.day},attackVote,{first_name},{second_name}")
         #占い
         elif self.is_class_present(action, "fortune"):
-            role = self.translate_role(action.find("span", class_=["oc00","oc01"]).text)
-            self.add_output(f"{self.day},divine,{first_name},{second_name},{role}")
+            if action.find("span", class_=["oc00","oc01"]) is not None: #占い結果ありの場合
+                role = self.translate_role(action.find("span", class_=["oc00","oc01"]).text)
+                self.add_output(f"{self.day},divine,{first_name},{second_name},{role}")
+            else:
+                self.add_output(f"{self.day},divine,{first_name},{second_name},none") #占い結果なしの場合(占い師が死ぬ場合)、noneを出力
         #狩人の護衛
         elif self.is_class_present(action, "hunter"):
             self.add_output(f"{self.day},guard,{first_name},{second_name}")
         else:
             raise Exception(f"error: action is {action.text}")
 
-    def is_class_present(self, element, class_name):
+    def is_class_present(self, element: Tag, class_name:str):
         return element.find("span", class_=class_name) is not None
 
-    def translate_role(self, role_text):
+    def translate_role(self, role_text:str):
         if "村　人" in role_text:
             return "villager"
         elif "人　狼" in role_text:
@@ -287,7 +291,7 @@ class GameLogParser:
         else:
             raise Exception(f"error: role is {role_text}")
 
-    def parse_special_results(self, row):
+    def parse_special_results(self, row: Tag):
         result = row.find("td", class_="cs")
         
         special_results = { '朝になりました': 'day start',
@@ -345,7 +349,7 @@ if __name__ == '__main__':
     url_prefix = "https://ruru-jinro.net/"
 
     #スクレイピング
-    for i in range(4,5):
+    for i in range(20,300):
         try:
             url_base = f"https://ruru-jinro.net/searchresult.jsp?st={i}&sort=NUMBER"
             driver = webdriver.Chrome()
@@ -380,4 +384,4 @@ if __name__ == '__main__':
                     output_file = f"/home/takuya/HDD1/work/AI_Wolf/2023S_AIWolfK2B/aiwolfk2b/utils/output/log_{number_str}.txt"
                     parser = GameLogParser(url, output_file)
                     parser.parse()
-                    time.sleep(30 + random.random() * 10)
+                    time.sleep(15 + random.random() * 10)
