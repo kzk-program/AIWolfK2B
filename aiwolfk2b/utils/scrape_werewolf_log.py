@@ -7,6 +7,7 @@ import chromedriver_binary  # Adds chromedriver binary to path
 import time
 import random
 from typing import List
+import os
 
 class GameLogParser:
     def __init__(self, url: str, output_file: str):
@@ -33,6 +34,21 @@ class GameLogParser:
         response = requests.get(self.url)
         content = response.content
         soup = BeautifulSoup(content.decode('utf-8', 'ignore'), 'html.parser')
+        
+        #生データを出力
+        #ファイルのディレクトリを取得
+        dirname = os.path.dirname(self.filename)
+        dirname = os.path.join(dirname, "raw")
+        #ファイル名を取得
+        filename = os.path.basename(self.filename)
+        
+        #ファイル名はfilenameにrawという文字列を追加し、さらにrawディレクトリの中に保存
+        raw_output_file = os.path.join(dirname, filename.replace(".txt", "_raw.txt"))
+        #rawディレクトリがなければ作成
+        os.makedirs(dirname, exist_ok=True)
+        
+        with open(raw_output_file, 'w+') as file:
+            file.write(soup.prettify())
 
         # div class="d12151", "d12150"を取得
         div_elements = soup.find_all('div', class_=['d12150', 'd12151'])
@@ -349,7 +365,7 @@ if __name__ == '__main__':
     url_prefix = "https://ruru-jinro.net/"
 
     #スクレイピング
-    for i in range(20,300):
+    for i in range(102,300):
         try:
             url_base = f"https://ruru-jinro.net/searchresult.jsp?st={i}&sort=NUMBER"
             driver = webdriver.Chrome()
