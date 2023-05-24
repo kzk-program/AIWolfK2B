@@ -6,52 +6,35 @@ from selenium import webdriver
 import chromedriver_binary  # Adds chromedriver binary to path
 import time
 import random
-from typing import List
+from typing import List,Tuple
 import os
 
 class GameLogParser:
-    def __init__(self, url: str, output_file: str):
-        self.url = url
-        self.filename = output_file
+    def __init__(self):
         self.game_status_dict = {}
         self.day = -1
         self.end_day = -1
         self.is_day = False
         self.before_game = False
         self.output_buffer = []
-        self.output_buffer.append("url," + url)
         
     def add_output(self, data:str):
         print(data)
         self.output_buffer.append(data)
             
-    def output_file(self):
-        with open(self.filename, 'w+') as file:
-            for data in self.output_buffer:
-                file.write(data + "\n")
-
-    def parse(self):
-        response = requests.get(self.url)
+    def get_data_from_url(self,url:str)-> str:
+        response = requests.get(url)
         content = response.content
-        soup = BeautifulSoup(content.decode('utf-8', 'ignore'), 'html.parser')
+        self.soup = BeautifulSoup(content.decode('utf-8', 'ignore'), 'html.parser')
         
-        #生データを出力
-        #ファイルのディレクトリを取得
-        dirname = os.path.dirname(self.filename)
-        dirname = os.path.join(dirname, "raw")
-        #ファイル名を取得
-        filename = os.path.basename(self.filename)
+        self.output_buffer.append("url," + url)
         
-        #ファイル名はfilenameにrawという文字列を追加し、さらにrawディレクトリの中に保存
-        raw_output_file = os.path.join(dirname, filename.replace(".txt", "_raw.txt"))
-        #rawディレクトリがなければ作成
-        os.makedirs(dirname, exist_ok=True)
+        return self.soup.prettify()
         
-        with open(raw_output_file, 'w+') as file:
-            file.write(soup.prettify())
 
+    def parse(self)-> List[str]:
         # div class="d12151", "d12150"を取得
-        div_elements = soup.find_all('div', class_=['d12150', 'd12151'])
+        div_elements = self.soup.find_all('div', class_=['d12150', 'd12151'])
         end_game_divs: ResultSet = div_elements[0:2]
         in_game_divs: ResultSet = div_elements[2:]
 
@@ -62,7 +45,7 @@ class GameLogParser:
         for player, role in self.game_status_dict.items():
             self.add_output(f"status,{player},{role}")
             
-        self.output_file()
+        return self.output_buffer
 
     def parse_end_game_info(self, end_game_divs: ResultSet):
         # ゲーム終了時の情報を取得
@@ -334,7 +317,8 @@ class GameLogParser:
                         "希望役職ルールが解除されました。",
                         "GMによって、",
                         "になりました",
-                        "最終発言から時間が経っている村民がいるので始められません。キックするか、行動を促してください。"]
+                        "最終発言から時間が経っている村民がいるので始められません。キックするか、行動を促してください。",
+                        "投票時間の延長や投票クリアは 5 回までしかできません"]
         
         if result.find('span', class_='name') is not None:
             victim = result.find('span', class_='name').text
@@ -359,19 +343,24 @@ def unit_test_GameLogParser():
     parser = GameLogParser(url, output_file)
     parser.parse()
 
+def output_file(output_filepath: str, output_buffer: List[str]):
+    with open(output_filepath, 'w+') as file:
+        for data in output_buffer:
+            file.write(data + "\n")
+
 if __name__ == '__main__':
     # unit_test_GameLogParser()
 
     url_prefix = "https://ruru-jinro.net/"
 
     #スクレイピング
-    for i in range(102,300):
+    for i in range(286,700):
         try:
             url_base = f"https://ruru-jinro.net/searchresult.jsp?st={i}&sort=NUMBER"
             driver = webdriver.Chrome()
             driver.get(url_base)
             # コンテンツが描画されるまで待機
-            time.sleep(2)
+            time.sleep(4)
             content = driver.page_source
             soup = BeautifulSoup(content, 'html.parser')
         finally:
@@ -382,6 +371,7 @@ if __name__ == '__main__':
         #print(table)
         rows = table.tbody.find_all("tr", recursive=False)
         for row in rows:
+            print("i:",i)
             tds = row.find_all("td")
             #役職で場合分け
             role_type = tds[-1].text
@@ -389,6 +379,12 @@ if __name__ == '__main__':
             village_id = int(re.findall(r'\d+', role_type)[0])
             #ゲームのNo.を取得
             number_str = tds[0].text
+            
+            #ゲーム荒しの場合はスキップ
+            bad_games = ["476995"]
+            if number_str in bad_games:
+                continue
+            
             #人数で場合分け
             if 5 <= village_id <=15:
                 #配役割合で場合分け
@@ -397,7 +393,26 @@ if __name__ == '__main__':
                     #URLを取得
                     url = url_prefix + log5_tag.a.get("href")
                     print("log url:",url)
-                    output_file = f"/home/takuya/HDD1/work/AI_Wolf/2023S_AIWolfK2B/aiwolfk2b/utils/output/log_{number_str}.txt"
-                    parser = GameLogParser(url, output_file)
-                    parser.parse()
-                    time.sleep(15 + random.random() * 10)
+                    #filename
+                    filename = f"log_{number_str}.txt"
+                    raw_filename = f"log_{number_str}_raw.txt"
+                    output_dir_base = f"/home/takuya/HDD1/work/AI_Wolf/2023S_AIWolfK2B/aiwolfk2b/utils/output/"
+                    
+                    output_filepath = os.path.join(output_dir_base, filename)
+                    output_raw_filepath = os.path.join(output_dir_base,"raw", raw_filename)
+                    #生データも出力
+                    parser = GameLogParser()
+                    try:
+                        raw_out_data = parser.get_data_from_url(url)
+                        output_file(output_raw_filepath, [raw_out_data])
+                        
+                        parsed_data = parser.parse()
+                        output_file(output_filepath, parsed_data)
+                    except Exception as e:
+                        print("error:",e)
+                        error_filepath = os.path.join(output_dir_base, "error.txt")
+                        with open(error_filepath, "a+") as file:
+                            file.write(f"{url}\n")
+                        continue
+                        
+                    time.sleep(10 + random.random() * 10)
