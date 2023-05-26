@@ -1,271 +1,352 @@
 from aiwolfpy import ProtocolParser
 from aiwolfpy.protocol.contents import *
+import sys
+sys.path.append("..")
+from utils.protocol_generator import ProtocolGenerator
 import random
 
-class SimpleSpeaker(object):
+from typing import Union, List
 
-    #人力で作っているspeaker
-    #BECAUSEなど入れ子構造では変な日本語喋ってる（要修正）
+class SimpleSpeaker:
+    """
+    A Simple speaker class with the ability to handle various types of speech content.
+    This speaker can handle complex nested structures in Japanese language.
+    """
+    
+    def __init__(self, me: str = "Agent[99]"):
+        """Initializes the SimpleSpeaker class.
 
-    def __init__(self, me="Agent[99]"):   #「me」で発話者名を入れることで、meと一致する主語があったとき主語が「俺」などに変わります
-            self.subject_dict = {"UNSPEC":["", "俺は", "私は"], "ANY":["誰もが", "みんな", "全員が"]}
-            self.role_dict = {'VILLAGER':['村人', '役なし'], 'MEDIUM':["霊媒師", "霊能者"],
-            'SEER':['占い師', '占い'], 'BODYGUARD':['ボディーガード','狩人','騎士'],
-            'WEREWOLF':['人狼', '狼', '黒'], 'POSSESSED':['狂人'],}
-            self.species_dict = {'HUMAN':['白', '人間'], 'WEREWOLF':['人狼', '狼', '黒']}
-            self.me = me
+        Args:
+            me (str): Name of the speaker. It changes the subject of the sentence to 'I' or 'me' when it matches. 
+                      Default is 'Agent[99]'.
+        """
+        self.subject_dict = {"UNSPEC":["", "俺は", "私は"], "ANY":["誰もが", "みんな", "全員が"]}
+        self.role_dict = {
+            'VILLAGER':['村人', '役なし'], 
+            'MEDIUM':["霊媒師", "霊能者"],
+            'SEER':['占い師', '占い'], 
+            'BODYGUARD':['ボディーガード','狩人','騎士'],
+            'WEREWOLF':['人狼', '狼', '黒'], 
+            'POSSESSED':['狂人'],
+        }
+        self.species_dict = {'HUMAN':['白', '人間'], 'WEREWOLF':['人狼', '狼', '黒'], "ANY":["人狼か人間か"]}
+        self.me = me
 
-    def speak(self, text, child=False):
-        if not child:
-            end_of_sentence = True
-        
-        if child:
-            c = text
+    def get_subject(self, subject):
+        """Get appropriate subject for a given subject text"""
+        if subject in self.subject_dict:
+            return random.choice(self.subject_dict[subject])
         else:
-            c = ProtocolParser.parse(text)
+            return subject + random.choice(['は'])
 
-        #Over, Skipは処理しない
-        if type(c) == ControlContent:
+    def get_target(self, target):
+        """Get appropriate target for a given target text"""
+        if target != "ANY":
+            return target
+        else:
+            return random.choice(["皆", "みんな", "みなさん"])
+
+    def get_role(self, role):
+        """Get appropriate role for a given role text"""
+        if role in self.role_dict:
+            return random.choice(self.role_dict[role])
+        else:
+            return role
+
+    def get_species(self, species):
+        """Get appropriate species for a given species text"""
+        return random.choice(self.species_dict[species])
+
+    def speak(self, text: str, child: bool = False) -> str:
+        """Generate text according to given content.
+
+        Args:
+            text (str): Input text.
+            child (bool): Flag indicating if current content is nested. Default is False.
+
+        Returns:
+            str: Generated text.
+        """
+        end_of_sentence = not child
+        content = ProtocolParser.parse(text) if not child else text
+
+        if isinstance(content, ControlContent):
             return text
 
-        candidates = []
-        #特定の文は丁寧に作る
-
-        #自分主語のESTIMATE 
-        if type(c) == SVTRContent:
-            if (not child) and c.verb == "ESTIMATE" and (c.subject == "UNSPEC" or c.subject == self.me) and c.target != "ANY":
-                role = random.choice(self.role_dict[c.role])
-                candidates.append(c.target+"は"+role+"だと思う")
-                candidates.append(c.target+"、"+role+"っぽい")
-                candidates.append(c.target+"が"+role+"だと見てる")
-                candidates.append(random.choice(self.subject_dict["UNSPEC"]) + c.target+"が"+role+"だと見てる")
-                candidates.append(random.choice(self.subject_dict["UNSPEC"])+ c.target+"が"+role+"だと思うな")
-                candidates.append(c.target+"が"+role+"なんじゃないかな")
-                if c.role == "WEREWOLF": 
-                    candidates.append(c.target+"は正直"+random.choice(self.role_dict['WEREWOLF'])+"っぽいんだよな")
-                    candidates.append(c.target+"、黒目に見える")
-                    candidates.append(c.target+"が黒いな")
-                    #「人狼OR狂人」ともとれるからびみょい
-                    candidates.append("俺は"+c.target+"が怪しいと思う")
-                    candidates.append(c.target+"が怪しいと思う")
-                    candidates.append("俺的には"+c.target+"が怪しいんだよなあ")
-                return random.choice(candidates)
-
-        
-        #他人主語のESTIMATE
-        if type(c) == SVTRContent:
-            if (not child) and c.verb == "ESTIMATE" and (c.subject != "UNSPEC" and c.subject != self.me) and c.target != "ANY":
-                role = random.choice(self.role_dict[c.role])
-                candidates.append(c.subject + "は"+c.target + "が"+role+"だと思ってるよね")
-                candidates.append(c.subject + "的には"+c.target + "が"+role+"ってなるはず")
-
-                if c.role == "WEREWOLF":
-                    candidates.append(c.subject + "的には"+c.target + "が黒く見えてるだろう")
-                return random.choice(candidates)
-
-        #自分主語自分目的語のCO
-        if type(c) == SVTRContent:
-            if (not child) and c.verb=="COMINGOUT" and (c.subject == 'UNSPEC' or c.subject == self.me) and c.target == self.me:
-                role = random.choice(self.role_dict[c.role])
-                if c.role != 'VILLAGER':
-                    candidates.append("COします!俺は"+role+"です!")
-                    candidates.append(role+"COです")
-                    candidates.append(role+"だとカミングアウトします")
-                    candidates.append("俺は"+role+"です")
-                    candidates.append("俺が真の"+role+"です")   #対抗が出たときの処理にしたいけど、文脈が読み取れないので対抗無しでも言ってしまう
-                else:
-                    candidates.append("私は村人です")
-                    candidates.append("私は村人です、本当です")
-                return random.choice(candidates)
+        if isinstance(content, SVTRContent):
+            return self.handle_svtr_content(content, child)
     
+        elif isinstance(content, SVTContent):
+            return self.handle_svt_content(content, child)
+
+        elif isinstance(content, SVTSContent):
+            return self.handle_svts_content(content, child)
         
+        elif isinstance(content, AgreeContent):
+            return self.handle_agree_content(content, child)
 
+        elif isinstance(content, SOTSContent):
+            return self.handle_sots_content(content, child)
+
+        elif isinstance(content, SOS1Content):
+            return self.handle_sos1_content(content, child)
         
-
-        #ここからは大雑把(日本語的におかしい文が生成される可能性あり)
-        if 'target' in dir(c):
-            if c.target != "ANY":
-                target = c.target
-            else:
-                target = random.choice(["皆", "みんな", "みなさん"])
-
+        elif isinstance(content, SOS2Content):
+            return self.handle_sos2_content(content, child)
         
-        if type(c) == SVTRContent:
-            
-            if c.role in self.role_dict:
-                role = random.choice(self.role_dict[c.role])
-            else:
-                role = c.role
-
-            if c.subject in self.subject_dict:
-                subject = random.choice(self.subject_dict[c.subject])
-
-            if c.verb == "ESTIMATE":
-                if c.subject not in self.subject_dict:
-                    subject = c.subject + random.choice(['は', '的には'])
-                candidates = [subject + target + "が"+ role + "だと推測する", subject + target + "が"+ role + "だろうと思う"]
-                
-            elif c.verb == "COMINGOUT":
-                if c.subject not in self.subject_dict:
-                    subject = c.subject + random.choice(['は'])
-                candidates = [subject + target + "が" + role + "だとカミングアウトする", subject + target + "が" + role + "だとCOする", subject + target + "が" + role + "だと宣言する"]
-
-        elif type(c) == SVTContent:
-            if c.subject in self.subject_dict:
-                subject = random.choice(self.subject_dict[c.subject])
-            else:
-                subject = c.subject + random.choice(['は'])
-                
-            verb_dict = {"DIVINATION":["を占う", "の役を見る"], "GUARD":["を護衛する", "を守る", "を護衛先に指定する"], "VOTE":["に投票する", "に入れる","を吊る"], "ATTACK":["を襲撃する", "を殺す", "を襲う"], "GUARDED":["を護衛した", "を守った", "を護衛先に選択した"], "VOTED":["に投票した","に入れた" ,"を吊ろうとした"], "ATACKED":["を襲撃した", "を殺した", "を襲った"]}
-            candidates = [subject + target + random.choice(verb_dict[c.verb])]
-
-            """ if c.verb == "DIVINATION":
-                if c.subject not in self.subject_dict:
-                    subject = c.subject + random.choice(['は'])
-                candidates = [subject + target + "を占う"]
-            
-            elif c.verb == "GUARD":
-                if c.subject not in self.subject_dict:
-                    subject = c.subject + random.choice(['は'])
-                candidates = [subject + target + "を護衛する"]
-            
-            elif c.verb == "VOTE":
-                if c.subject not in self.subject_dict:
-                    subject = c.subject + random.choice(['は'])
-                candidates = [subject + target + "に投票する"]
-            elif c.verb == "ATTACK":
-                if c.subject not in  self.subject_dict:
-                    subject = c.subject + random.choice(['は'])
-                candidates = [subject + target + "を襲撃する"]
-            
-            elif c.verb == "GUARDED":
-                if c.subject not in  self.subject_dict:
-                    subject = c.subject + random.choice(['は'])
-                candidates = [subject + target + "を護衛した"]
-                
-            elif c.verb == "VOTED":
-                if c.subject not in self.subject_dict:
-                    subject = c.subject + random.choice(['は'])
-                candidates = [subject + target + "に投票した"]
-            
-            elif c.verb == "ATTACKED":
-                if c.subject not in self.subject_dict:
-                    subject = c.subject+ random.choice(['は'])
-                candidates = [subject + target + "を襲撃した"]  """
-
-        elif type(c) == SVTSContent:
-
-            spices = random.choice(self.species_dict[c.species])
-
-            if c.subject in self.subject_dict:
-                subject = random.choice(self.subject_dict[c.subject])
-            
-            if c.verb == "DIVINED":
-                if c.subject not in self.subject_dict:
-                    subject = c.subject + random.choice(["が"])
-                candidates = [subject + "占った結果"+target+"は"+spices + "だった", target+"の占い結果は"+spices + "だった"]
-                
-            elif c.verb == "IDENTIFIED":
-                if c.subject not in self.subject_dict:
-                    subject = c.subject + random.choice(["が"])
-                candidates = [subject + "襲われた" + target + "を霊媒すると"+spices + "だった", subject + "襲われた" + target + "は"+spices + "だった", "霊媒結果は"+spices+"だった"]
-
+        elif isinstance(content, SOSSContent):
+            return self.handle_soss_content(content, child)
         
-        elif type(c) == AgreeContent:
-            if c.subject in self.subject_dict:
-                subject = random.choice(self.subject_dict[c.subject])
-            else:
-                subject = c.subject + random.choice(["は"])
-            if c.verb == "AGREE":
-                candidates = [subject + str(c.talk_number) + "番の発言には賛成する"]
-            elif c.verb=="DISAGREE":
-                candidates = [subject + str(c.talk_number) + "番の発言には反対する"]
+        elif isinstance(content, DayContent):
+            return self.handle_day_content(content, child)
 
-        elif type(c) == ControlContent:
-            return c._get_text()
-        
-        elif type(c) == SOTSContent:
-            if c.subject in self.subject_dict:
-                subject = random.choice(self.subject_dict[c.subject])
-            else:
-                subject = c.subject + random.choice(["は"])
-            sentence = self.speak(c.get_child(), child=True)
-            if c.operator == "REQUEST":
-                candidates = [subject + target + "に"+sentence +"よう求める"]
-            elif c.operator == "INQUIRE":
-                candidates = [subject + target + "に"+sentence+"か尋ねる"]
-        
-        elif type(c) == SOS1Content:
-            if c.subject in self.subject_dict:
-                subject = random.choice(self.subject_dict[c.subject])
-            else:
-                subject = c.subject + random.choice(["は"])
-            sentence = self.speak(c.get_child(), child=True)
-            candidates = [subject + sentence + "のを否定する"]
+    def handle_svt_content(self, content, child):
+        """Handle SVT type content"""
+        subject = self.get_subject(content.subject)
+        target = self.get_target(content.target)
+        if content.verb == "DIVINATION":
+            return self.handle_divination(child, subject, target)
+        elif content.verb == "GUARD":
+            return self.handle_guard(child, subject, target)
+        elif content.verb == "VOTE":
+            return self.handle_vote(child, subject, target)
+        elif content.verb == "ATTACK":
+            return self.handle_attack(child, subject, target)
+        elif content.verb == "GUARDED":
+            return self.handle_guarded(child, subject, target)
+        elif content.verb == "VOTED":
+            return self.handle_voted(child, subject, target)
+        elif content.verb == "ATTACKED":
+            return self.handle_attacked(child, subject, target)
 
-        elif type(c) == SOS2Content:
-            if c.subject in self.subject_dict:
-                subject = random.choice(self.subject_dict[c.subject])
-            else:
-                subject = c.subject + random.choice(["は"])
-            sentence1 = self.speak(c.children[0], child=True)
-            sentence2 = self.speak(c.children[1], child=True)
-            if c.operator == "BECAUSE":
-                candidates = [subject + sentence1 + "という理由のため"+sentence2+"であると述べる"]
-            elif c.operator == "XOR":
-                candidates = [subject + sentence1 + "か"+sentence2 +"のどちらかを主張する"]
-            
-        elif type(c) == SOSSContent:
-            if c.subject in self.subject_dict:
-                subject = random.choice(self.subject_dict[c.subject])
-            else:
-                subject = c.subject + random.choice(["は,"])
-            candidates = [subject, subject]
-            for i in range(len(candidates)):
-                for child in c.children:
-                    candidates[i] += self.speak(child, child=True)
-                    if i==0:
-                        candidates[i] += ","
-                    elif i==1:
-                        if c.operator == "AND":
-                            candidates[i] += "のであり、"
-                        else:
-                            candidates[i] += "のであるかまたは、"
-            
-            if c.operator== "AND":
-                candidates[0] += "全てが真の場合を主張する"
-                candidates[1] = candidates[1][:-2] +  "る"
-            elif c.operator == "OR":
-                candidates[0] += "の少なくとも1つが真の場合を主張する" 
-                candidates[1] += candidates[:-5]  
-                
+    def handle_svts_content(self, content, child):
+        """Handle SVTS type content"""
+        subject = self.get_subject(content.subject)
+        target = self.get_target(content.target)
+        species = self.get_species(content.species)
+        if content.verb == "DIVINED":
+            return self.handle_divined(child, subject, target, species)
+        elif content.verb == "IDENTIFIED":
+            return self.handle_identified(child, subject, target, species)
+
+    def handle_svtr_content(self, content, child):
+        """Handle SVTR type content"""
+        subject = self.get_subject(content.subject)
+        role = self.get_role(content.role)
+        target = self.get_target(content.target)
+
+        if content.verb == "ESTIMATE":
+            return self.handle_estimate(child, subject, role, target)
+        elif content.verb == "COMINGOUT":
+            return self.handle_comingout(child, subject, role, target)
+
+    def handle_agree_content(self, content, child):
+        """Handle Agree type content"""
+        subject = self.get_subject(content.subject)
+        day = str(content.talk_number[0])
+        talk_number = str(content.talk_number[1])
+        if content.verb=="AGREE":
+            return self.handle_agree(child, subject, day, talk_number)
+        elif content.verb=="DISAGREE":
+            return self.handle_disagree(child, subject, day, talk_number)
+
+    def handle_sots_content(self, content, child):
+        """Handle SOTS type content"""
+        subject = self.get_subject(content.subject)
+        target = self.get_target(content.target)
+        sentense = self.speak(content.get_child(), child=True)
+        if content.operator== "REQUEST":
+            return self.handle_request(child, subject, target, sentense)
+        elif content.operator== "INQUIRE":
+            return self.handle_inquire(child, subject, target, sentense)
+        
+    def handle_sos1_content(self, content, child):
+        """Handle SOS1 type content"""
+        subject = self.get_subject(content.subject)
+        sentense = self.speak(content.get_child(), child=True)
+        return self.handle_not(child, subject, sentense)
+
+    def handle_sos2_content(self, content, child):
+        """Handle SOS2 type content"""
+        subject = self.get_subject(content.subject)
+        sentense1 = self.speak(content.children[0], child=True)
+        sentense2 = self.speak(content.children[1], child=True)
+        if content.operator == "BECAUSE":
+            return self.handle_because(child, subject, sentense1, sentense2)
+        elif content.operator == "XOR":
+            return self.handle_xor(child, subject, sentense1, sentense2)
+        
+    def handle_soss_content(self, content, child):
+        """Handle SOSS type content"""
+        subject = self.get_subject(content.subject)
+        sentenses = []
+        for _ in content.children:
+            sentenses.append(self.speak(_, child=True))
+        if content.operator == "AND":
+            return self.handle_and(child, subject, sentenses)
+        elif content.operator == "OR":
+            return self.handle_or(child, subject, sentenses)
+    
+    """ ここから下を工夫するべし"""
+
+    def handle_day_content(self, content, child):
+        """Handle Day type content"""
+        subject = self.get_subject(content.subject)
+        day = str(content.day)
+        sentense = self.speak(content.get_child(), child=True)
+        return f"{subject} {day}日目に{sentense}"
+
+
+    def handle_divination(self, child, subject, target):
+        candidates = []
+        candidates.append(f"{subject}{target}を占う")
+        candidates.append(f"{subject}{target}の役を見る")
+        return random.choice(candidates)
+    def handle_guard(self, child, subject, target):
+        candidates = []
+        candidates.append(f"{subject}{target}を護衛する")
+        candidates.append(f"{subject}{target}を守る")
+        candidates.append(f"{subject}{target}を護衛先に指定する")
         return random.choice(candidates)
 
-def get_test_dataset(prompt):
+    def handle_vote(self, child, subject, target):
+        candidates = []
+        candidates.append(f"{subject}{target}に投票する")
+        candidates.append(f"{subject}{target}に入れる")
+        candidates.append(f"{subject}{target}を吊る")
+        return random.choice(candidates)
+
+    def handle_attack(self, child, subject, target):
+        candidates = []
+        candidates.append(f"{subject}{target}を襲撃する")
+        candidates.append(f"{subject}{target}を殺す")
+        candidates.append(f"{subject}{target}を襲う")
+        return random.choice(candidates)
+
+    def handle_guarded(self, child, subject, target):
+        candidates = []
+        candidates.append(f"{subject}{target}を護衛した")
+        candidates.append(f"{subject}{target}を守った")
+        candidates.append(f"{subject}{target}を護衛先に指定した")
+        return random.choice(candidates)
+
+    def handle_voted(self, child, subject, target):
+        candidates = []
+        candidates.append(f"{subject}{target}に投票した")
+        candidates.append(f"{subject}{target}に入れた")
+        candidates.append(f"{subject}{target}を吊った")
+        return random.choice(candidates)
+
+    def handle_attacked(self, child, subject, target):
+        candidates = []
+        candidates.append(f"{subject}{target}を襲撃した")
+        candidates.append(f"{subject}{target}を殺した")
+        candidates.append(f"{subject}{target}を襲った")
+        return random.choice(candidates)
+    
+    def handle_estimate(self, child, subject, role, target):
+        candidates = []
+        candidates.append(f"{subject}{target}が{role}だと思う")
+        candidates.append(f"{subject}{target}が{role}だと推測する")
+        candidates.append(f"{subject}{target}が{role}だと推理する")
+        candidates.append(f"{subject}{target}が{role}だろうと思う")
+        return random.choice(candidates)
+    
+    def handle_comingout(self, child, subject, role, target):
+        candidates = []
+        candidates.append(f"{subject}{target}が{role}だとカミングアウトする")
+        candidates.append(f"{subject}{target}が{role}だと名乗る")
+        candidates.append(f"{subject}{target}が{role}だとCOする")
+        return random.choice(candidates)
+    
+    def handle_divined(self, child, subject, target, species):
+        candidates = []
+        candidates.append(f"{subject}占った結果{target}は{species}だった")
+        candidates.append(f"{subject}による{target}の占い結果は{species}だった")
+        candidates.append(f"{subject}は{target}を{species} と占った")
+        return random.choice(candidates)
+    
+    def handle_identified(self, child, subject, target, species):
+        candidates = []
+        candidates.append(f"{subject}霊能した結果{target}は{species}だった")
+        candidates.append(f"{subject}による{target}の霊能結果は{species}だった")
+        return random.choice(candidates)
+    
+    def handle_agree(self, child, subject, day, talk_number):
+        candidates = []
+        candidates.append(f"{subject}{day}日目の{talk_number}番の発言には賛成する")
+        return random.choice(candidates)
+
+    def handle_disagree(self, child, subject, day, talk_number):
+        candidates = []
+        candidates.append(f"{subject}{day}日目の{talk_number}番の発言には反対する")
+        return random.choice(candidates)
+    
+    def handle_request(self, child, subject, target, sentense):
+        candidates = []
+        candidates.append(f"{subject}{target}に{sentense}よう求める")
+        candidates.append(f"{subject}{target}に{sentense}よう要求する")
+        return random.choice(candidates)
+
+    def handle_inquire(self, child, subject, target, sentense):
+        candidates = []
+        candidates.append(f"{subject}{target}に{sentense}か尋ねる")
+        candidates.append(f"{subject}{target}に{sentense}か聞く")
+        return random.choice(candidates)
+    
+    def handle_because(self, child, subject, sentense1, sentense2):
+        candidates = []
+        candidates.append(f"{subject}{sentense1}ので{sentense2}")
+        candidates.append(f"{subject}{sentense1}という理由のため{sentense2}")
+        return random.choice(candidates)
+    
+    def handle_xor(self, child, subject, sentense1, sentense2):
+        candidates = []
+        candidates.append(f"{subject}{sentense1}か{sentense2}")
+        candidates.append(f"{subject}{sentense1}か{sentense2}のどちらかを主張する")
+        return random.choice(candidates)
+    
+    def handle_not(self, child, subject, sentense):
+        candidates = []
+        candidates.append(f"{subject}{sentense}のを否定する")
+        return random.choice(candidates)
+    
+    def handle_and(self, child, subject, sentenses):
+        candidate = ""
+        candidate += subject
+        for i, sentense in enumerate(len(sentenses)):
+            candidate += sentense
+            if i != len(sentenses)-1:
+                candidate += "のであり、"
+        return candidate
+
+    def handle_or(self, child, subject, sentenses):
+        candidate = ""
+        candidate += subject
+        for i, sentense in enumerate(len(sentenses)):
+            candidate += sentense
+            if i != len(sentenses)-1:
+                candidate += "のであるかまたは、"
+        return candidate
+    
+
+def make_corpus(protocol_texts):
+    """Make corpus from protocol texts"""
     speaker = SimpleSpeaker()
-    jp_text = speaker.speak(prompt)
-    print(f"['{prompt}','{jp_text}'],")
+    corpus = []
+    for protocol_text in protocol_texts:
+        if not type(speaker.speak(protocol_text)) is str:
+            print(protocol_text, ", ", speaker.speak(protocol_text))
+        corpus.append(ProtocolParser.parse(protocol_text).get_text() + ", " + speaker.speak(protocol_text))
+    return corpus
 
 if __name__ == "__main__":
-    # print(speak('ESTIMATE Agent[10] BODYGUARD'))
-    # print(speak('Agent[01] COMINGOUT Agent[03] POSSESSED'))
-    # print(speak("AND (VOTE Agent[01]) (REQUEST ANY (VOTE Agent[01]))"))
-    # print(speak("Over"))
-    
-    # speak('ESTIMATE Agent[10] BODYGUARD')
-    # speak('Agent[01] COMINGOUT Agent[03] POSSESSED')
-    # speak("AND (VOTE Agent[01]) (REQUEST ANY (VOTE Agent[01]))")
-    # speak("Over")
-    
-    prompts = [
-        'ESTIMATE Agent[10] BODYGUARD',
-        'Agent[01] COMINGOUT Agent[03] POSSESSED',
-        "Over",
-        'COMINGOUT Agent[01] SEER',
-        "Agent[01] COMINGOUT Agent[01] SEER",
-        "DIVINED Agent[01] HUMAN",
-        "Agent[01] DIVINED Agent[02] WEREWOLF",
-        "GUARD Agent[01]"
-        ]
-    for prompt in prompts:
-        get_test_dataset(prompt)
+    agent_num = 5
+    sentence_length = 7
+    generator = ProtocolGenerator(agent_num=agent_num)
+    sentences_length_list = generator.generate_sentence(sentence_length)
+    sentences = [sentence for sentence,_ in sentences_length_list]
+    corpus_outputfile = f"./corpus_agentnum_{str(agent_num)}_len_{str(sentence_length)}_test.txt"
+    corpus = make_corpus(sentences)
+    with open(corpus_outputfile, "w") as f:
+        f.write("\n".join(corpus))
