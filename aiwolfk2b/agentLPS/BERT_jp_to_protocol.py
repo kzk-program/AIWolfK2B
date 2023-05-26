@@ -15,6 +15,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # データセットの前処理
 # 分類するラベルのリスト
+
 subject_list = [
     "Agent[01]",
     "Agent[02]",
@@ -242,19 +243,6 @@ class BERTJPToProtocolConverter(JPToProtocolConverter):
     def convert(self, text_list):
         bert_scml = self.bert_scml
         tokenizer = self.tokenizer
-        # # テキストをトークンに変換
-        # tokens = tokenizer.tokenize(text)
-        # # トークンをIDに変換
-        # input_ids = tokenizer.convert_tokens_to_ids(tokens)
-        # # テキストをモデルに入力できる形に変換
-        # input_ids = torch.tensor([input_ids]).to(device)
-        # # モデルに入力
-        # with torch.no_grad():
-        #     output = bert_scml(input_ids=input_ids)
-        # # スコアを取り出す
-        # scores = output.logits[0]
-        # # スコアからプロトコルを生成
-        # protocol = calc_protocol_from_scores(scores)
 
         # データの符号化
         encoding = tokenizer(text_list, padding="longest", return_tensors="pt")
