@@ -346,7 +346,7 @@ if __name__ == "__main__":
     generator = ProtocolGenerator(agent_num=agent_num)
     sentences_length_list = generator.generate_sentence(sentence_length)
     sentences = [sentence for sentence,_ in sentences_length_list]
-    corpus_outputfile = f"./corpus_agentnum_{str(agent_num)}_len_{str(sentence_length)}_test.txt"
+    corpus_outputfile = f"./corpus_ver1/corpus_agentnum_{str(agent_num)}_len_{str(sentence_length)}_test.txt"
     corpus = make_corpus(sentences)
     with open(corpus_outputfile, "w") as f:
         f.write("\n".join(corpus))
