@@ -10,6 +10,9 @@ from aiwolfpy.protocol.contents import *
 import os
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
+#計算に使うdeviceを取得
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
 # データセットの前処理
 # 分類するラベルのリスト
 subject_list = [
@@ -233,8 +236,8 @@ class BERTJPToProtocolConverter(JPToProtocolConverter):
 
         # モデルの読み込み
         best_model_path = current_dir+"/jp2protocol_model/bert_scml20230128.pth"
-        self.bert_scml = torch.load(best_model_path)
-        self.bert_scml = self.bert_scml.cuda()
+        self.bert_scml = torch.load(best_model_path, map_location=device)
+        self.bert_scml = self.bert_scml.to(device)
 
     def convert(self, text_list):
         bert_scml = self.bert_scml
@@ -244,7 +247,7 @@ class BERTJPToProtocolConverter(JPToProtocolConverter):
         # # トークンをIDに変換
         # input_ids = tokenizer.convert_tokens_to_ids(tokens)
         # # テキストをモデルに入力できる形に変換
-        # input_ids = torch.tensor([input_ids]).cuda()
+        # input_ids = torch.tensor([input_ids]).to(device)
         # # モデルに入力
         # with torch.no_grad():
         #     output = bert_scml(input_ids=input_ids)
@@ -255,7 +258,7 @@ class BERTJPToProtocolConverter(JPToProtocolConverter):
 
         # データの符号化
         encoding = tokenizer(text_list, padding="longest", return_tensors="pt")
-        encoding = {k: v.cuda() for k, v in encoding.items()}
+        encoding = {k: v.to(device) for k, v in encoding.items()}
 
         # BERTへデータを入力し分類スコアを得る。
         with torch.no_grad():
@@ -321,7 +324,7 @@ if __name__ == "__main__":
     load_model.load_state_dict(torch.load(best_model_path))
 
     # モデルをGPUに転送
-    bert_scml = load_model.bert_scml.cuda()
+    bert_scml = load_model.bert_scml.to(device)
 
     # 入力する文章
     text_list = [
@@ -350,7 +353,7 @@ if __name__ == "__main__":
 
     # データの符号化
     encoding = tokenizer(text_list, padding="longest", return_tensors="pt")
-    encoding = {k: v.cuda() for k, v in encoding.items()}
+    encoding = {k: v.to(device) for k, v in encoding.items()}
 
     # BERTへデータを入力し分類スコアを得る。
     with torch.no_grad():
