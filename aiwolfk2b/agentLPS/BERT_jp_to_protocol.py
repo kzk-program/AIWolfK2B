@@ -7,8 +7,9 @@ from jp_to_protocol_converter import JPToProtocolConverter
 from aiwolfpy.protocol.contents import *
 
 #現在のプログラムが置かれているディレクトリを取得
-import os
-current_dir = os.path.dirname(os.path.abspath(__file__))
+import pathlib
+
+current_dir = pathlib.Path(__file__).resolve().parent
 
 #計算に使うdeviceを取得
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -236,7 +237,7 @@ class BERTJPToProtocolConverter(JPToProtocolConverter):
         self.tokenizer = BertJapaneseTokenizer.from_pretrained(MODEL_NAME)
 
         # モデルの読み込み
-        best_model_path = current_dir+"/jp2protocol_model/bert_scml20230128.pth"
+        best_model_path = current_dir.joinpath("jp2protocol_model").joinpath("bert_scml20230128.pth")
         self.bert_scml = torch.load(best_model_path, map_location=device)
         self.bert_scml = self.bert_scml.to(device)
 
