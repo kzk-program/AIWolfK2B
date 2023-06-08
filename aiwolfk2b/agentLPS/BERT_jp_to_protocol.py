@@ -2,15 +2,21 @@
 import torch
 from transformers import BertJapaneseTokenizer, BertModel
 import pytorch_lightning as pl
+from jp_to_protocol_converter import JPToProtocolConverter
 
 from aiwolfpy.protocol.contents import *
 
 #現在のプログラムが置かれているディレクトリを取得
-import os
-current_dir = os.path.dirname(os.path.abspath(__file__))
+import pathlib
+
+current_dir = pathlib.Path(__file__).resolve().parent
+
+#計算に使うdeviceを取得
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # データセットの前処理
 # 分類するラベルのリスト
+
 subject_list = [
     "Agent[01]",
     "Agent[02]",
@@ -223,7 +229,7 @@ def calc_protocol_from_scores(scores):
     return protocol
 
 
-class JPToProtocolConverter:
+class BERTJPToProtocolConverter(JPToProtocolConverter):
     def __init__(self):
         # 日本語の事前学習モデルを指定
         MODEL_NAME = "cl-tohoku/bert-base-japanese-whole-word-masking"
@@ -231,30 +237,17 @@ class JPToProtocolConverter:
         self.tokenizer = BertJapaneseTokenizer.from_pretrained(MODEL_NAME)
 
         # モデルの読み込み
-        best_model_path = current_dir+"/jp2protocol_model/bert_scml20230128.pth"
-        self.bert_scml = torch.load(best_model_path)
-        self.bert_scml = self.bert_scml.cuda()
+        best_model_path = current_dir.joinpath("jp2protocol_model").joinpath("bert_scml20230128.pth")
+        self.bert_scml = torch.load(best_model_path, map_location=device)
+        self.bert_scml = self.bert_scml.to(device)
 
     def convert(self, text_list):
         bert_scml = self.bert_scml
         tokenizer = self.tokenizer
-        # # テキストをトークンに変換
-        # tokens = tokenizer.tokenize(text)
-        # # トークンをIDに変換
-        # input_ids = tokenizer.convert_tokens_to_ids(tokens)
-        # # テキストをモデルに入力できる形に変換
-        # input_ids = torch.tensor([input_ids]).cuda()
-        # # モデルに入力
-        # with torch.no_grad():
-        #     output = bert_scml(input_ids=input_ids)
-        # # スコアを取り出す
-        # scores = output.logits[0]
-        # # スコアからプロトコルを生成
-        # protocol = calc_protocol_from_scores(scores)
 
         # データの符号化
         encoding = tokenizer(text_list, padding="longest", return_tensors="pt")
-        encoding = {k: v.cuda() for k, v in encoding.items()}
+        encoding = {k: v.to(device) for k, v in encoding.items()}
 
         # BERTへデータを入力し分類スコアを得る。
         with torch.no_grad():
@@ -320,7 +313,7 @@ if __name__ == "__main__":
     load_model.load_state_dict(torch.load(best_model_path))
 
     # モデルをGPUに転送
-    bert_scml = load_model.bert_scml.cuda()
+    bert_scml = load_model.bert_scml.to(device)
 
     # 入力する文章
     text_list = [
@@ -349,7 +342,7 @@ if __name__ == "__main__":
 
     # データの符号化
     encoding = tokenizer(text_list, padding="longest", return_tensors="pt")
-    encoding = {k: v.cuda() for k, v in encoding.items()}
+    encoding = {k: v.to(device) for k, v in encoding.items()}
 
     # BERTへデータを入力し分類スコアを得る。
     with torch.no_grad():

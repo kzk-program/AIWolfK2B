@@ -10,7 +10,7 @@ import aiwolfpy
 import pandas as pd
 from aiwolfk2b.agentLPS.python_simple_protocol_agent import SampleAgent  # 試しに使うprotocol用のエージェント
 from aiwolfk2b.agentLPS.speaker import SimpleSpeaker # プロトコルを自然言語に変換するクラス
-from aiwolfk2b.agentLPS.jp_to_protocol import JPToProtocolConverter,BertForSequenceClassificationMultiLabel # 自然言語をプロトコルに変換するクラス
+from aiwolfk2b.agentLPS.BERT_jp_to_protocol import BERTJPToProtocolConverter,BertForSequenceClassificationMultiLabel # 自然言語をプロトコルに変換するクラス
 from OKAMI import OKAMI
 
 
@@ -23,7 +23,7 @@ class ProtocolWrapperAgent:
         self.request = None
         self.diff_data = None
         self.protocol_to_NL_converter = None
-        self.NL_to_protocol_converter = JPToProtocolConverter()
+        self.NL_to_protocol_converter = BERTJPToProtocolConverter()
 
     def initialize(self, base_info, diff_data, game_setting):
         self.base_info = base_info
@@ -32,7 +32,7 @@ class ProtocolWrapperAgent:
         self.agent.initialize(base_info, p_diff_data, game_setting)
         # converterの初期化
         self.protocol_to_NL_converter = SimpleSpeaker(me="Agent[{:02d}]".format(base_info["agentIdx"]))
-        self.NL_to_protocol_converter = JPToProtocolConverter()
+        self.NL_to_protocol_converter = BERTJPToProtocolConverter()
 
     def update(self, base_info, diff_data, request):
         self.base_info = base_info
