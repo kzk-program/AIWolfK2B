@@ -113,7 +113,7 @@ export PYTHONPATH="${PYTHONPATH}:${PWD}/../AIWolfK2B/OKAMI"
 
 ### 実行
 
-1. GPT_end_to_endにあるgpt3_agent.pyと同じ階層に新しいtxtファイル「openAIAPIkey.txt」を作り、用意したChatGPTのAPIキーを貼り付ける。
+1. aiwolfk2b/GPT_end_to_end/openAIAPIkey.txt」に、用意したChatGPTのAPIキーを貼り付ける。
 2. AutoStarter.iniにgpt3_agent.pyを追加する。(一つだけgpt3_agentで、他はagentLPSでやるのが今のところおすすめ)
     
     ```
@@ -125,15 +125,7 @@ export PYTHONPATH="${PYTHONPATH}:${PWD}/../AIWolfK2B/OKAMI"
 ```jsx
 game = 1
 ```
-
-4. 以下を実行　(conda等の開発環境を用意している場合はそこにインストール)
-
-```bash
-pip install openai
-pip install Levenshtein
-```
-
-5. AutoStarter.shを走らせる
+4. AutoStarter.shを走らせる
 ```bash
 ./AutoStarter.sh
 ```
