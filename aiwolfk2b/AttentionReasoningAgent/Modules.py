@@ -92,10 +92,13 @@ class AbstractRoleEstimationModel(ABC):
 class AbstractRoleInferenceModule(ABC):
     config: ConfigParser
     """設定ファイル"""
+    role_estimation_model: AbstractRoleEstimationModel
+    """役職推定モデル"""
     
-    def __init__(self,config:ConfigParser) -> None:
+    def __init__(self,config:ConfigParser,role_estimation_model:AbstractRoleEstimationModel) -> None:
         super().__init__()
         self.config = config
+        self.role_estimation_model = role_estimation_model
     
     @abstractmethod
     def infer(self,agent:Agent, game_info: GameInfo, game_setting: GameSetting) -> RoleInferenceResult:
@@ -111,13 +114,20 @@ class AbstractStrategyModule(ABC):
     """過去の行動の履歴"""
     future_plan: List[OneStepPlan]
     """未来の行動の予定"""
-    
     config: ConfigParser
     """設定ファイル"""
     
-    def __init__(self,config:ConfigParser) -> None:
+    role_estimation_model: AbstractRoleEstimationModel
+    """役職推定モデル"""
+    role_inference_module: AbstractRoleInferenceModule
+    """役職推論モジュール"""
+    
+    
+    def __init__(self,config:ConfigParser,role_estimation_model: AbstractRoleEstimationModel, role_inference_module: AbstractRoleInferenceModule) -> None:
         super().__init__()
         self.config = config
+        self.role_estimation_model = role_estimation_model
+        self.role_inference_module = role_inference_module
     
     @abstractmethod
     def talk(self) -> str:
@@ -163,29 +173,20 @@ class AbstractStrategyModule(ABC):
         pass
     
 
-class AbstractInfluenceConsiderationModule(ABC):
-    config: ConfigParser
-    """設定ファイル"""
-    
-    def __init__(self,config:ConfigParser) -> None:
-        super().__init__()
-        self.config = config
-    
-    @abstractmethod
-    def check_influence(self,game_info: GameInfo, game_setting: GameSetting) -> Tuple[bool,OneStepPlan]:
-        """ 
-        入力：推論を行うために使用する自然言語の対話・ゲーム情報
-        出力：投げかけかどうかを表すbool値と、投げかけであった場合、他者影響を考慮した行動の根拠と行動のペア（投げかけ出ない場合はNone）
-        """
-        pass
-
 class AbstractRequestProcessingModule(ABC):
     config: ConfigParser
     """設定ファイル"""
+    role_estimation_model: AbstractRoleEstimationModel
+    """役職推論モジュール"""
+    strategy_module: AbstractStrategyModule
+    """戦略立案モジュール"""
     
-    def __init__(self,config:ConfigParser) -> None:
+    
+    def __init__(self,config:ConfigParser,role_estimation_model: AbstractRoleEstimationModel, strategy_module:AbstractStrategyModule) -> None:
         super().__init__()
         self.config = config
+        self.role_estimation_model = role_estimation_model
+        self.strategy_module = strategy_module
         
     @abstractmethod
     def process_request(self, game_info: GameInfo, game_setting: GameSetting)->OneStepPlan:
@@ -195,13 +196,19 @@ class AbstractRequestProcessingModule(ABC):
         """
         pass
 
-class QuestionProcessingModule(ABC):
+class AbstractQuestionProcessingModule(ABC):
     config: ConfigParser
     """設定ファイル"""
+    role_inference_module: AbstractRoleInferenceModule
+    """役職推論モジュール"""
+    strategy_module: AbstractStrategyModule
+    """戦略立案モジュール"""
     
-    def __init__(self,config:ConfigParser) -> None:
+    def __init__(self,config:ConfigParser,role_inference_module:AbstractRoleInferenceModule, strategy_module:AbstractStrategyModule) -> None:
         super().__init__()
         self.config = config
+        self.role_inference_module = role_inference_module
+        self.strategy_module = strategy_module
         
     @abstractmethod
     def process_question(self,game_info: GameInfo, game_setting: GameSetting)->OneStepPlan:
@@ -224,5 +231,29 @@ class AbstractSpeechModule(ABC):
         """
         入力：発話内容の自然言語
         出力：キャラ性を加えた自然言語
+        """
+        pass
+    
+
+class AbstractInfluenceConsiderationModule(ABC):
+    config: ConfigParser
+    """設定ファイル"""
+    
+    request_processing_module: AbstractRequestProcessingModule
+    """他者からの要求を処理するモジュール"""
+    question_processing_module: AbstractQuestionProcessingModule
+    """他者からの質問を処理するモジュール"""
+    
+    def __init__(self,config:ConfigParser,request_processing_module:AbstractRequestProcessingModule, question_processing_module:AbstractQuestionProcessingModule) -> None:
+        super().__init__()
+        self.config = config
+        self.request_processing_module = request_processing_module
+        self.question_processing_module = question_processing_module
+    
+    @abstractmethod
+    def check_influence(self,game_info: GameInfo, game_setting: GameSetting) -> Tuple[bool,OneStepPlan]:
+        """ 
+        入力：推論を行うために使用する自然言語の対話・ゲーム情報
+        出力：投げかけかどうかを表すbool値と、投げかけであった場合、他者影響を考慮した行動の根拠と行動のペア（投げかけ出ない場合はNone）
         """
         pass
