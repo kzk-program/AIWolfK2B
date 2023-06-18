@@ -14,18 +14,18 @@ class RoleEstimateResult:
     """役職推定結果を保持するクラス"""
     agent: Agent
     """推定対象のエージェント"""
-    result: Dict[Role,float]
-    """推定結果(役職とその確率のペア)"""
+    probs: Dict[Role,float]
+    """推定結果(キー：役職、値：その役職の確率とした辞書)"""
     attention_map: Any
     """アテンションマップ"""
     
     def __init__(self,agent:Agent, result:Dict[Role,float],attention_map:Any):
         self.agent = agent
-        self.result = result
+        self.probs = result
         self.attention_map = attention_map
         
     def __str__(self) -> str:
-        return self.agent + "is " + str(self.result) + "\nattention_map: " + str(self.attention_map)
+        return self.agent + "is " + str(self.probs) + "\nattention_map: " + str(self.attention_map)
 
     
 class RoleInferenceResult:
@@ -34,15 +34,16 @@ class RoleInferenceResult:
     """推論対象のエージェント"""
     reason: str
     """推論結果に至った理由"""
-    result: List[Tuple[Role,float]]
-    """推論結果(役職とその確率のペア)"""
+    probs: Dict[Role,float]
+    """推論結果(キー：役職、値：その役職の確率とした辞書)"""
     
-    def __init__(self,reason:str, result:List[Tuple[Role,float]]):
+    def __init__(self,agent: Agent,reason:str, result: Dict[Role,float]):
+        self.agent = agent
         self.reason = reason
-        self.result = result
+        self.probs = result
         
     def __str__(self) -> str:
-        return self.agent + "is reason: " + self.reason + "\nresult: " + str(self.result)
+        return self.agent + "is reason: " + self.reason + "\nresult: " + str(self.probs)
 
 class ActionType(Enum):
     """取る行動の種類"""
@@ -81,6 +82,10 @@ class AbstractRoleEstimationModel(ABC):
         super().__init__()
         self.config = config
     
+    def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
+        """初期化処理"""
+        pass
+
     @abstractmethod
     def estimate(self,agent:Agent, game_info: GameInfo, game_setting: GameSetting) -> RoleEstimateResult:
         """
@@ -99,7 +104,11 @@ class AbstractRoleInferenceModule(ABC):
         super().__init__()
         self.config = config
         self.role_estimation_model = role_estimation_model
-    
+
+    def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
+        """初期化処理"""
+        pass
+  
     @abstractmethod
     def infer(self,agent:Agent, game_info: GameInfo, game_setting: GameSetting) -> RoleInferenceResult:
         """
@@ -114,6 +123,8 @@ class AbstractStrategyModule(ABC):
     """過去の行動の履歴"""
     future_plan: List[OneStepPlan]
     """未来の行動の予定"""
+    next_plan: OneStepPlan
+    """次の行動の予定"""
     config: ConfigParser
     """設定ファイル"""
     
@@ -129,33 +140,37 @@ class AbstractStrategyModule(ABC):
         self.role_estimation_model = role_estimation_model
         self.role_inference_module = role_inference_module
     
+    def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
+        """初期化処理"""
+        pass
+
     @abstractmethod
-    def talk(self) -> str:
+    def talk(self,game_info: GameInfo, game_setting: GameSetting) -> str:
         """talk要求時に発話する内容を返す"""
         raise NotImplementedError()
 
     @abstractmethod
-    def vote(self) -> Agent:
+    def vote(self,game_info: GameInfo, game_setting: GameSetting) -> Agent:
         """vote要求時に投票するエージェントを返す"""
         raise NotImplementedError()
 
     @abstractmethod
-    def attack(self) -> Agent:
+    def attack(self,game_info: GameInfo, game_setting: GameSetting) -> Agent:
         """attack要求時に襲撃するエージェントを返す"""
         raise NotImplementedError()
 
     @abstractmethod
-    def divine(self) -> Agent:
+    def divine(self,game_info: GameInfo, game_setting: GameSetting) -> Agent:
         """divine要求時に占うエージェントを返す"""
         raise NotImplementedError()
 
     @abstractmethod
-    def guard(self) -> Agent:
+    def guard(self,game_info: GameInfo, game_setting: GameSetting) -> Agent:
         """guard要求時に護衛するエージェントを返す"""
         raise NotImplementedError()
 
     @abstractmethod
-    def whisper(self) -> str:
+    def whisper(self,game_info: GameInfo, game_setting: GameSetting) -> str:
         """whisper要求時に囁く内容を返す"""
         raise NotImplementedError()
     
@@ -170,6 +185,11 @@ class AbstractStrategyModule(ABC):
     @abstractmethod
     def update_history(self,game_info: GameInfo, game_setting: GameSetting,executed_plan:OneStepPlan) -> None:
         """実際の行動を受け取り、履歴を更新する"""
+        self.history.append(executed_plan)
+    
+    @abstractmethod
+    def update_future_plan(self,game_info: GameInfo, game_setting: GameSetting) -> None:
+        """未来の行動を更新する"""
         pass
     
 
@@ -187,7 +207,11 @@ class AbstractRequestProcessingModule(ABC):
         self.config = config
         self.role_estimation_model = role_estimation_model
         self.strategy_module = strategy_module
-        
+    
+    def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
+        """初期化処理"""
+        pass
+    
     @abstractmethod
     def process_request(self, game_info: GameInfo, game_setting: GameSetting)->OneStepPlan:
         """
@@ -209,6 +233,11 @@ class AbstractQuestionProcessingModule(ABC):
         self.config = config
         self.role_inference_module = role_inference_module
         self.strategy_module = strategy_module
+    
+    def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
+        """初期化処理"""
+        pass
+
         
     @abstractmethod
     def process_question(self,game_info: GameInfo, game_setting: GameSetting)->OneStepPlan:
@@ -218,7 +247,7 @@ class AbstractQuestionProcessingModule(ABC):
         """
         pass
 
-class AbstractSpeechModule(ABC):
+class AbstractSpeakerModule(ABC):
     config: ConfigParser
     """設定ファイル"""
     
@@ -226,6 +255,10 @@ class AbstractSpeechModule(ABC):
         super().__init__()
         self.config = config
     
+    def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
+        """初期化処理"""
+        pass
+
     @abstractmethod
     def enhance_speech(self, speech:str) -> str:
         """
@@ -249,6 +282,11 @@ class AbstractInfluenceConsiderationModule(ABC):
         self.config = config
         self.request_processing_module = request_processing_module
         self.question_processing_module = question_processing_module
+    
+    def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
+        """初期化処理"""
+        pass
+
     
     @abstractmethod
     def check_influence(self,game_info: GameInfo, game_setting: GameSetting) -> Tuple[bool,OneStepPlan]:
