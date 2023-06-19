@@ -23,6 +23,11 @@ from aiwolfk2b.AttentionReasoningAgent.SimpleModules import *
 
 CONTENT_SKIP: Content = Content(SkipContentBuilder())
 
+
+#現在のプログラムが置かれているディレクトリを取得
+import pathlib
+current_dir = pathlib.Path(__file__).resolve().parent
+
 class AttentionReasoningAgent(AbstractPlayer):
     """Sample villager agent."""
 
@@ -136,6 +141,8 @@ class AttentionReasoningAgent(AbstractPlayer):
         self.question_processing_module.initialize(game_info,game_setting)
         self.influence_consideration_module.initialize(game_info,game_setting)
         self.speaker_module.initialize(game_info,game_setting)
+        
+        
 
     def day_start(self) -> None:
         self.talk_list_head = 0
@@ -223,7 +230,7 @@ if __name__ == '__main__':
     
     # config
     config_ini = configparser.ConfigParser()
-    config_ini_path = '/home/takuya/HDD1/work/AI_Wolf/2023S_AIWolfK2B/aiwolfk2b/AttentionReasoningAgent/config.ini'
+    config_ini_path = current_dir.joinpath("config.ini")
 
     # iniファイルが存在するかチェック
     if os.path.exists(config_ini_path):
