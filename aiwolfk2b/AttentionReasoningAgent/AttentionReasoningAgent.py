@@ -189,7 +189,7 @@ class AttentionReasoningAgent(AbstractPlayer):
         strategy_content = self.strategy_module.talk(self.game_info,self.game_setting)
         influenced = self.influence_consideration_module.check_influence(self.game_info,self.game_setting)
         if influenced[0]:
-            return influenced[1].reason
+            return influenced[1].action
         else:
             return strategy_content
 
