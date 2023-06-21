@@ -42,6 +42,7 @@ git submodule update
 ```bash
 cd [path to AIWolfK2B]
 pip install AIWolfPy/
+pip install git+https://github.com/HoneyMack/aiwolf-python-nl.git@feature/nl_adjust
 pip install -e .
 ```
 
@@ -77,10 +78,17 @@ pip install -e .
 
 AutoStarterを使って実行するためには、AutoStarter.iniで実行するエージェントのパスを指定する必要があるので、これを準備する。
 
-例えば、agentLPSを動かしたい場合、以下の文をAutoStarter.iniに追加する。
+例えば、
+
+agentLPSを動かしたい場合、以下の文をAutoStarter.iniに追加する。
 
 ```bash
 PythonPlayer4,python,../AIWolfK2B/aiwolfk2b/agentLPS/protocol_wrapper_agent.py
+```
+AttentionReasoningAgentを動かしたい場合、以下の文をAutoStarter.iniに追加する。
+
+```bash
+PythonPlayer4,python,../AIWolfK2B/aiwolfk2b/AttentionReasoningAgent/AttentionReasoningAgent.py
 ```
 
 ### 実行
