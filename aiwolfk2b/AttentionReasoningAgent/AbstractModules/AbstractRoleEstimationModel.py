@@ -24,17 +24,48 @@ class RoleEstimationResult:
         return self.agent + "is " + str(self.probs) + "\nattention_map: " + str(self.attention_map)
 
 class AbstractRoleEstimationModel(AbstractModule):
+    """役職推定モデルの抽象クラス"""
     def __init__(self,config:ConfigParser) -> None:
+        """
+        コンストラクタ
+
+        Parameters
+        ----------
+        config : ConfigParser
+            設定ファイル
+        """
         super().__init__(config)
     
     def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
-        """初期化処理"""
+        """
+        ゲーム開始時に呼ばれる初期化処理
+
+        Parameters
+        ----------
+        game_info : GameInfo
+            ゲームの情報
+        game_setting : GameSetting
+            ゲームの設定
+        """
         super().initialize(game_info, game_setting)
 
     @abstractmethod
     def estimate(self,agent:Agent, game_info: GameInfo, game_setting: GameSetting) -> RoleEstimationResult:
         """
-        入力：自然言語の対話・ゲーム情報、役職を推定するエージェント
-        出力：エージェントの役職の推定確率とアテンションマップ
+        指定された情報から、指定されたエージェントの役職を推定し、その結果を返す
+
+        Parameters
+        ----------
+        agent : Agent
+            推定対象のエージェント
+        game_info : GameInfo
+            ゲームの情報
+        game_setting : GameSetting
+            ゲームの設定
+
+        Returns
+        -------
+        RoleEstimationResult
+            指定されたエージェントの役職推定結果(エージェントの役職の推定確率とアテンションマップ)
         """
         pass
