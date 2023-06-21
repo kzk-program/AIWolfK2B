@@ -1,4 +1,5 @@
 #AttentionReasoningAgentの動作確認＆学習用プログラム
+import pathlib
 import argparse
 import configparser
 import errno
@@ -6,9 +7,7 @@ import errno
 import os
 import random
 import sys
-from logging import FileHandler, Formatter, StreamHandler, getLogger
 
-import pandas as pd
 from aiwolf import TcpipClient
 
 
@@ -25,7 +24,6 @@ CONTENT_SKIP: Content = Content(SkipContentBuilder())
 
 
 #現在のプログラムが置かれているディレクトリを取得
-import pathlib
 current_dir = pathlib.Path(__file__).resolve().parent
 
 class AttentionReasoningAgent(AbstractPlayer):
@@ -165,27 +163,6 @@ class AttentionReasoningAgent(AbstractPlayer):
         self.talk_list_head = len(game_info.talk_list)  # All done.
 
     def talk(self) -> Content:
-        # # Choose an agent to be voted for while talking.
-        # #
-        # # The list of fake seers that reported me as a werewolf.
-        # fake_seers: List[Agent] = [j.agent for j in self.divination_reports
-        #                            if j.target == self.me and j.result == Species.WEREWOLF]
-        # # Vote for one of the alive agents that were judged as werewolves by non-fake seers.
-        # reported_wolves: List[Agent] = [j.target for j in self.divination_reports
-        #                                 if j.agent not in fake_seers and j.result == Species.WEREWOLF]
-        # candidates: List[Agent] = self.get_alive_others(reported_wolves)
-        # # Vote for one of the alive fake seers if there are no candidates.
-        # if not candidates:
-        #     candidates = self.get_alive(fake_seers)
-        # # Vote for one of the alive agents if there are no candidates.
-        # if not candidates:
-        #     candidates = self.get_alive_others(self.game_info.agent_list)
-        # # Declare which to vote for if not declare yet or the candidate is changed.
-        # if self.vote_candidate == AGENT_NONE or self.vote_candidate not in candidates:
-        #     self.vote_candidate = self.random_select(candidates)
-        #     if self.vote_candidate != AGENT_NONE:
-        #         return Content(VoteContentBuilder(self.vote_candidate))
-        # return CONTENT_SKIP
         strategy_content = self.strategy_module.talk(self.game_info,self.game_setting)
         influenced = self.influence_consideration_module.check_influence(self.game_info,self.game_setting)
         if influenced[0]:
