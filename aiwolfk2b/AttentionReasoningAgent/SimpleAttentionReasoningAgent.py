@@ -3,15 +3,14 @@ import pathlib
 import argparse
 import configparser
 import errno
+from typing import Dict, List
 
 import os
 import random
 import sys
 
+
 from aiwolf import TcpipClient
-
-
-from typing import Dict, List
 from aiwolf import (AbstractPlayer, Agent, Content, GameInfo, GameSetting,
                     Judge, Role, Species, Status, Talk, Topic,
                     VoteContentBuilder,SkipContentBuilder)

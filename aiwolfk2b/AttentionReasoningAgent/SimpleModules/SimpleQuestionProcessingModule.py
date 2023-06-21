@@ -12,6 +12,6 @@ class SimpleQuestionProcessingModule(AbstractQuestionProcessingModule):
         super().__init__(config, role_inference_module, strategy_module)
         
     def process_question(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
-        plan = OneStepPlan("なんとなく",ActionType.TALK,"なんとなく")
+        plan = OneStepPlan("なんとなく(from question processing module)",ActionType.TALK,"なんとなく(from question processing module)")
         return plan
     

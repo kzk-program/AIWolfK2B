@@ -11,5 +11,5 @@ class SimpleRequestProcessingModule(AbstractRequestProcessingModule):
         super().__init__(config,role_estimation_model,strategy_module)
         
     def process_request(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
-        plan = OneStepPlan("なんとなく",ActionType.TALK,"お前には従わない")
+        plan = OneStepPlan("なんとなく(from request processing module)",ActionType.TALK,"お前には従わない(from request processing module)")
         return plan

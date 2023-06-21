@@ -17,7 +17,7 @@ class SimpleStrategyModule(AbstractStrategyModule):
         self.next_plan = None
 
     def talk(self,game_info: GameInfo, game_setting: GameSetting) -> str:
-        return "何も言うことはない"
+        return "何も言うことはない(from strategy module)"
     
     def vote(self, game_info: GameInfo, game_setting: GameSetting) -> Agent:
         """最も人狼の確率が高いエージェントに投票する"""

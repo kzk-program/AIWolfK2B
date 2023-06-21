@@ -16,8 +16,8 @@ class SimpleInfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
         """ランダムに投げかけありと判定して、テキトーなことをいう"""
         has_influence = random.random() > 0.5
         if has_influence:
-            """要求か質問のどちらかをランダムに選ぶ"""
-            is_request = random.random() > 0.5 or True
+            #要求か質問のどちらかをランダムに選ぶ
+            is_request = random.random() > 0.5
             if is_request:
                 plan = self.request_processing_module.process_request(game_info, game_setting)
             else:
