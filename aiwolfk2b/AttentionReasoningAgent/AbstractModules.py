@@ -72,7 +72,7 @@ class OneStepPlan:
     def __str__(self) -> str:
         return "reason: " + self.reason + "\naction_type: " + str(self.action_type) + "\naction: " + str(self.action)
 
-class AbstractModules(ABC):
+class AbstractModule(ABC):
     config: ConfigParser
     """設定ファイル"""
     
@@ -84,17 +84,13 @@ class AbstractModules(ABC):
         """初期化処理"""
         pass
 
-class AbstractRoleEstimationModel(ABC):
-    config: ConfigParser
-    """設定ファイル"""
-    
+class AbstractRoleEstimationModel(AbstractModule):
     def __init__(self,config:ConfigParser) -> None:
-        super().__init__()
-        self.config = config
+        super().__init__(config)
     
     def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
         """初期化処理"""
-        pass
+        super().initialize(game_info, game_setting)
 
     @abstractmethod
     def estimate(self,agent:Agent, game_info: GameInfo, game_setting: GameSetting) -> RoleEstimateResult:
@@ -104,20 +100,17 @@ class AbstractRoleEstimationModel(ABC):
         """
         pass
 
-class AbstractRoleInferenceModule(ABC):
-    config: ConfigParser
-    """設定ファイル"""
+class AbstractRoleInferenceModule(AbstractModule):
     role_estimation_model: AbstractRoleEstimationModel
     """役職推定モデル"""
     
     def __init__(self,config:ConfigParser,role_estimation_model:AbstractRoleEstimationModel) -> None:
-        super().__init__()
-        self.config = config
+        super().__init__(config)
         self.role_estimation_model = role_estimation_model
 
     def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
         """初期化処理"""
-        pass
+        super().initialize(game_info, game_setting)
   
     @abstractmethod
     def infer(self,agent:Agent, game_info: GameInfo, game_setting: GameSetting) -> RoleInferenceResult:
@@ -128,15 +121,13 @@ class AbstractRoleInferenceModule(ABC):
         pass
     
 
-class AbstractStrategyModule(ABC):
+class AbstractStrategyModule(AbstractModule):
     history: List[OneStepPlan]
     """過去の行動の履歴"""
     future_plan: List[OneStepPlan]
     """未来の行動の予定"""
     next_plan: OneStepPlan
     """次の行動の予定"""
-    config: ConfigParser
-    """設定ファイル"""
     
     role_estimation_model: AbstractRoleEstimationModel
     """役職推定モデル"""
@@ -145,15 +136,14 @@ class AbstractStrategyModule(ABC):
     
     
     def __init__(self,config:ConfigParser,role_estimation_model: AbstractRoleEstimationModel, role_inference_module: AbstractRoleInferenceModule) -> None:
-        super().__init__()
-        self.config = config
+        super().__init__(config)
         self.role_estimation_model = role_estimation_model
         self.role_inference_module = role_inference_module
     
     def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
         """初期化処理"""
-        pass
-
+        super().initialize(game_info, game_setting)
+        
     @abstractmethod
     def talk(self,game_info: GameInfo, game_setting: GameSetting) -> str:
         """talk要求時に発話する内容を返す"""
@@ -203,9 +193,7 @@ class AbstractStrategyModule(ABC):
         pass
     
 
-class AbstractRequestProcessingModule(ABC):
-    config: ConfigParser
-    """設定ファイル"""
+class AbstractRequestProcessingModule(AbstractModule):
     role_estimation_model: AbstractRoleEstimationModel
     """役職推論モジュール"""
     strategy_module: AbstractStrategyModule
@@ -213,14 +201,13 @@ class AbstractRequestProcessingModule(ABC):
     
     
     def __init__(self,config:ConfigParser,role_estimation_model: AbstractRoleEstimationModel, strategy_module:AbstractStrategyModule) -> None:
-        super().__init__()
-        self.config = config
+        super().__init__(config)
         self.role_estimation_model = role_estimation_model
         self.strategy_module = strategy_module
     
     def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
         """初期化処理"""
-        pass
+        super().initialize(game_info, game_setting)
     
     @abstractmethod
     def process_request(self, game_info: GameInfo, game_setting: GameSetting)->OneStepPlan:
@@ -230,23 +217,20 @@ class AbstractRequestProcessingModule(ABC):
         """
         pass
 
-class AbstractQuestionProcessingModule(ABC):
-    config: ConfigParser
-    """設定ファイル"""
+class AbstractQuestionProcessingModule(AbstractModule):
     role_inference_module: AbstractRoleInferenceModule
     """役職推論モジュール"""
     strategy_module: AbstractStrategyModule
     """戦略立案モジュール"""
     
     def __init__(self,config:ConfigParser,role_inference_module:AbstractRoleInferenceModule, strategy_module:AbstractStrategyModule) -> None:
-        super().__init__()
-        self.config = config
+        super().__init__(config)
         self.role_inference_module = role_inference_module
         self.strategy_module = strategy_module
     
     def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
         """初期化処理"""
-        pass
+        super().initialize(game_info, game_setting)
 
         
     @abstractmethod
@@ -257,17 +241,13 @@ class AbstractQuestionProcessingModule(ABC):
         """
         pass
 
-class AbstractSpeakerModule(ABC):
-    config: ConfigParser
-    """設定ファイル"""
-    
+class AbstractSpeakerModule(AbstractModule):  
     def __init__(self,config:ConfigParser) -> None:
-        super().__init__()
-        self.config = config
+        super().__init__(config)
     
     def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
         """初期化処理"""
-        pass
+        super().initialize(game_info, game_setting)
 
     @abstractmethod
     def enhance_speech(self, speech:str) -> str:
@@ -278,9 +258,7 @@ class AbstractSpeakerModule(ABC):
         pass
     
 
-class AbstractInfluenceConsiderationModule(ABC):
-    config: ConfigParser
-    """設定ファイル"""
+class AbstractInfluenceConsiderationModule(AbstractModule):
     
     request_processing_module: AbstractRequestProcessingModule
     """他者からの要求を処理するモジュール"""
@@ -288,14 +266,13 @@ class AbstractInfluenceConsiderationModule(ABC):
     """他者からの質問を処理するモジュール"""
     
     def __init__(self,config:ConfigParser,request_processing_module:AbstractRequestProcessingModule, question_processing_module:AbstractQuestionProcessingModule) -> None:
-        super().__init__()
-        self.config = config
+        super().__init__(config)
         self.request_processing_module = request_processing_module
         self.question_processing_module = question_processing_module
     
     def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
         """初期化処理"""
-        pass
+        super().initialize(game_info, game_setting)
 
     
     @abstractmethod
