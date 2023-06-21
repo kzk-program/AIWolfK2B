@@ -1,19 +1,18 @@
 from configparser import ConfigParser
+from typing import List,Tuple,Dict,Any,Union
 from aiwolf import GameInfo, GameSetting
-from aiwolf.agent import Agent
-from AbstractModules import *
+from aiwolf.agent import Agent,Role
+from aiwolfk2b.AttentionReasoningAgent.AbstractModules import *
+
 import random
 import math
-
-from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractRoleInferenceModule, AbstractStrategyModule, OneStepPlan
-
 
 class RandomRoleEstimationModel(AbstractRoleEstimationModel):
     """ランダムに役職を推定するモデル"""
     def __init__(self, config: ConfigParser) -> None:
         super().__init__(config)
         
-    def estimate(self,agent:Agent, game_info: GameInfo, game_setting: GameSetting) -> RoleEstimateResult:
+    def estimate(self,agent:Agent, game_info: GameInfo, game_setting: GameSetting) -> RoleEstimationResult:
         """ランダムに役職を推定する"""
         #１人以上存在する役職のリスト
         role_list = [role for role in game_setting.role_num_map.keys() if game_setting.role_num_map[role] > 0]
@@ -27,7 +26,7 @@ class RandomRoleEstimationModel(AbstractRoleEstimationModel):
         for role in role_list:
             estimation[role] = math.exp(scores[role])/sum_exp
             
-        return RoleEstimateResult(agent,estimation,None)
+        return RoleEstimationResult(agent,estimation,None)
     
 class SimpleRoleInferenceModule(AbstractRoleInferenceModule):
     """推論モデルを鵜呑みにする役職推論モジュール"""

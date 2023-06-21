@@ -1,0 +1,11 @@
+import sys, pathlib
+sys.path.append(str(pathlib.Path(__file__).parent))
+
+from AbstractModule import AbstractModule
+from AbstractRoleEstimationModel import AbstractRoleEstimationModel,RoleEstimationResult
+from AbstractRoleInferenceModule import AbstractRoleInferenceModule,RoleInferenceResult
+from AbstractStrategyModule import AbstractStrategyModule,OneStepPlan,ActionType
+from AbstractRequestProcessingModule import AbstractRequestProcessingModule
+from AbstractQuestionProcessingModule import AbstractQuestionProcessingModule
+from AbstractInfluenceConsiderationModule import AbstractInfluenceConsiderationModule
+from AbstractSpeakerModule import AbstractSpeakerModule
