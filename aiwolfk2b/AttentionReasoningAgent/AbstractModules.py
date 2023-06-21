@@ -72,7 +72,17 @@ class OneStepPlan:
     def __str__(self) -> str:
         return "reason: " + self.reason + "\naction_type: " + str(self.action_type) + "\naction: " + str(self.action)
 
-
+class AbstractModules(ABC):
+    config: ConfigParser
+    """設定ファイル"""
+    
+    def __init__(self,config:ConfigParser) -> None:
+        super().__init__()
+        self.config = config
+    
+    def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
+        """初期化処理"""
+        pass
 
 class AbstractRoleEstimationModel(ABC):
     config: ConfigParser
