@@ -91,7 +91,7 @@ class ChatGPTAgent(AbstractPlayer):
                  "content": 
                     f"""\
 テキストベースの人狼ゲームに参加しているプレイヤーとして振舞ってください。
-あなたはAgent[{game_setting.player_num:02d}]です。あなたの役割は{self.role_to_japanese[game_info.my_role]}です。
+あなたは{str(game_info.me)}です。あなたの役割は{self.role_to_japanese[game_info.my_role]}です。
 各プレイヤーが順番に発言していき、最大{game_setting.max_talk_turn}周回ると投票に移ります。
 
 以下は各役職の説明です。
