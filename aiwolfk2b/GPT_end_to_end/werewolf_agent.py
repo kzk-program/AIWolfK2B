@@ -9,23 +9,11 @@ import openai
 import Levenshtein
 import argparse
 
-# import os
-# import threading
-# import time
-# import textwrap
-# import random
-# import re
-# import copy
-# import requests, simpleaudio, tempfile, json
-# import pyaudio
-# import wave
-# import numpy as np
-# from concurrent.futures import ThreadPoolExecutor
 
 from time import sleep
 # name
-myname = 'gpt3_werewolf_python'
-PLAYER_NAMES = [myname]
+default_agent_name = 'gpt3_werewolf_python'
+
 
 # content factory
 cf = aiwolfpy.ContentFactory()
@@ -48,15 +36,7 @@ MODEL = "gpt-3.5-turbo"
 TEMPERATURE = 1
 MAX_TOKEN = None
 MESSAGE_LOG_DIR = "log_messages"
-
-## GAME SETTINGS
 TALKS_PER_DAY = 2
-SHUFFLE = True
-
-# file_handler = FileHandler('aiwolf_game.log')
-# file_handler.setLevel(logging.WARNING)
-# file_handler.setFormatter(handler_format)
-# logger.addHandler(file_handler)
 
 # Accumulate game informatin which was sent from server, and convert it to text, then send it to GPT-3.
 
@@ -89,40 +69,14 @@ class GameInfoAccumulater:
                     狂人(POSSESSED): 村人として扱われますが、人狼の味方をします。人狼が勝つことで狂人も勝利出来ます。
                     人狼(WEREWOLF): 二日目の夜から、誰か一人を選んで殺すことが出来ます。
 
-                    役職が狂人、人狼の場合はばれないために自分が狂人、人狼であることを他のメンバーに言わないで下さい。しかし、狂人の場合は人狼に気づいて
+                    役職が狂人、人狼の場合は役職がばれないために自分が狂人、人狼であることを他のメンバーに言わないで下さい。しかし、狂人の場合は人狼に気づいて
                     もらえるように工夫する必要があります。自分が人狼である場合は占い師などの役職になりすます戦略もあります。
 
                     自分が人狼、狂人ではないかと疑われたら疑いを晴らすために弁解をしてください。嘘をついても構いませんが、過去の自分の発言と矛盾しないように
                     して下さい。
                     """
         ]
-                # ),
-            
-            # {
-            #     "role": "user",
-            #     "content": textwrap.dedent(
-            #         f"""
-            #         ### GM ###
-            #         ではゲームを始めましょう。準備は良いですか？
-            #         """
-            #     ),
-            # },
-            # {
-            #     "role": "assistant",
-            #     "content": textwrap.dedent(
-            #         f"""
-            #         <thought>
-            #         1. Game Masterから準備が出来ているか聞かれています。
-            #         2. 準備が出来ていることを伝えます。
-            #         </thought>
-            #         <statement>
-            #         準備完了です。
-            #         </statement>
-            #         """
-            #     ),
-            # },
-        
-    # def past_remark(self,)
+
         
     def set_context(self, diff):
         self.context[0] += self.diff_data_to_text(diff)
@@ -191,7 +145,7 @@ class GPT3Agent(object):
         # my name
         self.base_info = dict()
         self.game_setting = dict()
-        self.my_name = myname
+        self.my_name = default_agent_name
         self.talked_num_today = 0
         self.aichat = AIChat()
 
@@ -202,6 +156,7 @@ class GPT3Agent(object):
     def initialize(self, base_info, diff_data, game_setting):
         self.base_info = base_info
         self.game_setting = game_setting
+        self.my_name = base_info['agentIdx']
         self.gameinfo = GameInfoAccumulater(base_info)
 
         
@@ -262,21 +217,20 @@ class GPT3Agent(object):
         return None
     
 
-agent = GPT3Agent()
-
-# read args
-parser = argparse.ArgumentParser(add_help=False)
-parser.add_argument('-p', type=int, action='store', dest='port')
-parser.add_argument('-h', type=str, action='store', dest='hostname')
-parser.add_argument('-r', type=str, action='store', dest='role', default='none')
-parser.add_argument('-n', type=str, action='store', dest='name', default=myname)
-input_args = parser.parse_args()
-
-
-client_agent = aiwolfpy.AgentProxy(
-    agent, input_args.name, input_args.hostname, input_args.port, input_args.role, logger, "pandas"
-)
-
 # run
 if __name__ == '__main__':
+    # read args
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument('-p', type=int, action='store', dest='port')
+    parser.add_argument('-h', type=str, action='store', dest='hostname')
+    parser.add_argument('-r', type=str, action='store', dest='role', default='none')
+    parser.add_argument('-n', type=str, action='store', dest='name', default=default_agent_name)
+    input_args = parser.parse_args()
+    
+    
+    agent = GPT3Agent()
+    client_agent = aiwolfpy.AgentProxy(
+    agent, input_args.name, input_args.hostname, input_args.port, input_args.role, logger, "pandas"
+    )
+    
     client_agent.connect_server()
