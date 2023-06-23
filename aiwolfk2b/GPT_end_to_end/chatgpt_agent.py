@@ -77,6 +77,7 @@ class ChatGPTAgent(AbstractPlayer):
         self.temperature = temperature
         self.game_info_accumulator = GameInfoAccumulator()
         
+        #openAIのAPIキーを読み込む
         with open(current_dir.joinpath("openAIAPIkey.txt"), "r",encoding="utf-8") as f:
             openai.api_key = f.read().strip()
 
@@ -206,7 +207,8 @@ class ChatGPTAgent(AbstractPlayer):
         return self.get_agent_from_text(ans)
 
     def whisper(self) -> Content:
-        return ""
+        #TODO:大会向けには不要なので実装しないが、一般的な人狼AIとしては実装する
+        raise NotImplementedError("未実装です。実装してください")
 
     def finish(self) -> None:
         pass
@@ -263,9 +265,9 @@ class ChatGPTAgent(AbstractPlayer):
         return ""
     
 if __name__ == "__main__":
+    
     default_agent_name = 'chatgpt3_python'
-    
-    
+
     parser: ArgumentParser = ArgumentParser(add_help=False)
     parser.add_argument("-p", type=int, action="store", dest="port", required=True)
     parser.add_argument("-h", type=str, action="store", dest="hostname", required=True)
