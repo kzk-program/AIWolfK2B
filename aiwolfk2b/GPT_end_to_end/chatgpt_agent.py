@@ -263,7 +263,7 @@ class ChatGPTAgent(AbstractPlayer):
         return ""
     
 if __name__ == "__main__":
-    default_agent_name = 'gpt3_werewolf_python'
+    default_agent_name = 'chatgpt3_python'
     
     
     parser: ArgumentParser = ArgumentParser(add_help=False)
