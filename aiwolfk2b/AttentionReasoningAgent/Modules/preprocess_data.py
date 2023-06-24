@@ -40,9 +40,20 @@ def get_default_GameInfo(my_agent_idx:int=1)->_GameInfo:
     return _gameinfo
 
 class GameLogPreprocessor:
-    def __init__(self,my_agent_idx:int = 1):
+    def __init__(self,my_agent_idx:int = 1,criteria_agent_idx:int=2):
+        """
+        コンストラクタ
+
+        Parameters
+        ----------
+        my_agent_idx : int, optional
+            情報を受け取るエージェント（自分）, by default 1
+        criteria_agent_idx : int, optional
+            推論したいエージェントのidx, by default 2
+        """
         self.game_status_dict = {}
         self.my_agent_idx = my_agent_idx
+        self.criteria_agent_idx = criteria_agent_idx
         self.day = -1
         self.end_day = -1
         self.is_day = False
@@ -129,7 +140,8 @@ class GameLogPreprocessor:
         
         #プレイヤー名とエージェント名の対応を作成
         for idx,player in enumerate(self.player_role_dict.keys()):
-            agent_idx = idx + 1
+            #criteria_agent_idxを基準にagent_idxを割り振る
+            agent_idx = (playerNum - self.criteria_agent_idx + idx)%playerNum + 1
             self.player_to_agent_name_dict[player] = Agent(agent_idx)
             
         #エージェント名と役職の対応を作成
@@ -156,7 +168,7 @@ class GameLogPreprocessor:
         # ゲーム終了時点の日数を取得
         day_text = div.get_text(",").split(",")[1]
         # 日数は「%d日目」の形式なので、正規表現で取得
-        self.end_day = int(re.findall(r'\d+', day_text)[0])
+        self.end_day = int(re.findall(r'\d+', day_text)[0]) -1 #ゲーム開始時を0日目とするため-1する
 
     def preprocess_game_result(self, div: Tag):
         rows = div.table.tbody.find_all("tr", recursive=False)[1:]
@@ -262,7 +274,7 @@ class GameLogPreprocessor:
 
     def preprocess_day_info(self, div: Tag):
         day_text = div.get_text()
-        self.day = int(re.findall(r'\d+', day_text)[0])
+        self.day = int(re.findall(r'\d+', day_text)[0])-1 #ゲーム開始時を0日目とするため-1する
         if "昼" in day_text:
             self.is_day = True
         elif "夜" in day_text:
@@ -545,8 +557,26 @@ class GameLogPreprocessor:
             
         #全角空白を半角空白に変換
         message = message.replace("　"," ")
-        #改行を削除
+        #改行の空白を削除
         message = message.replace("\n            ","\n")
+        
+        # #可読性用
+        # #過去の文への言及「>>数字\n\n」での改行を削除
+        # message = re.sub(r'(>>\d+:\d+)|(>>\d+)\n\n', r'\1 ', message)
+        # #改行が連続している場合は一つにまとめる(可読性のため)
+        # message = re.sub(r'\n+', r'\n', message)
+        
+        #改行削除
+        message = message.replace("\n","")
+        #空白削除
+        message = message.replace(" ","")
+        #あいさつが邪魔なので消す
+        morning_calls =["おはよう", "おはようございます" ,"おはよー", "おはよん", "おっは", "おは", "おっはー", "おはようございますっ", "お早う", "お早うございます", "お早よう", "早々", "朝のご挨拶", "おはようございまーす", "おっはよー", "早うございます", "モーニング", "グッドモーニング", "おはようサンシャイン", "お目覚めはいかがですか", "おはようございます、そして良い一日を", "おはよう、新しい一日が始まったね", "今日も一日おはよう", "おはよう、早起きさん", "素敵な朝ですね", "朝から元気ですね", "早起きは三文の得"]
+        #文字が長い順に並べる
+        morning_calls.sort(key=len,reverse=True)
+        
+        for morning_call in morning_calls:
+            message = message.replace(morning_call,"")
         
         return message
         
@@ -561,7 +591,10 @@ def unit_test_GameLogPreprocessor():
     parser.get_data_from_file(inputpath)
     parser.parse()
     print(parser._game_setting)
-    print(parser._game_info_day_dict)
+    for game_info_day in parser._game_info_day_dict.values():
+        for talk in game_info_day["talkList"]:
+            print(talk)
+        #print(game_info_day["talkList"])
 
 def output_file(output_filepath: str, output_buffer: List[str]):
     with open(output_filepath, 'w+') as file:
