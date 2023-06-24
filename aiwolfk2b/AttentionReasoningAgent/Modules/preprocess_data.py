@@ -1,20 +1,58 @@
 from bs4 import BeautifulSoup, ResultSet, Tag
 from typing import List,Tuple,Dict
-import os,re,time,requests
-import random
+import os,re,time,requests,random
+from collections import defaultdict
+from pathlib import Path
 
+from aiwolf.gameinfo import GameInfo,_GameInfo
+from aiwolf.gamesetting import GameSetting,_GameSetting
 
-from aiwolf import Role
+from aiwolf.agent import Agent, Role, Status, Species,Winner
+from aiwolf.judge import Judge, _Judge
+from aiwolf.utterance import Talk, Whisper, _Utterance
+from aiwolf.vote import Vote, _Vote
 
+def get_default_GameInfo(my_agent_idx:int=1)->_GameInfo:
+    _gameinfo = _GameInfo()
+    
+    #Optionalなものはコメントアウトしている
+    _gameinfo["agent"]:int = my_agent_idx #初期値
+    _gameinfo["attackVoteList"]: List[Vote] = []
+    #_gameinfo["attackedAgent"] = 0 #初期値
+    #_gameinfo["cursedFox"] = 0 #初期値
+    _gameinfo["day"]:int = 0 #初期値
+    #_gameinfo["divineResult"] = _Judge()
+    #_gameinfo["executedAgent"] = 0 #初期値
+    _gameinfo["existingRoleList"]:List[Role] = []
+    #_gameinfo["guardedAgent"] = 0 #初期値
+    _gameinfo["lastDeadAgentList"]: List[Agent] = []
+    _gameinfo["latestAttackVoteList"]: List[Agent] = []
+    #_gameinfo["latestExecutedAgent"] = 0 #初期値
+    _gameinfo["latestVoteList"]: List[Vote] = []
+    #_gameinfo["mediumResult"] = _Judge()
+    _gameinfo["remainTalkMap"]: Dict[Agent, int] = {}
+    _gameinfo["remainWhisperMap"]: Dict[Agent, int] = {}
+    _gameinfo["roleMap"]: Dict[Agent, Role] = {}
+    _gameinfo["statusMap"]: Dict[Agent, Status] = {}
+    _gameinfo["talkList"]: List[Talk] = []
+    _gameinfo["voteList"]: List[Vote] = []
+    _gameinfo["whisperList"]: List[Whisper] = []
+    return _gameinfo
 
 class GameLogPreprocessor:
-    def __init__(self):
+    def __init__(self,my_agent_idx:int = 1):
         self.game_status_dict = {}
+        self.my_agent_idx = my_agent_idx
         self.day = -1
         self.end_day = -1
         self.is_day = False
         self.before_game = False
         self.output_buffer = []
+        self._game_info_day_dict:Dict[int,_GameInfo] = defaultdict(lambda:get_default_GameInfo(self.my_agent_idx))
+        self._game_setting = _GameSetting()
+        self.winner:Winner = Winner.UNC
+        self.player_to_agent_name_dict:Dict[str,Agent] = {}
+        
         
     def add_output(self, data:str):
         print(data)
@@ -32,7 +70,7 @@ class GameLogPreprocessor:
     def get_data_from_file(self,filepath:Path)-> str:
         self.soup = BeautifulSoup(filepath.read_text(encoding="utf8"), 'html.parser')
     
-    def parse_role_info(self)-> Dict[str,Role]:
+    def preprocess_role_info(self)-> Dict[str,Role]:
         div_d1221 = self.soup.find_all("div", class_="d1221")
         if not len(div_d1221) == 1:
             raise Exception("1つあるべきプレイヤーリストのdivが1つではありません")
@@ -78,70 +116,100 @@ class GameLogPreprocessor:
         end_game_divs: ResultSet = div_elements[0:2]
         in_game_divs: ResultSet = div_elements[2:]
 
-        self.parse_end_game_info(end_game_divs)
-        self.parse_in_game_info(in_game_divs)
 
-        # 最後にゲームの役職を出力
-        for player, role in self.game_status_dict.items():
-            self.add_output(f"status,{player},{role}")
+        # 最初にゲームの役職の内訳を計算:他の処理の関係で一番最初にやる必要あり
+        self.player_role_dict = self.preprocess_role_info()
+        roleNumMap = defaultdict(int)
+        playerNum = len(self.player_role_dict)
+        for player, role in self.player_role_dict.items():
+            roleNumMap[str(role)] += 1
+            #self.add_output(f"status,{player},{role}")
+        self._game_setting["roleNumMap"] = roleNumMap
+        self._game_setting["playerNum"] = playerNum
+        
+        #プレイヤー名とエージェント名の対応を作成
+        for idx,player in enumerate(self.player_role_dict.keys()):
+            agent_idx = idx + 1
+            self.player_to_agent_name_dict[player] = Agent(agent_idx)
             
+        #エージェント名と役職の対応を作成
+        self.agent_role_dict = {agent:self.player_role_dict[player] for player,agent in self.player_to_agent_name_dict.items()}  
+        
+        self.preprocess_end_game_info(end_game_divs)
+        self.preprocess_in_game_info(in_game_divs)
+        
+        
         return self.output_buffer
 
-    def parse_end_game_info(self, end_game_divs: ResultSet):
+    def preprocess_end_game_info(self, end_game_divs: ResultSet):
         # ゲーム終了時の情報を取得
         for div in end_game_divs:
             class_name = div.get('class')[0]
             if class_name == 'd12150':
-                self.parse_end_day(div)
+                self.preprocess_end_day(div)
             elif class_name == 'd12151':
-                self.parse_game_result(div)
+                self.preprocess_game_result(div)
             else:
                 raise Exception(f"error: div class is {class_name}")
 
-    def parse_end_day(self, div: Tag):
+    def preprocess_end_day(self, div: Tag):
         # ゲーム終了時点の日数を取得
         day_text = div.get_text(",").split(",")[1]
         # 日数は「%d日目」の形式なので、正規表現で取得
         self.end_day = int(re.findall(r'\d+', day_text)[0])
 
-    def parse_game_result(self, div: Tag):
+    def preprocess_game_result(self, div: Tag):
         rows = div.table.tbody.find_all("tr", recursive=False)[1:]
         for row in rows:
             if row.find("td", class_="cn") is not None:
-                self.parse_player_message(row)
+                self.preprocess_player_message(row)
             elif row.find("td", class_="cnw") is not None or row.find("td", class_="cng") is not None:
                 pass  # 観戦者とゲームマスターは無視
             elif row.find("td", class_="cs") is not None:
-                self.parse_game_end(row)
+                self.preprocess_game_end(row)
 
-    def parse_player_message(self, row: Tag):
-        speaker = row.find('span', class_='name').text
-        message = row.find('td', class_='cc').text
+    def preprocess_player_message(self, row: Tag):
+        speaker = row.find('span', class_='name').text.strip()
+        message = row.find('td', class_='cc').text.strip()
         # 独り言か判定して場合分け
         # もし、<span class="end">があれば、独り言
         if row.find('span', class_='end') is not None:
-            self.add_output(f"{self.end_day},soliloquy,{speaker},{message}")
+            #今回は独り言は無視
+            #self.add_output(f"{self.end_day},soliloquy,{speaker},{message}")
+            pass
         else:
-            speaker_idx_name = row.find('td', class_='cn').text
+            speaker_idx_name = row.find('td', class_='cn').text.strip()
             # speakerを除いてidxのみを取得
             speaker_idx = speaker_idx_name.replace(speaker, "").strip()
             if speaker_idx == "⑮":
                 speaker_idx = "0"
-            self.add_output(f"{self.end_day},talk,{speaker_idx},{speaker},{message}")
+            #self.add_output(f"{self.end_day},talk,{speaker_idx},{speaker},{message}")
+            # REVIEW: ゲーム終了後の発言は無視するので良いか？
+            # utterrance = _Utterance()
+            # agent = self.player_to_agent_name_dict[speaker]
+            # utterrance["day"] = self.end_day
+            # utterrance["agent"] = agent.agent_idx
+            # utterrance["idx"] = speaker_idx
+            # prep_message = self.convert_player_to_agent_in_message(message)
+            # utterrance["text"] = prep_message
+            # utterrance["turn"] = -1
+            # self._game_info_day_dict[self.end_day]["talkList"].append(utterrance)
 
-    def parse_game_end(self, row: Tag):
+    def preprocess_game_end(self, row: Tag):
         if row.find("span", class_="result") is not None:
-            self.parse_winner(row)
+            self.preprocess_winner(row)
         elif row.find("span", class_="death") is not None:
-            self.parse_death(row)
+            self.preprocess_death(row)
         elif "この村は廃村になりました……。ペナルティはありません。" in row.text:
-            self.add_output("game is canceled")
+            #self.add_output("game is canceled")
+            #TODO: ゲームがキャンセルされた場合、データとして使わないのでよいか？
+            raise Exception("game is canceled")
 
-    def parse_winner(self, row: Tag):
-        self.add_output("after talk")
-        self.add_output("game end")
-        winner = row.find("span", class_="result").text
-        winners = {"人　狼": "werewolf", "村　人": "villager", "妖　狐": "fox", "引き分け": "draw"}
+    def preprocess_winner(self, row: Tag):
+        #self.add_output("after talk")
+        #self.add_output("game end")
+        winner = row.find("span", class_="result").text.strip()
+        winners = {"人　狼": Winner.WEREWOLF, "村　人": Winner.VILLAGER, "妖　狐": Winner.FOX, "引き分け": Winner.DRAW}
         for w in winners:
             if w in winner:
                 winner = winners[w]
@@ -149,34 +217,50 @@ class GameLogPreprocessor:
         else:
             raise Exception(f"error: winner is {winner}")
 
-        self.add_output(f"{self.end_day},winner,{winner}")
+        #self.add_output(f"{self.end_day},winner,{winner}")
+        self.winner = winner
 
-    def parse_death(self, row: Tag):
+    def preprocess_death(self, row: Tag):
         result = row.find("span", class_="death")
-        victim = result.find('span', class_='name').text
+        victim = result.find('span', class_='name').text.strip()
         death_results = {'処刑されました': 'executed',
                         '突然死': 'sudden_death',
                         'さんは無残な姿で発見されました': 'attacked',
                         'さんはGMにより殺害されました': 'killed_by_gm',
                         'さんは猫又に食われた姿で、発見されました': 'eaten'}
+        
+        agent = self.player_to_agent_name_dict[victim]
+        
         for d in death_results:
             if d in result.text:
-                self.add_output(f"{self.end_day},{death_results[d]},{victim}")
+                if death_results[d] == 'executed':
+                    self._game_info_day_dict[self.end_day]["latestExecutedAgent"] = agent.agent_idx
+                elif death_results[d] == 'attacked':
+                    self._game_info_day_dict[self.end_day]["attackedAgent"] = agent.agent_idx
+                elif death_results[d] == 'eaten':
+                    raise NotImplementedError("eaten is not implemented")
+                elif death_results[d] == 'killed_by_gm':
+                    raise NotImplementedError("killed_by_gm is not implemented")
+                elif death_results[d] == 'sudden_death':
+                    raise NotImplementedError("sudden_death is not implemented")
+                else:
+                    raise NotImplementedError("unknown death result")
+                # self.add_output(f"{self.end_day},{death_results[d]},{victim}")
                 break
         else:
             raise Exception(f"error: result is {result.text}")
 
-    def parse_in_game_info(self, in_game_divs:ResultSet):
+    def preprocess_in_game_info(self, in_game_divs:ResultSet):
         for div in in_game_divs:
             class_name = div.get('class')[0]
             if class_name == 'd12150':
-                self.parse_day_info(div)
+                self.preprocess_day_info(div)
             elif class_name == 'd12151':
-                self.parse_log_info(div)
+                self.preprocess_log_info(div)
             else:
                 raise Exception(f"error: div class is {class_name}")
 
-    def parse_day_info(self, div: Tag):
+    def preprocess_day_info(self, div: Tag):
         day_text = div.get_text()
         self.day = int(re.findall(r'\d+', day_text)[0])
         if "昼" in day_text:
@@ -190,58 +274,67 @@ class GameLogPreprocessor:
         else:
             raise Exception(f"error: day_text is {day_text}")
 
-    def parse_log_info(self, div: Tag):
+    def preprocess_log_info(self, div: Tag):
         if self.is_day:
-            self.parse_day_log_info(div)
+            self.preprocess_day_log_info(div)
         elif self.before_game:
             pass # ゲーム開始前は無視
         else:
-            self.parse_night_log_info(div)
+            self.preprocess_night_log_info(div)
 
-    def parse_day_log_info(self, div: Tag):
-        self.add_output("day end")
+    def preprocess_day_log_info(self, div: Tag):
+        #self.add_output("day end")
         rows = div.table.tbody.find_all("tr", recursive=False)[1:]
         for row in rows:
             if row.find("td", class_="cv") is not None:
-                self.parse_vote_result(row)
+                self.preprocess_vote_result(row)
             elif row.find("td", class_="cn") is not None:  
-                self.parse_day_talk(row)
+                self.preprocess_day_talk(row)
             elif row.find("td", class_="cnd") is not None:
-                self.parse_spirit_talk(row)
+                self.preprocess_spirit_talk(row)
             elif row.find("td", class_="cs") is not None:
-                self.parse_special_results(row)
+                self.preprocess_special_results(row)
             elif row.find("td", class_="cnw") is not None or row.find("td", class_="cng") is not None:
                 pass  # Ignore spectators and game master
             else:
                 raise Exception(f"error: row is {row.text}")
     
-    def parse_night_log_info(self, div: Tag):
-        self.add_output("night end")
+    def preprocess_night_log_info(self, div: Tag):
+        #elf.add_output("night end")
         rows = div.table.tbody.find_all("tr", recursive=False)[1:]
         for row in rows:
             if row.find("td", class_="ca") is not None:
-                self.parse_action(row)
+                self.preprocess_action(row)
             elif row.find("td", class_="cv") is not None:
-                self.parse_vote_result(row)
+                self.preprocess_vote_result(row)
             elif row.find("td", class_="cn") is not None:  
-                self.parse_night_talk(row)
+                self.preprocess_night_talk(row)
             elif row.find("td", class_="cnd") is not None:
-                self.parse_spirit_talk(row)
+                self.preprocess_spirit_talk(row)
             elif row.find("td", class_="cs") is not None:
-                self.parse_special_results(row)
+                self.preprocess_special_results(row)
             elif row.find("td", class_="cnw") is not None or row.find("td", class_="cng") is not None:
                 pass  # Ignore spectators and game master
             else:
                 raise Exception(f"error: row is {row.text}")
         
-    def parse_vote_result(self, row: Tag):
+    def preprocess_vote_result(self, row: Tag):
         player_votes = row.find("td", class_="cv").table.tbody.find_all("tr",recursive=False)
         for vote in player_votes:
             columns = vote.find_all("td")
                     
-            source = columns[0].find('span', class_='name').text
-            target = columns[2].find('span', class_='name').text
-            self.add_output(f"{self.day},vote,{source},{target}")
+            source = columns[0].find('span', class_='name').text.strip()
+            target = columns[2].find('span', class_='name').text.strip()
+            
+            _vote = _Vote()
+            source_agent = self.player_to_agent_name_dict[source]
+            target_agent = self.player_to_agent_name_dict[target]
+            _vote["agent"] = source_agent.agent_idx
+            _vote["day"] = self.day
+            _vote["target"] = target_agent.agent_idx
+            
+            self._game_info_day_dict[self.day]["latestVoteList"].append(_vote)
+            #self.add_output(f"{self.day},vote,{source},{target}")
 
             #プレイヤーの役職情報を取得
             player_role_text = columns[0].text
@@ -258,64 +351,116 @@ class GameLogPreprocessor:
             
             self.game_status_dict[source] = player_role
 
-    def parse_day_talk(self, div: Tag):
+    def preprocess_day_talk(self, div: Tag):
         #会話を取得
-        speaker = div.find('span', class_='name').text
-        message = div.find('td', class_='cc').text
+        speaker = div.find('span', class_='name').text.strip()
+        message = div.find('td', class_='cc').text.strip()
         #独り言か判定して場合分け
         #もし、<span class="end">があれば、独り言
         if div.find('span', class_='end') is not None:
             #独り言
-            self.add_output(f"{self.day},soliloquy,{speaker},{message}")
+            # TODO:独り言は無視するかどうかよく考える
+            # self.add_output(f"{self.day},soliloquy,{speaker},{message}")
+            pass
         else:
-            speaker_idx_name = div.find('td', class_='cn').text
+            speaker_idx_name = div.find('td', class_='cn').text.strip()
             #speakerを除いてidxのみを取得
             speaker_idx = speaker_idx_name.replace(speaker, "").strip()
             if speaker_idx == "⑮":
                 speaker_idx = "0"
-            self.add_output(f"{self.day},talk,{speaker_idx},{speaker},{message}")
+            
+            _utterrance = _Utterance()
+            agent = self.player_to_agent_name_dict[speaker]
+            _utterrance["day"] = self.day
+            _utterrance["agent"] = agent.agent_idx
+            _utterrance["idx"] = speaker_idx
+            prep_message = self.preprocess_message(message)
+            _utterrance["text"] = prep_message
+            _utterrance["turn"] = -1
+            self._game_info_day_dict[self.day]["talkList"].append(_utterrance)
+            # self.add_output(f"{self.day},talk,{speaker_idx},{speaker},{message}")
 
 
-    def parse_spirit_talk(self, row: Tag):
+    def preprocess_spirit_talk(self, row: Tag):
         #霊界の会話
-        speaker = row.find('span', class_='name').text
-        message = row.find('td', class_='ccd').text
+        speaker = row.find('span', class_='name').text.strip()
+        message = row.find('td', class_='ccd').text.strip()
         
-        self.add_output(f"{self.day},spiritTalk,{speaker},{message}")
+        # TODO:霊界の会話は無視するかどうかよく考える
+        # self.add_output(f"{self.day},spiritTalk,{speaker},{message}")
     
-    def parse_night_talk(self,row):
-        speaker = row.find('span', class_='name').text
-        message = row.find('td', class_='cc').text
+    def preprocess_night_talk(self,row):
+        speaker = row.find('span', class_='name').text.strip()
+        message = row.find('td', class_='cc').text.strip()
          #人狼の会話か判定
         if row.find("span", class_="wolf") is not None:
             #人狼の会話
-            self.add_output(f"{self.day},whisper,{speaker},{message}")
+            _utterrance = _Utterance()
+            agent = self.player_to_agent_name_dict[speaker]
+            _utterrance["day"] = self.day
+            _utterrance["agent"] = agent.agent_idx
+            _utterrance["idx"] = -1
+            prep_message = self.preprocess_message(message)
+            _utterrance["text"] = prep_message
+            _utterrance["turn"] = -1
+            #もし、自分が人狼なら、会話ログを追加
+            if self.agent_role_dict[Agent(self.my_agent_idx)] == Role.WEREWOLF:
+                self._game_info_day_dict[self.day]["whisperList"].append(_utterrance)
+            
+            # self.add_output(f"{self.day},whisper,{speaker},{message}")
         #そうでなければ独り言
         else:
             #独り言
-            self.add_output(f"{self.day},soliloquy,{speaker},{message}")
+            # TODO:独り言は無視するかどうかよく考える
+            # self.add_output(f"{self.day},soliloquy,{speaker},{message}")
+            pass
         
-    def parse_action(self,row: Tag):
+    def preprocess_action(self,row: Tag):
         action = row.find("td", class_="ca")
         names = action.find_all('span', class_='name')
-        first_name = names[0].text
-        second_name = names[1].text if len(names) > 1 else None
+        first_name = names[0].text.strip()
+        second_name = names[1].text.strip() if len(names) > 1 else None
         
         #アクションの種類で場合分け
         #人狼の襲撃
         if self.is_class_present(action, "wolf"):
-            self.add_output(f"{self.day},attack,{second_name},true")
-            self.add_output(f"{self.day},attackVote,{first_name},{second_name}")
+            _vote = _Vote()
+            source_agent = self.player_to_agent_name_dict[first_name]
+            target_agent = self.player_to_agent_name_dict[second_name]
+            _vote["agent"] = source_agent.agent_idx
+            _vote["day"] = self.day
+            _vote["target"] = target_agent.agent_idx
+            #もし、自分が人狼なら、誰が誰を襲撃したかを追加
+            if self.agent_role_dict[Agent(self.my_agent_idx)] == Role.WEREWOLF:
+                self._game_info_day_dict[self.day]["attackVoteList"].append(_vote)
+            #TODO:襲撃されて死んだらattackedAgentに追加されるので、ここで追加する必要はないはず。
+            #self._game_info_day_dict[self.day]["attackedAgent"].append(_vote)
+            #self.add_output(f"{self.day},attack,{second_name},true")
+            #self.add_output(f"{self.day},attackVote,{first_name},{second_name}")
         #占い
         elif self.is_class_present(action, "fortune"):
             if action.find("span", class_=["oc00","oc01"]) is not None: #占い結果ありの場合
                 role = self.translate_role(action.find("span", class_=["oc00","oc01"]).text)
-                self.add_output(f"{self.day},divine,{first_name},{second_name},{role}")
+                _judge = _Judge()
+                _judge["agent"] = self.player_to_agent_name_dict[first_name].agent_idx
+                _judge["day"] = self.day
+                _judge["target"] = self.player_to_agent_name_dict[second_name].agent_idx
+                _judge["result"] = str(role)
+                
+                #自分が占い師であれば占い結果を出力
+                if self.player_to_agent_name_dict[first_name].agent_idx == self.my_agent_idx:
+                    self._game_info_day_dict[self.day]["divineResult"]= _judge
+                
+                #self.add_output(f"{self.day},divine,{first_name},{second_name},{role}")
             else:
-                self.add_output(f"{self.day},divine,{first_name},{second_name},none") #占い結果なしの場合(占い師が死ぬ場合)、noneを出力
+                # TODO:占い師が死んだ場合は、占い結果なしとして出力するかどうかよく考える
+                # self.add_output(f"{self.day},divine,{first_name},{second_name},none") #占い結果なしの場合(占い師が死ぬ場合)、noneを出力
+                pass
         #狩人の護衛
         elif self.is_class_present(action, "hunter"):
-            self.add_output(f"{self.day},guard,{first_name},{second_name}")
+            guaded_agent = self.player_to_agent_name_dict[second_name]
+            self._game_info_day_dict[self.day]["guardedAgent"]=guaded_agent.agent_idx
+            #self.add_output(f"{self.day},guard,{first_name},{second_name}")
         else:
             raise Exception(f"error: action is {action.text}")
 
@@ -324,13 +469,13 @@ class GameLogPreprocessor:
 
     def translate_role(self, role_text:str):
         if "村　人" in role_text:
-            return "villager"
+            return Species.HUMAN
         elif "人　狼" in role_text:
-            return "werewolf"
+            return Species.WEREWOLF
         else:
             raise Exception(f"error: role is {role_text}")
 
-    def parse_special_results(self, row: Tag):
+    def preprocess_special_results(self, row: Tag):
         result = row.find("td", class_="cs")
         
         special_results = { '朝になりました': 'day start',
@@ -361,13 +506,16 @@ class GameLogPreprocessor:
                         "投票時間の延長や投票クリアは 5 回までしかできません"]
         
         if result.find('span', class_='name') is not None:
-            victim = result.find('span', class_='name').text
-            self.add_output(f"{self.day},attacked,{victim}")
+            victim = result.find('span', class_='name').text.strip()
+            agent = self.player_to_agent_name_dict[victim]
+            self._game_info_day_dict[self.end_day]["attackedAgent"] = agent.agent_idx
+
+            #self.add_output(f"{self.day},attacked,{victim}")
             return
         
         for s in special_results:
             if s in result.text:
-                self.add_output(special_results[s])
+                #self.add_output(special_results[s])
                 return
             
         for s in skip_results:
@@ -375,13 +523,45 @@ class GameLogPreprocessor:
                 break
         else:
             raise Exception(f"error: result is {result.text}")
+        
+    def preprocess_message(self,message:str)-> str:
+        """
+        メッセージ内のプレイヤー名をエージェント名に変換、全角空白を半角に変換、改行の修正などの前処理をする
 
-def unit_test_GameLogParser():
-    #url = "https://ruru-jinro.net/log6/log504440.html"
-    url = "https://ruru-jinro.net/log6/log504873.html"
-    output_file = "/home/takuya/HDD1/work/AI_Wolf/2023S_AIWolfK2B/aiwolfk2b/utils/output/log_test.txt"
-    parser = GameLogParser(url, output_file)
+        Parameters
+        ----------
+        message : str
+            変換前のメッセージ
+
+        Returns
+        -------
+        str
+            変換後のメッセージ
+        """
+        #TODO:より良いアルゴリズムに変更する
+        #文字列の置換処理を使ってプレイヤー名をエージェント名に置き換える
+        for player_name in self.player_to_agent_name_dict.keys():
+            message = message.replace(player_name, str(self.player_to_agent_name_dict[player_name]))
+            
+        #全角空白を半角空白に変換
+        message = message.replace("　"," ")
+        #改行を削除
+        message = message.replace("\n            ","\n")
+        
+        return message
+        
+        
+
+def unit_test_GameLogPreprocessor():
+    import pathlib
+    path = pathlib.Path(__file__).resolve().parent
+    inputpath = path.joinpath("sample_log_raw.txt")
+    outputpath = path.joinpath("sample_log_preprocessed.txt")
+    parser = GameLogPreprocessor()
+    parser.get_data_from_file(inputpath)
     parser.parse()
+    print(parser._game_setting)
+    print(parser._game_info_day_dict)
 
 def output_file(output_filepath: str, output_buffer: List[str]):
     with open(output_filepath, 'w+') as file:
@@ -389,70 +569,70 @@ def output_file(output_filepath: str, output_buffer: List[str]):
             file.write(data + "\n")
 
 if __name__ == '__main__':
-    # unit_test_GameLogParser()
+    unit_test_GameLogPreprocessor()
 
-    url_prefix = "https://ruru-jinro.net/"
+    # url_prefix = "https://ruru-jinro.net/"
 
-    #スクレイピング
-    for i in range(286,700):
-        try:
-            url_base = f"https://ruru-jinro.net/searchresult.jsp?st={i}&sort=NUMBER"
-            driver = webdriver.Chrome()
-            driver.get(url_base)
-            # コンテンツが描画されるまで待機
-            time.sleep(4)
-            content = driver.page_source
-            soup = BeautifulSoup(content, 'html.parser')
-        finally:
-            # プラウザを閉じる
-            driver.quit()
+    # #スクレイピング
+    # for i in range(286,700):
+    #     try:
+    #         url_base = f"https://ruru-jinro.net/searchresult.jsp?st={i}&sort=NUMBER"
+    #         driver = webdriver.Chrome()
+    #         driver.get(url_base)
+    #         # コンテンツが描画されるまで待機
+    #         time.sleep(4)
+    #         content = driver.page_source
+    #         soup = BeautifulSoup(content, 'html.parser')
+    #     finally:
+    #         # プラウザを閉じる
+    #         driver.quit()
 
-        table = soup.find("table", class_="base")
-        #print(table)
-        rows = table.tbody.find_all("tr", recursive=False)
-        for row in rows:
-            print("i:",i)
-            tds = row.find_all("td")
-            #役職で場合分け
-            role_type = tds[-1].text
-            #数字の部分を取得
-            village_id = int(re.findall(r'\d+', role_type)[0])
-            #ゲームのNo.を取得
-            number_str = tds[0].text
+    #     table = soup.find("table", class_="base")
+    #     #print(table)
+    #     rows = table.tbody.find_all("tr", recursive=False)
+    #     for row in rows:
+    #         print("i:",i)
+    #         tds = row.find_all("td")
+    #         #役職で場合分け
+    #         role_type = tds[-1].text
+    #         #数字の部分を取得
+    #         village_id = int(re.findall(r'\d+', role_type)[0])
+    #         #ゲームのNo.を取得
+    #         number_str = tds[0].text
             
-            #ゲーム荒しの場合はスキップ
-            bad_games = ["476995"]
-            if number_str in bad_games:
-                continue
+    #         #ゲーム荒しの場合はスキップ
+    #         bad_games = ["476995"]
+    #         if number_str in bad_games:
+    #             continue
             
-            #人数で場合分け
-            if 5 <= village_id <=15:
-                #配役割合で場合分け
-                if "A" in role_type or "B" in role_type:
-                    log5_tag = row.find("td", class_="log_5")
-                    #URLを取得
-                    url = url_prefix + log5_tag.a.get("href")
-                    print("log url:",url)
-                    #filename
-                    filename = f"log_{number_str}.txt"
-                    raw_filename = f"log_{number_str}_raw.txt"
-                    output_dir_base = f"/home/takuya/HDD1/work/AI_Wolf/2023S_AIWolfK2B/aiwolfk2b/utils/output/"
+    #         #人数で場合分け
+    #         if 5 <= village_id <=15:
+    #             #配役割合で場合分け
+    #             if "A" in role_type or "B" in role_type:
+    #                 log5_tag = row.find("td", class_="log_5")
+    #                 #URLを取得
+    #                 url = url_prefix + log5_tag.a.get("href")
+    #                 print("log url:",url)
+    #                 #filename
+    #                 filename = f"log_{number_str}.txt"
+    #                 raw_filename = f"log_{number_str}_raw.txt"
+    #                 output_dir_base = f"/home/takuya/HDD1/work/AI_Wolf/2023S_AIWolfK2B/aiwolfk2b/utils/output/"
                     
-                    output_filepath = os.path.join(output_dir_base, filename)
-                    output_raw_filepath = os.path.join(output_dir_base,"raw", raw_filename)
-                    #生データも出力
-                    parser = GameLogParser()
-                    try:
-                        raw_out_data = parser.get_data_from_url(url)
-                        output_file(output_raw_filepath, [raw_out_data])
+    #                 output_filepath = os.path.join(output_dir_base, filename)
+    #                 output_raw_filepath = os.path.join(output_dir_base,"raw", raw_filename)
+    #                 #生データも出力
+    #                 parser = GameLogParser()
+    #                 try:
+    #                     raw_out_data = parser.get_data_from_url(url)
+    #                     output_file(output_raw_filepath, [raw_out_data])
                         
-                        parsed_data = parser.parse()
-                        output_file(output_filepath, parsed_data)
-                    except Exception as e:
-                        print("error:",e)
-                        error_filepath = os.path.join(output_dir_base, "error.txt")
-                        with open(error_filepath, "a+") as file:
-                            file.write(f"{url},{e}\n")
-                        continue
+    #                     parsed_data = parser.parse()
+    #                     output_file(output_filepath, parsed_data)
+    #                 except Exception as e:
+    #                     print("error:",e)
+    #                     error_filepath = os.path.join(output_dir_base, "error.txt")
+    #                     with open(error_filepath, "a+") as file:
+    #                         file.write(f"{url},{e}\n")
+    #                     continue
                         
-                    time.sleep(10 + random.random() * 10)
+    #                 time.sleep(10 + random.random() * 10)
