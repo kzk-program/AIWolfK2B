@@ -1,4 +1,4 @@
-from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractQuestionProcessingModule, AbstractRoleInferenceModule, AbstractStrategyModule, OneStepPlan, ActionType
+from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractQuestionProcessingModule, AbstractRoleInferenceModule, AbstractStrategyModule, OneStepPlan, ActionType, RoleInferenceResult
 from configparser import ConfigParser
 from aiwolfk2b.AttentionReasoningAgent.SimpleModules import SimpleRoleInferenceModule, SimpleStrategyModule, RandomRoleEstimationModel
 from aiwolf import GameInfo, GameSetting
@@ -16,8 +16,11 @@ import Levenshtein
 class QuestionType(Enum):
     """質問の種類"""
     ACTION_REASON = "ACTION_REASON"
+    """過去の行動の理由"""
     ACTION_PLAN = "ACTION_PLAN"
-    ROLE_INFERENCE = "ROLE_INFERENCE"
+    """将来の行動のプラン"""
+    ROLE_INFERENCE = "OLE_INFERENCE"
+    """役職推定"""
 
 class GPT3API:
     """
@@ -56,14 +59,23 @@ class QuestionProcessingModule(AbstractQuestionProcessingModule):
         self.gpt3_api = GPT3API()
     
     def process_question(self,question: str, questioner: Agent ,game_info: GameInfo, game_setting: GameSetting)->OneStepPlan:
+        self._game_info = game_info
+        self._game_setting = game_setting
         question_type = self._classify_question(question)
         if question_type == None:
-            return OneStepPlan("何を意図した質問か分からなかったから", ActionType.TALK, str(questioner)+"、何を言ってるか分かりません。")
+            return OneStepPlan("何を意図した質問か分からなかったから", ActionType.TALK, f">>{questioner}何を言ってるか分かりません。")
         
-        if question_type == QuestionType.ACTION_REASON:
+        elif question_type == QuestionType.ACTION_REASON:
             question_actiontype = self._classify_question_actiontype(question)
-            return OneStepPlan(str(questioner)+"に質問されたから", ActionType.TALK, str(questioner)+"、"+self._answer_action_reason(question, question_actiontype))
+            return OneStepPlan(f"{questioner}に質問されたから", ActionType.TALK, f">>{questioner} {self._answer_action_reason(question, question_actiontype)}")
         
+        elif question_type == QuestionType.ACTION_PLAN:
+            question_actiontype = self._classify_question_actiontype(question)
+            return self._answer_action_plan(question, question_actiontype, questioner)
+        
+        elif question_type == QuestionType.ROLE_INFERENCE:
+            return self._answer_role_inference(question, questioner)
+
         else:
             raise NotImplementedError("未実装")
 
@@ -195,19 +207,115 @@ Agent[04]
         else:
             return the_actiontype_history_list[corresponding_num-1]
         
-    def _corresponding_future_action(self, question:str, ) -> OneStepPlan:
+    def _answer_action_plan(self, question:str, question_actiontype:ActionType, questioner:Agent) -> OneStepPlan:
+        """
+        行動予定質問に対し回答する。
+        Args:
+            question (str): 質問
+            question_actiontype (ActionType): 質問の行動タイプ
+
+        Returns:
+            str: 回答
+        """
+
+        if question_actiontype == ActionType.ATTACK:
+            return "そもそも私は人狼ではありません。"
+        elif question_actiontype == ActionType.TALK:
+            return "どういうことですか"
+        
+        corresponding_action = self._corresponding_future_action(question, question_actiontype)
+        if corresponding_action == None:
+            return "まだどうするか決めていません。"
+        
+        if question_actiontype == ActionType.DIVINE:
+            return OneStepPlan(corresponding_action.reason, ActionType.TALK, f">>{questioner} {str(corresponding_action.action)}を占うつもりです。")
+        elif question_actiontype == ActionType.GUARD:
+            return OneStepPlan(corresponding_action.reason, ActionType.TALK, f">>{questioner} {str(corresponding_action.action)}を護衛するつもりです。")
+        elif question_actiontype ==  ActionType.VOTE:
+            return OneStepPlan(corresponding_action.reason, ActionType.TALK, f">>{questioner} {str(corresponding_action.action)}に投票するつもりです。")
+        else:
+            raise ValueError("ActionTypeが不正: " + question_actiontype.value)
+
+
+    def _corresponding_future_action(self, question:str, question_actiontype:ActionType) -> Optional[OneStepPlan]:
         """
         行動予定質問に対し、該当する行動を返す
-        人狼のATTACK以外全部正直に答える
         """
-        pass
+        the_actiontype_plan_list = []
+        for one_step_plan in self.strategy_module.future_plan:
+            if one_step_plan.action_type == question_actiontype:
+                the_actiontype_plan_list.append(one_step_plan)
 
-    def _suspicious_agent() -> OneStepPlan:
+        if len(the_actiontype_plan_list) == 0:
+            return None
+        
+        if question_actiontype != ActionType.TALK:
+            if question_actiontype == ActionType.DIVINE:
+                verb = "を投票"
+            elif question_actiontype == ActionType.GUARD:
+                verb = "を護衛"
+            elif question_actiontype == ActionType.VOTE:
+                verb = "に投票"
+            prompt = f"""質問は、誰{verb}した理由を聞いてますか？Agent[01]~Agent[05]のどれかを答えてください。
+---
+質問:
+「>>Agent[02] なんでAgent[04]{verb}したんじゃ？」
+正解:
+Agent[04]
+---
+質問:
+"""
+            prompt += "「" + question + "」\n"
+            target_agent = closest_str(["Agent[" + "{:02}".format(x) + "]" for x in range(1, 6)],self.gpt3_api.complete(prompt).strip())
+            for one_step_plan in the_actiontype_plan_list[::-1]:  #最新のから検索
+                if str(one_step_plan.action) == target_agent:
+                    return one_step_plan
+            return None
+        else:
+            raise NotImplementedError("未実装")
+
+    def _answer_role_inference(self, question:str, questioner:Agent) -> OneStepPlan:
         """
         疑わしいエージェント質問に対し、疑わしいエージェントを返す
         人狼の場合はあとで実装方法を考える
         """
-        pass
+        prompt = f"""何の役職だと思われる人を聞いていますか？1 人狼 2 狂人 3 占い師  4 村人 0 それ以外で答えてください。ただし、「疑う」「怪しい」などと言ったときは人狼のことを指します。
+---
+「狂人は誰だと思いますか？」 :2
+「>>Agent[02] 一番占い師っぽいと思ってるのは誰？」 :3
+「村人は誰かな？」 :4
+「誰が一番怪しいと思う？」 :1
+「誰が作曲家だと思う？」 :0
+「{question}」 :
+"""
+        questioned_role = closest_str([str(x) for x in range(5)],self.gpt3_api.complete(prompt).strip())
+        questioned_role:Optional[Role] = [None, Role.WEREWOLF, Role.POSSESSED, Role.SEER, Role.VILLAGER][int(questioned_role)]
+        if questioned_role == None:
+            return OneStepPlan("質問の意図が分からなかったので", ActionType.TALK, f">>{questioner} どういうことか分かりません。")
+        questioned_role_str = self.role_to_japanese(questioned_role)
+        role_inference_results:List[RoleInferenceResult] = []
+        for agent in self._game_info.agent_list:
+            role_inference_results.append(self.role_inference_module.infer(agent, self._game_info, self._game_setting))
+        max_prob = max([x.probs[questioned_role] for x in role_inference_results])
+        high_prob_results = [x for x in role_inference_results if x.probs[questioned_role] > max_prob-0.1]
+        if len(high_prob_results) == 1:
+            return OneStepPlan(high_prob_results[0].reason, ActionType.TALK, f">>{questioner} {high_prob_results[0].agent}が{questioned_role_str}ではないかと思っています。")
+        elif len(high_prob_results) == 2:
+            return OneStepPlan(f"{high_prob_results[0].agent}に関しては{high_prob_results[0].reason}、{high_prob_results[1].agent}に関しては{high_prob_results[1].reason}", ActionType.TALK, f">>{questioner} {high_prob_results[0].agent}と{high_prob_results[1].agent}が{questioned_role_str}の可能性が高いと思います。")
+        else:
+            return OneStepPlan(f"まだ決定的な情報が無いので", ActionType.TALK, f">>{questioner} 誰が{questioned_role_str}か分かっていません。")
+
+    def role_to_japanese(self, role:Role)->str:
+        """Role型を日本語str型に変える関数。これはRoleで作って欲しい感じもある。"""
+        if role == Role.WEREWOLF:
+            return "人狼"
+        elif role == Role.SEER:
+            return "占い師"
+        elif role == Role.POSSESSED:
+            return "狂人"
+        elif role == Role.VILLAGER:
+            return "村人"
+
 
 
 if __name__ == "__main__":
@@ -228,12 +336,12 @@ if __name__ == "__main__":
     role_inference_module = SimpleRoleInferenceModule(config_ini, role_estimation_model)
     strategy_module = SimpleStrategyModule(config_ini, role_estimation_model, role_inference_module)
     with open("/home/meip-users/aiwolf_ara/AIWolfK2B/aiwolfk2b/AttentionReasoningAgent/game_info.pkl", mode="rb") as f:
-        game_info = pickle.load(f)
+        game_info:GameInfo = pickle.load(f)
     with open("/home/meip-users/aiwolf_ara/AIWolfK2B/aiwolfk2b/AttentionReasoningAgent/game_setting.pkl", mode="rb") as f:
-        game_setting = pickle.load(f)
+        game_setting:GameSetting = pickle.load(f)
     
     question_processing_module = QuestionProcessingModule(config_ini,role_inference_module,strategy_module)
     question_processing_module.initialize(game_info, game_setting)
-    question_processing_module.strategy_module.history = [OneStepPlan("怪しい動きをしてたから", ActionType.VOTE, Agent(2))]
-    print(question_processing_module.process_question("なぜAgent[02]に投票したんじゃ？", Agent(1), game_info, game_setting).action)
-    print(question_processing_module.process_question("なぜAgent[03]に投票したんじゃ？", Agent(1), game_info, game_setting).action)
+    question_processing_module.strategy_module.history = [OneStepPlan("怪しい動きをしてたから", ActionType.TALK, "Agent[02]が人狼だと思う"), OneStepPlan("怪しい動きをしてたから", ActionType.VOTE, Agent(2))]
+    print(question_processing_module.process_question("なぜAgent[02]を怪しんだんじゃ？", Agent(1), game_info, game_setting).action)
+    print(question_processing_module.process_question("君は誰が怪しいと思う？", Agent(2), game_info, game_setting).action)
