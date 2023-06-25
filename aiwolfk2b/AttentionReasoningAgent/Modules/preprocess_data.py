@@ -19,18 +19,18 @@ def get_default_GameInfo(my_agent_idx:int=1)->_GameInfo:
     #Optionalなものはコメントアウトしている
     _gameinfo["agent"]:int = my_agent_idx #初期値
     _gameinfo["attackVoteList"]: List[Vote] = []
-    #_gameinfo["attackedAgent"] = 0 #初期値
-    #_gameinfo["cursedFox"] = 0 #初期値
+    _gameinfo["attackedAgent"] = -1 #初期値
+    _gameinfo["cursedFox"] = -1 #初期値
     _gameinfo["day"]:int = 0 #初期値
-    #_gameinfo["divineResult"] = _Judge()
-    #_gameinfo["executedAgent"] = 0 #初期値
+    _gameinfo["divineResult"] = None
+    _gameinfo["executedAgent"] = -1 #初期値
     _gameinfo["existingRoleList"]:List[Role] = []
-    #_gameinfo["guardedAgent"] = 0 #初期値
+    _gameinfo["guardedAgent"] = -1 #初期値
     _gameinfo["lastDeadAgentList"]: List[Agent] = []
     _gameinfo["latestAttackVoteList"]: List[Agent] = []
-    #_gameinfo["latestExecutedAgent"] = 0 #初期値
+    _gameinfo["latestExecutedAgent"] = -1 #初期値
     _gameinfo["latestVoteList"]: List[Vote] = []
-    #_gameinfo["mediumResult"] = _Judge()
+    _gameinfo["mediumResult"] = None
     _gameinfo["remainTalkMap"]: Dict[Agent, int] = {}
     _gameinfo["remainWhisperMap"]: Dict[Agent, int] = {}
     _gameinfo["roleMap"]: Dict[Agent, Role] = {}
@@ -134,7 +134,7 @@ class GameLogPreprocessor:
         roleNumMap = defaultdict(int)
         playerNum = len(self.player_role_dict)
         for player, role in self.player_role_dict.items():
-            roleNumMap[str(role)] += 1
+            roleNumMap[role.name] += 1
             #self.add_output(f"status,{player},{role}")
         self._game_setting["roleNumMap"] = roleNumMap
         self._game_setting["playerNum"] = playerNum
@@ -460,7 +460,7 @@ class GameLogPreprocessor:
                 _judge["agent"] = self.player_to_agent_name_dict[first_name].agent_idx
                 _judge["day"] = self.day
                 _judge["target"] = self.player_to_agent_name_dict[second_name].agent_idx
-                _judge["result"] = str(role)
+                _judge["result"] = str(role.name)
                 
                 #自分が占い師であれば占い結果を出力
                 if self.player_to_agent_name_dict[first_name].agent_idx == self.my_agent_idx:
@@ -624,19 +624,22 @@ def distil_data(inputdir:Path,outputdir:Path):
             pass
 
 
-def make_dataset(inputdir:Path,outputdir:Path):
+def make_dataset(inputdir:Path,outputdir:Path,output_filename:str="dataset_long"):
     import csv,pickle
     dataset = []
     # 指定したディレクトリにあるデータを読み込む
     log_grob = "log_*.txt"
-    for inputpath in inputdir.rglob(log_grob):
+    for counter,inputpath in enumerate(inputdir.rglob(log_grob)):
         parser_base = GameLogPreprocessor(criteria_agent_idx=2)
         parser_base.get_data_from_file(inputpath)
         parser_base.parse()
         playerNum = parser_base._game_setting["playerNum"]
-        #9人以上のゲームは除外
-        if playerNum > 8:
-            continue
+        # #9人以上のゲームは除外
+        # if playerNum > 9 or playerNum < 5:
+        #     continue
+        
+        # if counter > 100:
+        #     break
         
         #各エージェントの立場から、別のエージェントの役職を推定する
         for from_agent_idx in range(1,playerNum+1):
@@ -650,20 +653,23 @@ def make_dataset(inputdir:Path,outputdir:Path):
                 parser.parse()
         
                 agent_role_dict = parser.agent_role_dict
-                game_setting = GameSetting(parser._game_setting)
+                #game_setting = GameSetting(parser._game_setting)
+                _game_setting = parser._game_setting
                 game_info_day_list = [GameInfo(_game_info_day) for _game_info_day in parser._game_info_day_dict.values()]
                 #モデル入力用の形式に変換
                 input_text = ""
                 
                 #最初にゲームの役職分布を書く
                 role_list = [Role.VILLAGER,Role.SEER,Role.BODYGUARD,Role.MEDIUM,Role.WEREWOLF,Role.POSSESSED,Role.FOX,Role.FREEMASON]
-                role_text = str(game_setting.role_num_map[Role.VILLAGER])
-                for role in Role[1:]:
-                    role_text += ","+str(game_setting.role_num_map[role])
+                role_text = str(_game_setting["roleNumMap"][Role.VILLAGER.name])
+                for role in role_list[1:]:
+                    role_text += ","+str(_game_setting["roleNumMap"][role.name])
+                # print(_game_setting["roleNumMap"])
+                # print(role_text)
                 role_text+="\n"
                 
                 #自分の役職
-                my_role_text = str(agent_role_dict[from_agent_idx]) + "\n"
+                my_role_text = str(agent_role_dict[Agent(from_agent_idx)].name) + "\n"
                 #会話文を書く
                 daily_text = ""
                 for idx,game_info in enumerate(game_info_day_list[1:]):
@@ -684,16 +690,33 @@ def make_dataset(inputdir:Path,outputdir:Path):
                     guarded_agent_text = ""
                     executed_agent_text = ""
                     
+                    # if len(talk_list) > 0:
+                    #     for talk in reversed(talk_list):
+                    #         one_talk_text = f"talk,{talk.idx},{talk.text}\n"
+                    #         talk_text += one_talk_text
+                    # if len(vote_list) > 0:
+                    #     for vote in vote_list:
+                    #         one_vote_text = f"vote,{vote.agent.agent_idx},{vote.target.agent_idx}\n"
+                    #         vote_text += one_vote_text
+                    # if divine_result is not None:
+                    #     divine_result_text = f"divine,{divine_result.agent.agent_idx},{divine_result.target.agent_idx},{str(divine_result.result.name)}\n"
+                    # if attacked_agent is not None:
+                    #     attacked_agent_text = f"attacked,{attacked_agent.agent_idx}\n"
+                    # if guarded_agent is not None:
+                    #     guarded_agent_text = f"guarded,{guarded_agent.agent_idx}\n"
+                    # if executed_agent is not None:
+                    #     executed_agent_text = f"executed,{executed_agent.agent_idx}\n"
+                        
                     if len(talk_list) > 0:
                         for talk in reversed(talk_list):
-                            one_talk_text = f"talk,{talk.idx},{talk.text}\n"
+                            one_talk_text = f"{talk.text}\n"
                             talk_text += one_talk_text
                     if len(vote_list) > 0:
                         for vote in vote_list:
-                            one_vote_text = f"vote,{vote.agent.agent_idx},{vote.target.agent_idx}\n"
+                            one_vote_text = f"{vote.agent.agent_idx},{vote.target.agent_idx}\n"
                             vote_text += one_vote_text
                     if divine_result is not None:
-                        divine_result_text = f"divine,{divine_result.agent.agent_idx,divine_result.target.agent_idx,str(divine_result.result)}\n"
+                        divine_result_text = f"divine,{divine_result.agent.agent_idx},{divine_result.target.agent_idx},{str(divine_result.result.name)}\n"
                     if attacked_agent is not None:
                         attacked_agent_text = f"attacked,{attacked_agent.agent_idx}\n"
                     if guarded_agent is not None:
@@ -701,29 +724,38 @@ def make_dataset(inputdir:Path,outputdir:Path):
                     if executed_agent is not None:
                         executed_agent_text = f"executed,{executed_agent.agent_idx}\n"
                     
-                    daily_text += day_text + divine_result_text + attacked_agent_text + guarded_agent_text+ talk_text + vote_text + executed_agent_text
+                    daily_text += day_text + divine_result_text + attacked_agent_text + guarded_agent_text+ "talk:\n"+ talk_text + vote_text + executed_agent_text
+                    
+                if len(daily_text) < 200: #会話が少ないものは除外
+                    break
+                if len(daily_text) > 2000: #多すぎるのも除外
+                    break
                     
                 input_text = role_text + my_role_text + daily_text
-                answer_text = str(agent_role_dict[Agent(to_agent_idx)])
+                answer_text = agent_role_dict[Agent(to_agent_idx)].name
+                #Agent[数字]-> [数字]に変換
+                input_text = re.sub(r"Agent\[(\d+)\]",r"[\1]",input_text)
+                
                 dataset.append((answer_text,input_text))
+                #print("answer_text",answer_text)
+                #print("input_text",input_text)
     #ファイルに書き込む
-    write = csv.writer(open(outputdir.joinpath("dataset.csv") , "w"))
+    write = csv.writer(open(outputdir.joinpath(f"{output_filename}.csv") , "w"))
     write.writerows(dataset)
     
-    with open(outputdir.joinpath("dataset.pkl"), "wb") as f:
+    with open(outputdir.joinpath(f"{output_filename}.pkl"), "wb") as f:
         pickle.dump(dataset, f)
         
 if __name__ == '__main__':
     #unit_test_GameLogPreprocessor()   
-    
     current_dir = pathlib.Path(__file__).resolve().parent
     inputdir = current_dir.joinpath("raw_data")
-    outputdir = current_dir.joinpath("preprocessable_data_max8")
-    distil_data(inputdir,outputdir)
+    outputdir = current_dir.joinpath("preprocessable_data")
+    #distil_data(inputdir,outputdir)
 
     #蒸留したデータを読み込んで、前処理を行い、１つのファイルにまとめる
     inputdir = outputdir
-    outputdir = current_dir.joinpath("preprocessed_data_max8")
+    outputdir = current_dir.joinpath("preprocessed_data")
     make_dataset(inputdir,outputdir)
     
     
