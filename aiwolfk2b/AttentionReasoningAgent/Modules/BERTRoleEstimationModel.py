@@ -7,14 +7,30 @@ from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractRoleEstima
 
 import random
 import math
+import torch
+from transformers import BertJapaneseTokenizer, BertForSequenceClassification
+
 
 class BERTRoleEstimationModel(AbstractRoleEstimationModel):
     """ランダムに役職を推定するモデル"""
     def __init__(self, config: ConfigParser) -> None:
         super().__init__(config)
+        self.modelpath = config.get("RoleEstimationModel","bert_model_path")
+        self.bert_tokenizer_name = config.get("RoleEstimationModel","bert_tokenizer_name")
+        self.batch_size = config.getint("RoleEstimationModel","batch_size")
+        self.max_length = config.getint("RoleEstimationModel","max_length")
+        
+        #計算に使うdeviceを取得
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.bert_sc = BertForSequenceClassification.from_pretrained(
+            self.modelpath,
+        )
+        self.bert_sc = self.bert_sc.to(device)
+        # 文章をトークンに変換するトークナイザーの読み込み
+        self.tokenizer:BertJapaneseTokenizer = BertJapaneseTokenizer.from_pretrained(self.bert_tokenizer_name)
         
     def estimate(self,agent:Agent, game_info: GameInfo, game_setting: GameSetting) -> RoleEstimationResult:
-        """ランダムに役職を推定する"""
+        """bertを使って役職を推定する"""
         #１人以上存在する役職のリスト
         role_list = [role for role in game_setting.role_num_map.keys() if game_setting.role_num_map[role] > 0]
         estimation = {}
