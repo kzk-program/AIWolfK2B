@@ -1,3 +1,5 @@
+import csv
+import pickle
 from bs4 import BeautifulSoup, ResultSet, Tag
 from typing import List,Tuple,Dict
 import os,re,time,requests,random
@@ -12,12 +14,14 @@ from aiwolf.agent import Agent, Role, Status, Species,Winner
 from aiwolf.judge import Judge, _Judge
 from aiwolf.utterance import Talk, Whisper, _Utterance
 from aiwolf.vote import Vote, _Vote
-from aiwolfk2b.utils.helper import get_default_underb_GameInfo,get_default_underb_GameSetting
+import tqdm
+from aiwolfk2b.AttentionReasoningAgent.Modules.RoleEstimationModelPreprocessor import RoleEstimationModelPreprocessor
+from aiwolfk2b.utils.helper import get_default_underb_GameInfo,get_default_underb_GameSetting,load_default_config
 
 current_dir = pathlib.Path(__file__).resolve().parent
 
 class ParseRuruLogToGameAttribution:
-    def __init__(self,view_agent_idx:int):
+    def __init__(self,view_agent_idx:int,config=None):
         """
         コンストラクタ
 
@@ -26,8 +30,11 @@ class ParseRuruLogToGameAttribution:
         view_agent_idx : int, optional
             情報を受け取るエージェント（自分）
         """
-        self.reset(view_agent_idx)
+        if config is None:
+            config = load_default_config()
+        self.config = config
         self.soup:BeautifulSoup = None
+        self.reset(view_agent_idx)
 
     
     def reset(self,view_agent_idx:int,reset_soup:bool=False):
@@ -52,6 +59,7 @@ class ParseRuruLogToGameAttribution:
         self.player_to_agent_name_dict:Dict[str,Agent] = {}
         self.player_role_dict:Dict[str,Role] = {}
         self.agent_role_dict:Dict[Agent,Role] = {}
+        self.preprocesser = RoleEstimationModelPreprocessor(self.config)
         if reset_soup:
             self.soup:BeautifulSoup = None
         
@@ -128,9 +136,11 @@ class ParseRuruLogToGameAttribution:
         for idx,player in enumerate(self.player_role_dict.keys()):
             agent_idx = idx + 1
             self.player_to_agent_name_dict[player] = Agent(agent_idx)
+            #名前を正規化したものも追加しておく
+            self.player_to_agent_name_dict[self.preprocesser.preprocess_text(player)] = Agent(agent_idx)
             
         #エージェント名と役職の対応を作成
-        self.agent_role_dict = {agent:self.player_role_dict[player] for player,agent in self.player_to_agent_name_dict.items()}  
+        self.agent_role_dict = {agent:self.player_role_dict[player] for player,agent in self.player_to_agent_name_dict.items() if player in self.player_role_dict}  
         
         self.parse_end_game_info(end_game_divs)
         self.parse_in_game_info(in_game_divs)
@@ -527,13 +537,12 @@ class ParseRuruLogToGameAttribution:
         """
         #TODO:より良いアルゴリズムに変更する
         #文字列の置換処理を使ってプレイヤー名をエージェント名に置き換える
+        message = self.preprocesser.preprocess_text(message)
+        
         for player_name in self.player_to_agent_name_dict.keys():
             message = message.replace(player_name, str(self.player_to_agent_name_dict[player_name]))
             
-        #全角空白を半角空白に変換
-        message = message.replace("　"," ")
-        #改行の空白を削除
-        message = message.replace("\n            ","\n")
+
         
         # #可読性用
         # #過去の文への言及「>>数字\n\n」での改行を削除
@@ -541,10 +550,6 @@ class ParseRuruLogToGameAttribution:
         # #改行が連続している場合は一つにまとめる(可読性のため)
         # message = re.sub(r'\n+', r'\n', message)
         
-        #改行削除
-        message = message.replace("\n","")
-        #空白削除
-        message = message.replace(" ","")
         #あいさつが邪魔なので消す
         morning_calls =["おはよう", "おはようございます" ,"おはよー", "おはよん", "おっは", "おは", "おっはー", "おはようございますっ", "お早う", "お早うございます", "お早よう", "早々", "朝のご挨拶", "おはようございまーす", "おっはよー", "早うございます", "モーニング", "グッドモーニング", "おはようサンシャイン", "お目覚めはいかがですか", "おはようございます、そして良い一日を", "おはよう、新しい一日が始まったね", "今日も一日おはよう", "おはよう、早起きさん", "素敵な朝ですね", "朝から元気ですね", "早起きは三文の得"]
         #文字が長い順に並べる
@@ -622,10 +627,65 @@ def load_sample_GameAttirbution(my_agent_idx:int)->Tuple[List[GameInfo],GameSett
     game_log_path = current_dir.joinpath("data").joinpath("sample_log_raw.txt")
     parser = ParseRuruLogToGameAttribution(my_agent_idx)
     game_info_list, game_setting = parser.create_game_log_from_ruru(game_log_path,my_agent_idx)
-    
+
     return game_info_list,game_setting
 
-        
+
+def make_dataset(inputdir:Path,outputdir:Path,output_filename:str="dataset"):
+    from aiwolfk2b.utils.helper import load_default_config
+    from aiwolfk2b.AttentionReasoningAgent.Modules.RoleEstimationModelPreprocessor import RoleEstimationModelPreprocessor
+    import csv,pickle
+    import tqdm
+    dataset = []
+    config = load_default_config()
+    preprocessor = RoleEstimationModelPreprocessor(config)
+
+
+    # 指定したディレクトリにあるデータを読み込む
+    log_grob = "log_*.txt"
+    count_completed = 0
+    count_discarded = 0
+    for inputpath in tqdm.tqdm(inputdir.rglob(log_grob)):
+        parser = ParseRuruLogToGameAttribution(view_agent_idx=1)
+        #パースがうまく行かないものはスキップ
+        try:
+            gameinfo_list, gamesetting = parser.create_game_log_from_ruru(inputpath,view_agent_idx=1)
+            agent_role_dict = parser.agent_role_dict
+            player_num = gamesetting.player_num
+            #9人以上のゲームは除外
+            if player_num > 9 or player_num < 5:
+                continue
+
+            for view_agent_idx in range(1,player_num+1):
+                #各エージェントの立場からみた、別のエージェントの役職を推定する
+                gameinfo_list, gamesetting = parser.create_game_log_from_ruru(None,view_agent_idx=view_agent_idx)
+
+                for target_agent_idx in range(1,player_num+1):
+                    #自分自身は推定しない
+                    if target_agent_idx == view_agent_idx:
+                        continue
+                    target_agent = Agent(target_agent_idx)
+                    estimation_text = preprocessor.create_estimation_text(target_agent,gameinfo_list,gamesetting)
+                    answer_role = agent_role_dict[target_agent].name
+                    dataset.append((answer_role,estimation_text))
+            count_completed += 1
+        except Exception as e:
+            # print(f"error occured in {inputpath}")
+            # print(e)
+            count_discarded += 1
+            continue
+
+    print(f"complete {count_completed} files")
+    print(f"discard {count_discarded} files")
+
+    #ファイルに書き込む
+    write = csv.writer(open(outputdir.joinpath(f"{output_filename}.csv") , "w"))
+    write.writerows(dataset)
+
+    with open(outputdir.joinpath(f"{output_filename}.pkl"), "wb") as f:
+        pickle.dump(dataset, f)
+
+
 if __name__ == '__main__':
     ### 単体テスト
     # # Parseがうまく行くか検証
@@ -634,7 +694,12 @@ if __name__ == '__main__':
     # ruru鯖のログをaiwolf形式に変換できるかチェック
     game_info_list,game_setting = load_sample_GameAttirbution(2)
     game_info = game_info_list[0]
- 
+
+    # データセットを生成する単体テスト
+    current_dir = pathlib.Path(__file__).resolve().parent
+    input_dir = current_dir.joinpath("data","ruru_log","raw")
+    output_dir = current_dir.joinpath("data","train")
+    make_dataset(input_dir,output_dir,output_filename="dataset")
     
     ### プログラム実行
     # # バグが起きないデータのみを取り出す

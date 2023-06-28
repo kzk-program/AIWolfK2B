@@ -196,82 +196,25 @@ def unit_test_make_estimation_text(view_agent_idx:int, estimated_agent_idx:int):
         推定対象のエージェントの番号
     """
         
-    from aiwolfk2b.utils.helper import load_default_config
-    from aiwolfk2b.AttentionReasoningAgent.Modules.ParseRuruLogToGameAttribution import load_sample_GameAttirbution
+    from aiwolfk2b.utils.helper import load_default_config,load_default_GameInfo,load_default_GameSetting
+    from aiwolf import Talk
     config_ini = load_default_config()
-    game_info_list,game_setting = load_sample_GameAttirbution(view_agent_idx)
+    game_info = load_default_GameInfo()
+    game_info.talk_list.append(Talk(idx=1,day=1,turn=1,agent=Agent(1),text="Agent[01]は人狼だよ"))
+    game_setting = load_default_GameSetting()
+    
     estimated_agent = Agent(estimated_agent_idx)
 
     preprocessor = RoleEstimationModelPreprocessor(config_ini)
-    text = preprocessor.create_estimation_text(estimated_agent,game_info_list,game_setting)
+    text = preprocessor.create_estimation_text(estimated_agent,[game_info],game_setting)
     
     print(text)
         
-        
-def make_dataset(inputdir:Path,outputdir:Path,output_filename:str="dataset"):
-    from aiwolfk2b.utils.helper import load_default_config
-    from aiwolfk2b.AttentionReasoningAgent.Modules.ParseRuruLogToGameAttribution import ParseRuruLogToGameAttribution
-    import csv,pickle
-    import tqdm
-    dataset = []
-    config = load_default_config()
-    preprocessor = RoleEstimationModelPreprocessor(config)
-    
-    
-    # 指定したディレクトリにあるデータを読み込む
-    log_grob = "log_*.txt"
-    count_completed = 0
-    count_discarded = 0
-    for inputpath in tqdm.tqdm(inputdir.rglob(log_grob)):
-        parser = ParseRuruLogToGameAttribution(view_agent_idx=1)
-        #パースがうまく行かないものはスキップ
-        try:
-            gameinfo_list, gamesetting = parser.create_game_log_from_ruru(inputpath,view_agent_idx=1)
-            agent_role_dict = parser.agent_role_dict
-            player_num = gamesetting.player_num
-            #9人以上のゲームは除外
-            if player_num > 9 or player_num < 5:
-                continue
-            
-            for view_agent_idx in range(1,player_num+1):
-                #各エージェントの立場からみた、別のエージェントの役職を推定する
-                gameinfo_list, gamesetting = parser.create_game_log_from_ruru(None,view_agent_idx=view_agent_idx)
-                
-                for target_agent_idx in range(1,player_num+1):
-                    #自分自身は推定しない
-                    if target_agent_idx == view_agent_idx:
-                        continue
-                    target_agent = Agent(target_agent_idx)
-                    estimation_text = preprocessor.create_estimation_text(target_agent,gameinfo_list,gamesetting)
-                    answer_role = agent_role_dict[target_agent].name
-                    dataset.append((answer_role,estimation_text))
-            count_completed += 1
-        except Exception as e:
-            # print(f"error occured in {inputpath}")
-            # print(e)
-            count_discarded += 1
-            continue
-        
-    print(f"complete {count_completed} files")
-    print(f"discard {count_discarded} files")
-    
-    #ファイルに書き込む
-    write = csv.writer(open(outputdir.joinpath(f"{output_filename}.csv") , "w"))
-    write.writerows(dataset)
-    
-    with open(outputdir.joinpath(f"{output_filename}.pkl"), "wb") as f:
-        pickle.dump(dataset, f)
 
 if __name__ == "__main__":
     #単体テスト
     # GameAttribution(GameInfo,GameSetting)からtextを生成できるか確認
-    # unit_test_make_estimation_text(view_agent_idx=1,estimated_agent_idx=2)
-    
-    # データセットを生成する単体テスト
-    current_dir = pathlib.Path(__file__).resolve().parent
-    input_dir = current_dir.joinpath("data","ruru_log","raw")
-    output_dir = current_dir.joinpath("data","train")
-    make_dataset(input_dir,output_dir,output_filename="dataset")
+    unit_test_make_estimation_text(view_agent_idx=1,estimated_agent_idx=2)
     
     # #データ生成の単体テスト
     # current_dir = pathlib.Path(__file__).resolve().parent
