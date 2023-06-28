@@ -4,6 +4,7 @@ from typing import List,Tuple,Dict,Any,Union
 from aiwolf import GameInfo, GameSetting
 from aiwolf.agent import Agent,Role
 from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractRoleEstimationModel,RoleEstimationResult
+from aiwolfk2b.AttentionReasoningAgent.Modules.RoleEstimationModelPreprocessor import RoleEstimationModelPreprocessor
 
 import re,math,os,errno
 import pathlib
@@ -12,6 +13,7 @@ from pathlib import Path
 import torch
 
 from transformers import BertJapaneseTokenizer, BertForSequenceClassification
+
 
 current_dir = pathlib.Path(__file__).resolve().parent
 
@@ -23,8 +25,7 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
         self.bert_tokenizer_name = config.get("RoleEstimationModel","bert_tokenizer_name")
         self.batch_size = config.getint("RoleEstimationModel","batch_size")
         self.max_length = config.getint("RoleEstimationModel","max_length")
-        #役職推定に使うラベルのリスト(順番に意味あり)
-        self.role_label_list = [Role.VILLAGER,Role.SEER,Role.BODYGUARD,Role.MEDIUM,Role.WEREWOLF,Role.POSSESSED,Role.FOX,Role.FREEMASON]
+        self.preprocessor = RoleEstimationModelPreprocessor(config)
         
         #計算に使うdeviceを取得
         #self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -40,143 +41,15 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
         super().initialize(game_info, game_setting)
         self.game_info = game_info
         self.game_setting = game_setting
-        
-    def compress_text(self,text: str)->str:
-        """
-        会話文の中で、人狼に関係ある部分を抽出する
-
-        Parameters
-        ----------
-        text : str
-            会話文
-
-        Returns
-        -------
-        str
-            圧縮された会話文
-        """
-        #TODO:実装する
-        return text
-        
-    def make_estimation_text(self,agent: Agent, game_info_list: List[GameInfo], game_setting: GameSetting,compress_text:bool=True)->str:
-        """
-        役職推定に使うテキストを作成する
-        
-        Parameters
-        ----------
-        agent : Agent
-            推定対象のエージェント
-        game_info : List[GameInfo]
-            役職推定に用いるゲーム情報
-        game_setting : GameSetting
-            役職推定に用いるゲーム設定
-        
-        Returns
-        -------
-        str
-            役職推定に使うテキスト
-        """
-        
-        #推論に必要な情報をテキスト化
-        #書式は以下の通り
-        #role_map:(villager,seer,bodyguard,medium,werewolf,possessed,fox,cat,immortal,freemason) 
-        #day1
-        #attacked,agent_idx
-        #guareded,agent_idx
-        #(divine,agent_idx,species) #あれば
-        #talk
-        #unique_id,agent_idx,text
-        #vote
-        #from_agent_idx,to_agent_idx
-        #executed,agent_idx
-        #day2
-        # same as day1
-        #...
-        #my_role (あれば)
-        
-        def rotate_agent_idx(agent_idx:int)->int:
-            """
-            推定するエージェントの番号が01になるようにインデックスを入れ替える
-
-            Parameters
-            ----------
-            agent_idx : int
-                入れ替えるエージェントの番号
-
-            Returns
-            -------
-            int
-                入れ替えた後のエージェントの番号
-            """
-            return (agent_idx - agent.agent_idx + game_setting.player_num)%game_setting.player_num+1
-        
-        estimation_text = ""
-        #役職のマップを作成
-        role_text=str(game_setting.role_num_map[self.role_label_list[0]])
-        for role in self.role_label_list[1:]:
-            role_text += ","+str(game_setting.role_num_map[role])
-            
-        estimation_text += "role_map:"+role_text+"\n"
-        
-        #日付ごとに情報をまとめる
-        #日付でlistをソート
-        game_info_list.sort(key=lambda x:x.day)
-        
-        
-        for game_info in game_info_list:
-            daily_text = ""
-            daily_text += f"day{game_info.day}\n"
-            #朝わかる結果を追加
-            if game_info.divine_result is not None: #占い結果があれば
-                target_agent_idx = rotate_agent_idx(game_info.divine_result.target.agent_idx)
-                species = game_info.divine_result.result
-                daily_text += f"divine,{target_agent_idx},{species}\n"
-            if game_info.attacked_agent is not None: #襲撃結果があれば
-                agent_idx = rotate_agent_idx(game_info.attacked_agent.agent_idx)
-                daily_text += f"attacked,{agent_idx}\n"
-            if game_info.guarded_agent is not None: #護衛結果があれば
-                agent_idx = rotate_agent_idx(game_info.guarded_agent.agent_idx)
-                daily_text += f"guarded,{agent_idx}\n"
-                
-            #会話文を追加
-            daily_text += "talk\n"
-            for talk in reversed(game_info.talk_list):
-                talk_text = talk.text
-                if compress_text:
-                    talk_text = self.compress_text(talk_text)
-                agent_idx = rotate_agent_idx(talk.agent.agent_idx)
-                #テキスト中のエージェントについて、推定対象のエージェントがAgent[01]となるように順番を入れ替える
-                talk_text = re.sub(r"Agent\[(\d+)\]",lambda m: f"Agent[{rotate_agent_idx(int(m.group(1))):02d}]",talk_text)
-                daily_text += f"{agent_idx},{talk_text}\n"
-            
-            #投票結果を追加
-            daily_text += "vote\n"
-            for vote in game_info.latest_vote_list:
-                src_agent_idx = rotate_agent_idx(vote.agent.agent_idx)
-                tgt_agent_idx = rotate_agent_idx(vote.target.agent_idx)
-                daily_text += f"{src_agent_idx},{tgt_agent_idx}\n"
-                       
-            #処刑結果を追加
-            if game_info.executed_agent is not None:
-                agent_idx = rotate_agent_idx(game_info.executed_agent.agent_idx)
-                daily_text += f"executed,{agent_idx}\n"
-
-            #一日分の情報を追加
-            estimation_text += daily_text
-        
-        #Agent[数字]->[数字]に変換して情報を圧縮
-        estimation_text = re.sub(r"Agent\[(\d+)\]",lambda m: f"[{m.group(1)}]",estimation_text)
-        
-        return estimation_text
           
     
-    def estimate(self,agent:Agent, game_info_list: List[GameInfo], game_setting: GameSetting,compress_text:bool=True) -> RoleEstimationResult:
+    def estimate(self,estimated_agent:Agent, game_info_list: List[GameInfo], game_setting: GameSetting,compress_text:bool=True) -> RoleEstimationResult:
         """
         BERTを使って役職を推定する
 
         Parameters
         ----------
-        agent : Agent
+        estimated_agent : Agent
             推定対象のエージェント
         game_info : List[GameInfo]
             役職推定に用いるゲーム情報
@@ -190,10 +63,11 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
         RoleEstimationResult
             Agentの役職推定結果
         """
+        text = self.preprocessor.create_estimation_text(estimated_agent,game_info_list,game_setting,compress_text)
+        #推定
+        results = self.estimate_from_text([text],game_setting)
         
-        
-        
-        pass
+        return results[0]
     
     def estimate_from_text(self,text_list:List[str],game_setting: GameSetting=None)-> List[RoleEstimationResult]:
         """
@@ -229,7 +103,7 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
             scores = outputs.logits
             attentions = outputs.attentions
             #存在しない役職のスコアを-torch.infにする
-            for idx,role in enumerate(self.role_label_list):
+            for idx,role in enumerate(self.preprocessor.role_label_list):
                 if game_setting.role_num_map[role] == 0:
                     scores[:,idx] = -torch.inf
             
@@ -238,63 +112,23 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
             probs = probs.cpu().double().numpy()
             for i in range(len(text_list)):
                 estimation = {}
-                for j in range(len(self.role_label_list)):
-                    estimation[self.role_label_list[j]] = probs[i][j]
+                for j in range(len(self.preprocessor.role_label_list)):
+                    estimation[self.preprocessor.role_label_list[j]] = probs[i][j]
                 one_batch_attention = [attentions[k][i].cpu().numpy() for k in range(len(attentions))]
                 results.append(RoleEstimationResult(None,estimation,one_batch_attention))
             
         return results
-    
-    
-def get_default_config()-> ConfigParser:
-    config_ini = ConfigParser()
-    config_ini_path = current_dir.parent.joinpath("config.ini")
 
-    # iniファイルが存在するかチェック
-    if os.path.exists(config_ini_path):
-        # iniファイルが存在する場合、ファイルを読み込む
-        with open(config_ini_path, encoding='utf-8') as fp:
-            config_ini.read_file(fp)
-    else:
-        # iniファイルが存在しない場合、エラー発生
-        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), config_ini_path)
-    
-    return config_ini
-
-def get_default_GameInfo()->GameInfo:
-    from preprocess_data import get_default_GameInfo
-    _game_info = get_default_GameInfo()
-    game_info = GameInfo(_game_info)
-    
-    return game_info
-
-def get_sample_GameInfoList()->List[GameInfo]:
-    from preprocess_data import GameLogPreprocessor
-    game_log_path = current_dir.joinpath("data").joinpath("sample_log_raw.txt")
-    parser = GameLogPreprocessor()
-    parser.get_data_from_file(game_log_path)
-    parser.parse()
-    
-    game_info_list = [GameInfo(_game_info_day) for _game_info_day in parser._game_info_day_dict.values()]
-    
-    return game_info_list
-
-def get_default_GameSetting()->GameSetting:
-    import pickle
-    setting_path = current_dir.joinpath("game_setting.pkl")
-    with open(setting_path,"rb") as f:
-        game_setting = pickle.load(f)
-        
-    return game_setting
 
     
 def unit_test_estimate_from_text():
     """
     BERTRoleEstimationModelのestimate_from_text関数の単体テスト
-    """    
-    config_ini = get_default_config()
-    game_info = get_default_GameInfo()
-    game_setting = get_default_GameSetting()
+    """
+    from aiwolfk2b.utils.helper import load_default_GameInfo,load_default_GameSetting,load_default_config
+    config_ini = load_default_config()
+    game_info = load_default_GameInfo()
+    game_setting = load_default_GameSetting()
     
 
     estimator = BERTRoleEstimationModel(config_ini)
@@ -312,29 +146,25 @@ talk:
     result_list = estimator.estimate_from_text(test_text)
     for res in result_list:
         print(res.probs)
+
     
-def unit_test_make_estimation_text(agent_idx:int = 1):
+def unit_test_estimate(estimated_agent_idx):
     """
     BERTRoleEstimationModelのestimate_from_text関数の単体テスト
     """    
-    config_ini = get_default_config()
-    game_info = get_default_GameInfo()
-    game_info_list = get_sample_GameInfoList()
-    game_setting = get_default_GameSetting()
-    agent = Agent(agent_idx)
-    
+    from aiwolfk2b.utils.helper import load_default_config
+    from aiwolfk2b.AttentionReasoningAgent.Modules.ParseRuruLogToGameAttribution import load_sample_GameAttirbution
+    config_ini = load_default_config()
+    estimated_agent = Agent(estimated_agent_idx)
+    game_info_list,game_setting = load_sample_GameAttirbution(estimated_agent_idx)
 
     estimator = BERTRoleEstimationModel(config_ini)
-    estimator.initialize(game_info,game_setting)
-    text = estimator.make_estimation_text(agent,game_info_list,game_setting)
-    
-    print(text)
+    estimator.initialize(game_info_list[0],game_setting)
+    result = estimator.estimate(estimated_agent,game_info_list,game_setting)
+    print(result.probs)
         
+
 if __name__ == "__main__":
-    #unit_test_estimate_from_text()
-    unit_test_make_estimation_text(1)
-    unit_test_make_estimation_text(2)
-    unit_test_make_estimation_text(3)
-    unit_test_make_estimation_text(4)
-    unit_test_make_estimation_text(5)
+    unit_test_estimate_from_text()
+    unit_test_estimate(1)
         
