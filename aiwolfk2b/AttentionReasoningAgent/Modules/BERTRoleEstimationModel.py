@@ -116,9 +116,13 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
         for role in self.role_label_list[1:]:
             role_text += ","+str(game_setting.role_num_map[role])
             
-        estimation_text += "role_map:("+role_text+")\n"
+        estimation_text += "role_map:"+role_text+"\n"
         
         #日付ごとに情報をまとめる
+        #日付でlistをソート
+        game_info_list.sort(key=lambda x:x.day)
+        
+        
         for game_info in game_info_list:
             daily_text = ""
             daily_text += f"day{game_info.day}\n"
@@ -142,13 +146,12 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
                     talk_text = self.compress_text(talk_text)
                 agent_idx = rotate_agent_idx(talk.agent.agent_idx)
                 #テキスト中のエージェントについて、推定対象のエージェントがAgent[01]となるように順番を入れ替える
-                talk_text = re.sub(r"Agent\[(\d+)\]",lambda m: f"Agent[{rotate_agent_idx(int(m.group(1)))}:02d]",talk_text)
+                talk_text = re.sub(r"Agent\[(\d+)\]",lambda m: f"Agent[{rotate_agent_idx(int(m.group(1))):02d}]",talk_text)
                 daily_text += f"{agent_idx},{talk_text}\n"
-            
             
             #投票結果を追加
             daily_text += "vote\n"
-            for vote in game_info.vote_list:
+            for vote in game_info.latest_vote_list:
                 src_agent_idx = rotate_agent_idx(vote.agent.agent_idx)
                 tgt_agent_idx = rotate_agent_idx(vote.target.agent_idx)
                 daily_text += f"{src_agent_idx},{tgt_agent_idx}\n"
@@ -159,7 +162,7 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
                 daily_text += f"executed,{agent_idx}\n"
 
             #一日分の情報を追加
-            estimation_text += daily_text + "\n"
+            estimation_text += daily_text
         
         #Agent[数字]->[数字]に変換して情報を圧縮
         estimation_text = re.sub(r"Agent\[(\d+)\]",lambda m: f"[{m.group(1)}]",estimation_text)
@@ -265,6 +268,17 @@ def get_default_GameInfo()->GameInfo:
     
     return game_info
 
+def get_sample_GameInfoList()->List[GameInfo]:
+    from preprocess_data import GameLogPreprocessor
+    game_log_path = current_dir.joinpath("data").joinpath("sample_log_raw.txt")
+    parser = GameLogPreprocessor()
+    parser.get_data_from_file(game_log_path)
+    parser.parse()
+    
+    game_info_list = [GameInfo(_game_info_day) for _game_info_day in parser._game_info_day_dict.values()]
+    
+    return game_info_list
+
 def get_default_GameSetting()->GameSetting:
     import pickle
     setting_path = current_dir.joinpath("game_setting.pkl")
@@ -278,7 +292,6 @@ def unit_test_estimate_from_text():
     """
     BERTRoleEstimationModelのestimate_from_text関数の単体テスト
     """    
-
     config_ini = get_default_config()
     game_info = get_default_GameInfo()
     game_setting = get_default_GameSetting()
@@ -300,9 +313,28 @@ talk:
     for res in result_list:
         print(res.probs)
     
-def unit_test_make_estimation_text():
-    pass
+def unit_test_make_estimation_text(agent_idx:int = 1):
+    """
+    BERTRoleEstimationModelのestimate_from_text関数の単体テスト
+    """    
+    config_ini = get_default_config()
+    game_info = get_default_GameInfo()
+    game_info_list = get_sample_GameInfoList()
+    game_setting = get_default_GameSetting()
+    agent = Agent(agent_idx)
+    
+
+    estimator = BERTRoleEstimationModel(config_ini)
+    estimator.initialize(game_info,game_setting)
+    text = estimator.make_estimation_text(agent,game_info_list,game_setting)
+    
+    print(text)
         
 if __name__ == "__main__":
-    unit_test_estimate_from_text()
+    #unit_test_estimate_from_text()
+    unit_test_make_estimation_text(1)
+    unit_test_make_estimation_text(2)
+    unit_test_make_estimation_text(3)
+    unit_test_make_estimation_text(4)
+    unit_test_make_estimation_text(5)
         
