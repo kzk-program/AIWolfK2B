@@ -6,6 +6,7 @@ from aiwolf.agent import Agent,Role
 from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractModule
 
 import re,math,os,errno
+import unicodedata,neologdn
 import pathlib
 from pathlib import Path
 
@@ -19,6 +20,35 @@ class RoleEstimationModelPreprocessor(AbstractModule):
         super().__init__(config)
         #役職推定に使うラベルのリスト(順番に意味あり)
         self.role_label_list = [Role.VILLAGER,Role.SEER,Role.BODYGUARD,Role.MEDIUM,Role.WEREWOLF,Role.POSSESSED,Role.FOX,Role.FREEMASON]
+        
+    def preprocess_text(self,text: str)->str:
+        """
+        会話文において不要と思われる記号の削除や表記ゆれの統一
+
+        Parameters
+        ----------
+        text : str
+            前処理する会話文
+
+        Returns
+        -------
+        str
+            前処理後の会話文
+        """
+        #TODO:実装する
+        #Unicode正規化
+        text = unicodedata.normalize("NFKC",text)
+        #全部小文字にする
+        text = text.lower()
+        #文字種の統一と不要な文字の除去,文字の繰り返しの削除
+        text = neologdn.normalize(text,repeat=3) #REVIEW:repeat数は要検討
+        #改行削除
+        text = text.replace("\n","")
+        #空白削除
+        text = text.replace(" ","")
+        return text
+        
+
 
     def compress_text(self,text: str)->str:
         """
