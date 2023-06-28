@@ -276,6 +276,7 @@ class GameLogPreprocessor:
     def preprocess_day_info(self, div: Tag):
         day_text = div.get_text()
         self.day = int(re.findall(r'\d+', day_text)[0])-1 #ゲーム開始時を0日目とするため-1する
+        self._game_info_day_dict[self.day]["day"] = self.day
         if "昼" in day_text:
             self.is_day = True
         elif "夜" in day_text:
