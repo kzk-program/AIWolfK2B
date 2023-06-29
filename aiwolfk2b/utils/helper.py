@@ -90,7 +90,6 @@ def get_default_underb_GameSetting()->_GameSetting:
 
 def load_config(config_path:Path)-> ConfigParser:
     config = ConfigParser()
-    config_path = current_dir.parent.joinpath("AttentionReasoningAgent").joinpath("config.ini")
 
     # iniファイルが存在するかチェック
     if os.path.exists(config_path):
