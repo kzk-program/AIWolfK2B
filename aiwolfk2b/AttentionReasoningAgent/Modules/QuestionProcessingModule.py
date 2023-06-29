@@ -39,17 +39,6 @@ class GPT3API:
             temperature=0)
         return response['choices'][0]['text']
 
-def closest_str(str_list:List[str], target_str:str)->str:
-    """str_listの中からtarget_strに最も近い文字列を返す"""
-    min_distance = 100000
-    min_str = ""
-    for str in str_list:
-        distance = Levenshtein.distance(str, target_str)
-        if distance < min_distance:
-            min_distance = distance
-            min_str = str
-    return min_str
-
 class QuestionProcessingModule(AbstractQuestionProcessingModule):
     """
     質問処理モジュール
@@ -61,7 +50,10 @@ class QuestionProcessingModule(AbstractQuestionProcessingModule):
     def process_question(self,question: str, questioner: Agent ,game_info: GameInfo, game_setting: GameSetting)->OneStepPlan:
         self._game_info = game_info
         self._game_setting = game_setting
+
+        # 質問の種類を分類する
         question_type = self._classify_question(question)
+
         if question_type == None:
             return OneStepPlan("何を意図した質問か分からなかったから", ActionType.TALK, f">>{questioner}何を言ってるか分かりません。")
         
@@ -79,15 +71,17 @@ class QuestionProcessingModule(AbstractQuestionProcessingModule):
         else:
             raise NotImplementedError("未実装")
 
+
     def _classify_question(self, question: str) -> Optional[QuestionType]:
         """質問を分類する。分類できないときはNoneを返す"""
-        prompt = f"""以下の質問に対し、質問の種類が 1 過去の行動の理由 2 将来の行動のプラン 3 役職推定 4.どれでも無い のどれかに分類します。
+        prompt = f"""以下の質問に対し、質問の種類が 1 過去の行動の理由 2 将来の行動のプラン 3 役職推定 4.どれでも無い のどれかに分類します。ただし、「疑う」「怪しい」などと言ったときは人狼の役職推定を指します。
 「なぜあなたはAgent[01]を占ったのですか」 :1
 「あなたは誰に投票しますか」:2
 「あなたは誰が人狼だと思いますか」:3
 「人狼はあなたを明日殺すと思いますか」:4
 「{question}」 :"""
-        question_type_num = closest_str(["1", "2", "3", "4"], self.gpt3_api.complete(prompt).strip())
+
+        question_type_num = self.closest_str(["1", "2", "3", "4"], self.gpt3_api.complete(prompt).strip())
         if question_type_num == "1":
             return QuestionType.ACTION_REASON
         elif question_type_num == "2":
@@ -99,9 +93,10 @@ class QuestionProcessingModule(AbstractQuestionProcessingModule):
         else:
             raise ValueError("question_type_numが1~4のどれでもない")
 
+
     def _classify_question_actiontype(self, question: str) -> ActionType:
         """質問の種類が行動理由か行動予定のとき、具体的にどのActionTypeのことか判定する"""
-        prompt = f"""以下の質問に対し、質問の種類が 1 占い行為 2 護衛行為 3 投票行為 4 襲撃行為 5 発言(カミングアウトや、行為の呼びかけ、行為の宣言等を含む) のどれかに分類します。
+        prompt = f"""以下の質問に対し、質問の種類が 1 占い行為 2 護衛行為 3 投票行為 4 襲撃行為 5 発言(カミングアウトや、行為の呼びかけ、行為の宣言等を含む) のどれかに分類します。ただし、投票することを「吊る」と言うこともあることに注意してください。
 「なぜあなたはAgent[01]を占ったのですか」 :1
 「なぜあなたはAgent[01]を守ったのか？」 :2
 「Agent[02]に投票したのは何故か。」:3
@@ -109,7 +104,7 @@ class QuestionProcessingModule(AbstractQuestionProcessingModule):
 「COするつもりはありますか。」 :5
 「なぜAgent[01]に投票するよう呼びかけたのか？」 :5
 「{question}」 :"""
-        question_actiontype_num = closest_str(["1", "2", "3", "4", "5"], self.gpt3_api.complete(prompt).strip())
+        question_actiontype_num = self.closest_str(["1", "2", "3", "4", "5"], self.gpt3_api.complete(prompt).strip())
         if question_actiontype_num == "1":
             return ActionType.DIVINE
         elif question_actiontype_num == "2":
@@ -147,11 +142,13 @@ class QuestionProcessingModule(AbstractQuestionProcessingModule):
         else:
             raise ValueError("ActionTypeが不正: " + question_actiontype.value)
 
+
     def _corresponding_past_action(self, question: str, question_actiontype:ActionType) -> Optional[OneStepPlan]:
         """
         行動理由質問に関して、該当する行動を返す
         """
-
+        
+        # historyから、該当するactiontypeのOneStepPlanを取ってくる
         the_actiontype_history_list = []
         for one_step_plan in self.strategy_module.history:
             if one_step_plan.action_type == question_actiontype:
@@ -167,7 +164,7 @@ class QuestionProcessingModule(AbstractQuestionProcessingModule):
                 verb = "を護衛"
             elif question_actiontype == ActionType.VOTE:
                 verb = "に投票"
-            prompt = f"""質問は、誰{verb}した理由を聞いてますか？Agent[01]~Agent[05]のどれかを答えてください。
+            prompt = f"""質問は、誰{verb}した理由を聞いてますか？Agent[01]~Agent[{self._game_setting.player_num:02d}]のどれかを答えてください。
 ---
 質問:
 「>>Agent[02] なんでAgent[04]{verb}したんじゃ？」
@@ -177,14 +174,14 @@ Agent[04]
 質問:
 """
             prompt += "「" + question + "」\n"
-            target_agent = closest_str(["Agent[" + "{:02}".format(x) + "]" for x in range(1, 6)],self.gpt3_api.complete(prompt).strip())
+            target_agent = self.closest_str([str(agent) for agent in self._game_info.agent_list],self.gpt3_api.complete(prompt).strip())
             for one_step_plan in the_actiontype_history_list[::-1]:  #最新のから検索
                 if str(one_step_plan.action) == target_agent:
                     return one_step_plan
             return None
         
-
-        prompt = """質問に最も近い発言の番号を答えてください。どれも合致しない場合は0と答えてください。
+        else:
+            prompt = """質問に最も近い発言の番号を答えてください。どれも合致しない場合は0と答えてください。
 ---
 質問：
 「なぜあなたはAgent[01]を人狼だと疑ったのですか。」
@@ -196,16 +193,16 @@ Agent[04]
 3
 ---
 質問：
-"""
-        prompt += "「" + question + "」\n"
-        for i, one_step_plan in enumerate(the_actiontype_history_list):
-            prompt += f"{i+1} {one_step_plan.action}\n"
-        prompt += "答え:\n"
-        corresponding_num = int(closest_str([str(x) for x in range(len(the_actiontype_history_list)+1)],self.gpt3_api.complete(prompt).strip()))
-        if corresponding_num == 0:
-            return None
-        else:
-            return the_actiontype_history_list[corresponding_num-1]
+    """
+            prompt += "「" + question + "」\n"
+            for i, one_step_plan in enumerate(the_actiontype_history_list):
+                prompt += f"{i+1} {one_step_plan.action}\n"
+            prompt += "答え:\n"
+            corresponding_num = int(self.closest_str([str(x) for x in range(len(the_actiontype_history_list)+1)],self.gpt3_api.complete(prompt).strip()))
+            if corresponding_num == 0:
+                return None
+            else:
+                return the_actiontype_history_list[corresponding_num-1]
         
     def _answer_action_plan(self, question:str, question_actiontype:ActionType, questioner:Agent) -> OneStepPlan:
         """
@@ -266,7 +263,7 @@ Agent[04]
 質問:
 """
             prompt += "「" + question + "」\n"
-            target_agent = closest_str(["Agent[" + "{:02}".format(x) + "]" for x in range(1, 6)],self.gpt3_api.complete(prompt).strip())
+            target_agent = self.closest_str(["Agent[" + "{:02}".format(x) + "]" for x in range(1, 6)],self.gpt3_api.complete(prompt).strip())
             for one_step_plan in the_actiontype_plan_list[::-1]:  #最新のから検索
                 if str(one_step_plan.action) == target_agent:
                     return one_step_plan
@@ -288,7 +285,7 @@ Agent[04]
 「誰が作曲家だと思う？」 :0
 「{question}」 :
 """
-        questioned_role = closest_str([str(x) for x in range(5)],self.gpt3_api.complete(prompt).strip())
+        questioned_role = self.closest_str([str(x) for x in range(5)],self.gpt3_api.complete(prompt).strip())
         questioned_role:Optional[Role] = [None, Role.WEREWOLF, Role.POSSESSED, Role.SEER, Role.VILLAGER][int(questioned_role)]
         if questioned_role == None:
             return OneStepPlan("質問の意図が分からなかったので", ActionType.TALK, f">>{questioner} どういうことか分かりません。")
@@ -315,13 +312,24 @@ Agent[04]
             return "狂人"
         elif role == Role.VILLAGER:
             return "村人"
+        
+    def closest_str(self, str_list:List[str], target_str:str)->str:
+        """str_listの中からtarget_strに最も近い文字列を返す"""
+        min_distance = 100000
+        min_str = ""
+        for str in str_list:
+            distance = Levenshtein.distance(str, target_str)
+            if distance < min_distance:
+                min_distance = distance
+                min_str = str
+        return min_str
 
 
 
 if __name__ == "__main__":
     import pickle
     config_ini = configparser.ConfigParser()
-    config_ini_path = '/home/meip-users/aiwolf_ara/AIWolfK2B/aiwolfk2b/AttentionReasoningAgent/config.ini'
+    config_ini_path = os.pardir+'/config.ini'
 
     # iniファイルが存在するかチェック
     if os.path.exists(config_ini_path):
@@ -335,9 +343,9 @@ if __name__ == "__main__":
     role_estimation_model = RandomRoleEstimationModel(config_ini)
     role_inference_module = SimpleRoleInferenceModule(config_ini, role_estimation_model)
     strategy_module = SimpleStrategyModule(config_ini, role_estimation_model, role_inference_module)
-    with open("/home/meip-users/aiwolf_ara/AIWolfK2B/aiwolfk2b/AttentionReasoningAgent/game_info.pkl", mode="rb") as f:
+    with open(os.pardir + "/game_info.pkl", mode="rb") as f:
         game_info:GameInfo = pickle.load(f)
-    with open("/home/meip-users/aiwolf_ara/AIWolfK2B/aiwolfk2b/AttentionReasoningAgent/game_setting.pkl", mode="rb") as f:
+    with open(os.pardir + "/game_setting.pkl", mode="rb") as f:
         game_setting:GameSetting = pickle.load(f)
     
     question_processing_module = QuestionProcessingModule(config_ini,role_inference_module,strategy_module)
