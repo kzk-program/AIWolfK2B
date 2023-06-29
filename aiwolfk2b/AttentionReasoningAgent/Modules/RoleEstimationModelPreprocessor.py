@@ -42,10 +42,17 @@ class RoleEstimationModelPreprocessor(AbstractModule):
         text = text.lower()
         #文字種の統一と不要な文字の除去,文字の繰り返しの削除
         text = neologdn.normalize(text,repeat=3) #REVIEW:repeat数は要検討
-        #改行削除
-        text = text.replace("\n","")
+        #二個以上の連続した改行削除(間に空白がある場合も削除)
+        text = re.sub(r"\n[ ]*\n","\n",text)
+        text = re.sub(r"\n{2,}","\n",text)
+        # # 改行削除
+        #text = text.replace("\n","")
         #空白削除
         text = text.replace(" ","")
+        #白・黒の記号(○・●)を置換
+        text = text.replace("○","白").replace("◯","白").replace("◦","白")
+        text = text.replace("•","黒").replace("●","黒")
+        
         return text
         
 
@@ -102,6 +109,7 @@ class RoleEstimationModelPreprocessor(AbstractModule):
         # same as day1
         #...
         #my_role (あれば)
+        
         
         def rotate_agent_idx(agent_idx:int)->int:
             """
