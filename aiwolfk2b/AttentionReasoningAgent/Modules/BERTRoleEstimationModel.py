@@ -23,6 +23,7 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
     def __init__(self, config: ConfigParser) -> None:
         super().__init__(config)
         self.modelpath = current_dir.joinpath(config.get("RoleEstimationModel","bert_model_path"))
+        self.bert_pretrained_model_name = config.get("RoleEstimationModel","bert_pretrained_model_name")
         self.bert_tokenizer_name = config.get("RoleEstimationModel","bert_tokenizer_name")
         self.batch_size = config.getint("RoleEstimationModel","batch_size")
         self.max_length = config.getint("RoleEstimationModel","max_length")
@@ -32,8 +33,10 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
         #self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.device = "cpu" #多分推論はCPUの方が速い
         self.bert_sc = BertForSequenceClassification.from_pretrained(
-            self.modelpath,
+            self.bert_pretrained_model_name,
+            num_labels=len(self.preprocessor.role_label_list),
         )
+        self.bert_sc.load_state_dict(torch.load(self.modelpath,map_location=self.device))
         self.bert_sc = self.bert_sc.to(self.device)
         # 文章をトークンに変換するトークナイザーの読み込み
         self.tokenizer:BertJapaneseTokenizer = BertJapaneseTokenizer.from_pretrained(self.bert_tokenizer_name)

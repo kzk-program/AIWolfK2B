@@ -35,7 +35,7 @@ class RoleInferenceResult:
         self.probs = result
         
     def __str__(self) -> str:
-        return self.agent + "is reason: " + self.reason + "\nresult: " + str(self.probs)
+        return str(self.agent) + "is reason: " + self.reason + "\nresult: " + str(self.probs)
 
 
 class AbstractRoleInferenceModule(AbstractModule):
