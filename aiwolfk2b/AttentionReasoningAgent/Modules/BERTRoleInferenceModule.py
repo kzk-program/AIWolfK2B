@@ -11,12 +11,12 @@ from aiwolf.vote import Vote
 from aiwolfk2b.AttentionReasoningAgent.Modules.RoleEstimationModelPreprocessor import RoleEstimationModelPreprocessor
 from aiwolfk2b.AttentionReasoningAgent.Modules.BERTRoleEstimationModel import BERTRoleEstimationModel
 from aiwolfk2b.AttentionReasoningAgent.AbstractModules import RoleEstimationResult,RoleInferenceResult,AbstractRoleEstimationModel,AbstractRoleInferenceModule
-from aiwolfk2b.utils.helper import load_default_GameInfo,load_default_GameSetting,load_config
+
 
 import torch,re,openai,threading
 import numpy as np
 
-current_dir = pathlib.Path().resolve()
+current_dir = pathlib.Path(__file__).resolve().parent
 
 class BERTRoleInferenceModule(AbstractRoleInferenceModule):
     """BERTを使って役職を推論するモジュール"""
@@ -27,12 +27,18 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         self.device = "cpu" #多分推論はCPUの方が速い
         
         #上位何件までの情報をもとに推論するか
-        self.top_n = self.config.getint("RoleInferenceModule","top_n")
+        self.top_n = self.config.getint("BERTRoleInferenceModule","top_n")
         
         #gptまわりの設定
-        self.gpt_model= self.config.get("RoleInferenceModule","gpt_model")
-        self.gpt_max_tokens = self.config.getint("RoleInferenceModule","gpt_max_tokens")
-        self.gpt_temperature = self.config.getfloat("RoleInferenceModule","gpt_temperature")
+        self.gpt_model= self.config.get("BERTRoleInferenceModule","gpt_model")
+        self.gpt_max_tokens = self.config.getint("BERTRoleInferenceModule","gpt_max_tokens")
+        self.gpt_temperature = self.config.getfloat("BERTRoleInferenceModule","gpt_temperature")
+        self.gpt_api_key_path = self.config.get("BERTRoleInferenceModule","gpt_api_key_path")
+        self.gpt_api_key_path = Path(self.gpt_api_key_path).resolve()
+        #openAIのAPIキーを読み込む
+        with open(self.gpt_api_key_path, "r",encoding="utf-8") as f:
+            openai.api_key = f.read().strip()
+        
         
         #BERTのモデルを読み込むことを前提にする
         if not isinstance(self.role_estimation_model,BERTRoleEstimationModel):
@@ -124,6 +130,8 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         
         
         estimate_text = self.estimator.preprocessor.create_estimation_text(agent,game_info,game_setting)
+        # #\nを[SEP]に変換する
+        # estimate_text = estimate_text.replace("\n","[SEP]")
         result = self.estimator.estimate_from_text([estimate_text])[0]
         
         words,attens = self.calc_word_attention_pairs(estimate_text,result)
@@ -136,7 +144,7 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         
         day = 0
         for word,atten in zip(words,attens):
-            if word == "\n":#一行終わったら終わり
+            if word == "[SEP]":#一行終わったら終わり
                 if accum_text == "":
                     raise Exception("空行は想定していません") 
                 elif accum_text in ["talk","vote"]:
@@ -150,7 +158,7 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
                     word_split = accum_text.split(",")
                     if phase == "talk":
                         talk = decompose_talk_text(accum_text)
-                        sentence_attens.append((accum_attens,talk.agent,talk,"talk"))
+                        sentence_attens.append((accum_attens,talk.agent,talk.text,"talk"))
                     elif phase == "vote":
                         vote = decompose_vote_text(accum_text)
                         sentence_attens.append((accum_attens,vote.agent,vote.target,"vote"))
@@ -176,6 +184,7 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
             else:
                 accum_text += word
                 accum_attens += atten
+        #print(sentence_attens)
         
         #attentionの大きい順にソートする
         sentence_attens.sort(key=lambda x:x[0],reverse=True)
@@ -208,10 +217,16 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         # chatgptを用いて推論理由を生成
         #最大確率を持つラベルを予測結果とする
         pred_role = max(result.probs.items(), key=lambda x: x[1])[0]
-        explain_text = f"人狼ゲームにて、以下の箇条書きの内容から{agent}が{pred_role.name}であると推定される。以下の情報を元に{agent}の役職が{pred_role.name}と呼べる理由を簡潔に述べなさい。だだし、文末は「から」で終わらせなさい\n{reason_text}"
-        explained_reason = self.send_message_to_api(explain_text)
+        explain_text = f"人狼ゲームにて、以下の箇条書きの内容から{agent}が{pred_role.name}であると推定される。以下の情報を元に{agent}の役職が{pred_role.name}と呼べる理由を簡潔に50字内で述べなさい。だだし、文末は「から」で終わらせなさい\n{reason_text}"
         
-        return explained_reason
+        explain_message = [{"role":"user","content":explain_text}]
+        explained_reason = self.send_message_to_api(explain_message)
+        
+        inference = RoleInferenceResult(agent,explained_reason,result.probs)
+        print(f"log_text:{estimate_text}")
+        print(f"explain_text:{explain_text}")
+        
+        return inference
         
     
     def calc_word_attention_pairs(self,estimate_text:str,result:RoleEstimationResult) -> Tuple[List[str],List[float]]:
@@ -247,7 +262,10 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         agg_attens :List[float]= []
         text_tokens:List[str] = self.estimator.tokenizer.tokenize(estimate_text)
         
+        
         for idx,token in enumerate(text_tokens):
+            if idx >= self.estimator.max_length-1:
+                break #最大長を超えたら終わり
             #一つ前と連続するか
             if token.startswith("##"):
                 # 単語
@@ -298,5 +316,28 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
                     return api_result["response"]
 
         print("Reached maximum retries. Aborting.")
-
         return ""
+
+def unit_test_infer(estimate_idx:int):
+    from aiwolfk2b.utils.helper import load_default_GameInfo,load_default_GameSetting,load_config
+    from aiwolfk2b.AttentionReasoningAgent.Modules.ParseRuruLogToGameAttribution import load_sample_GameAttirbution
+
+    config_path = current_dir.parent / "config_inference.ini"
+    config_ini = load_config(config_path)
+    # game_info = load_default_GameInfo()
+    # game_setting = load_default_GameSetting()
+
+    game_info,game_setting = load_sample_GameAttirbution(estimate_idx)
+    
+    estimator = BERTRoleEstimationModel(config_ini)
+    inference_module = BERTRoleInferenceModule(config_ini,estimator)
+    
+    estimator.initialize(game_info,game_setting)
+    inference_module.initialize(game_info,game_setting)
+    
+    agent = Agent(estimate_idx)
+    result = inference_module.infer(agent,game_info,game_setting)
+    print(result)
+
+if __name__ == "__main__":
+    unit_test_infer(3)
