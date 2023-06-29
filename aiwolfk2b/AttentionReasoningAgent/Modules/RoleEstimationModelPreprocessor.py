@@ -11,6 +11,7 @@ import pathlib
 from pathlib import Path
 
 
+
 current_dir = pathlib.Path(__file__).resolve().parent
 
 
@@ -42,11 +43,11 @@ class RoleEstimationModelPreprocessor(AbstractModule):
         text = text.lower()
         #文字種の統一と不要な文字の除去,文字の繰り返しの削除
         text = neologdn.normalize(text,repeat=3) #REVIEW:repeat数は要検討
-        #二個以上の連続した改行削除(間に空白がある場合も削除)
-        text = re.sub(r"\n[ ]*\n","\n",text)
-        text = re.sub(r"\n{2,}","\n",text)
-        # # 改行削除
-        #text = text.replace("\n","")
+        # #二個以上の連続した改行削除(間に空白がある場合も削除)
+        # text = re.sub(r"\n[ ]*\n","\n",text)
+        # text = re.sub(r"\n{2,}","\n",text)
+        # 改行削除
+        text = text.replace("\n","")
         #空白削除
         text = text.replace(" ","")
         #白・黒の記号(○・●)を置換
@@ -160,7 +161,7 @@ class RoleEstimationModelPreprocessor(AbstractModule):
             #会話順にソート
             game_info.talk_list.sort(key=lambda x:x.idx)
             for talk in game_info.talk_list:
-                talk_text = talk.text
+                talk_text = self.preprocess_text(talk.text) # 会話文の前処理
                 if compress_text:
                     talk_text = self.compress_text(talk_text)
                 agent_idx = rotate_agent_idx(talk.agent.agent_idx)
@@ -188,8 +189,9 @@ class RoleEstimationModelPreprocessor(AbstractModule):
         estimation_text = re.sub(r"Agent\[(\d+)\]",lambda m: f"[{m.group(1)}]",estimation_text)
         
         return estimation_text
-      
-
+    
+    
+    
 
     
 def unit_test_make_estimation_text(view_agent_idx:int, estimated_agent_idx:int):
