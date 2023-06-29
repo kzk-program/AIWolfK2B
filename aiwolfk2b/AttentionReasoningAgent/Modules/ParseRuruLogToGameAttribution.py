@@ -655,6 +655,9 @@ def make_dataset(inputdir:Path,outputdir:Path,output_filename:str="dataset"):
             #9人以上のゲームは除外
             if player_num > 9 or player_num < 5:
                 continue
+            #猫又などの特殊役職が含まれているものは除外
+            if Role.UNC in parser.player_role_dict.values():
+                continue
 
             for view_agent_idx in range(1,player_num+1):
                 #各エージェントの立場からみた、別のエージェントの役職を推定する
@@ -669,6 +672,9 @@ def make_dataset(inputdir:Path,outputdir:Path,output_filename:str="dataset"):
                     answer_role = agent_role_dict[target_agent].name
                     dataset.append((answer_role,estimation_text))
             count_completed += 1
+            
+            # if count_completed > 100:#デバッグ用に100回で止める
+            #     break
         except Exception as e:
             # print(f"error occured in {inputpath}")
             # print(e)
