@@ -166,7 +166,7 @@ class RoleEstimationModelPreprocessor(AbstractModule):
                     talk_text = self.compress_text(talk_text)
                 agent_idx = rotate_agent_idx(talk.agent.agent_idx)
                 #テキスト中のエージェントについて、推定対象のエージェントがAgent[01]となるように順番を入れ替える
-                talk_text = re.sub(r"Agent\[(\d+)\]",lambda m: f"Agent[{rotate_agent_idx(int(m.group(1))):02d}]",talk_text)
+                talk_text = re.sub(r"agent\[(\d+)\]",lambda m: f"agent[{rotate_agent_idx(int(m.group(1))):02d}]",talk_text)
                 daily_text += f"{agent_idx},{talk_text}\n"
             
             #TODO:voteの結果はすべて表示させるものになっているが、再投票になった場合の明示をどうするか、検討する必要あり
@@ -186,7 +186,11 @@ class RoleEstimationModelPreprocessor(AbstractModule):
             estimation_text += daily_text
         
         #Agent[数字]->[数字]に変換して情報を圧縮
-        estimation_text = re.sub(r"Agent\[(\d+)\]",lambda m: f"[{m.group(1)}]",estimation_text)
+        estimation_text = re.sub(r"agent\[(\d+)\]",lambda m: f"[{m.group(1)}]",estimation_text)
+        
+        
+        #\nを[SEP]に変換する
+        estimation_text = estimation_text.replace("\n","[SEP]")
         
         return estimation_text
     
