@@ -11,6 +11,7 @@ import pathlib
 from pathlib import Path
 
 import torch
+import numpy as np
 
 from transformers import BertJapaneseTokenizer, BertForSequenceClassification
 
@@ -114,7 +115,8 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
                 estimation = {}
                 for j in range(len(self.preprocessor.role_label_list)):
                     estimation[self.preprocessor.role_label_list[j]] = probs[i][j]
-                one_batch_attention = [attentions[k][i].cpu().numpy() for k in range(len(attentions))]
+                one_batch_attention = attentions[-1][i].cpu().numpy()
+                one_batch_attention = np.array(one_batch_attention)
                 results.append(RoleEstimationResult(None,estimation,one_batch_attention))
             
         return results
