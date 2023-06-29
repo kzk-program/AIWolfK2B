@@ -19,7 +19,7 @@ from transformers import BertJapaneseTokenizer, BertForSequenceClassification
 current_dir = pathlib.Path(__file__).resolve().parent
 
 class BERTRoleEstimationModel(AbstractRoleEstimationModel):
-    """ランダムに役職を推定するモデル"""
+    """BERTを使って役職を推定するモデル"""
     def __init__(self, config: ConfigParser) -> None:
         super().__init__(config)
         self.modelpath = current_dir.joinpath(config.get("RoleEstimationModel","bert_model_path"))
