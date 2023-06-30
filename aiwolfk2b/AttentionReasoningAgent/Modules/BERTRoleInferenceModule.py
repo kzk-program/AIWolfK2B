@@ -375,6 +375,35 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         
         return (agg_words,agg_attens)
     
+    def make_attention_html(self,estimate_text:str,result:RoleEstimationResult)-> str:
+        """
+        attention機構で着目された単語を視覚的にわかりやすくするためのhtmlを作成する
+
+        Parameters
+        ----------
+        estimate_text : str
+            推定に使った文章
+        result : RoleEstimationResult
+            推定結果
+
+        Returns
+        -------
+        str
+            attentionを視覚的にわかりやすくしたhtml
+        """
+        def highlight(word, attn):
+            html_color = '#%02X%02X%02X' % (255, int(255*(1 - attn)), int(255*(1 - attn)))
+            return '<span style="background-color: {}">{}</span>'.format(html_color, word)
+        
+        html = ""
+        agg_words,agg_attens = self.calc_word_attention_pairs(estimate_text,result)
+        for word, attn in zip(agg_words,agg_attens):
+            html += highlight(word, attn)
+        html += "<br><br>"
+        
+        return html
+        
+    
     def send_message_to_api(self,messages, max_retries=5, timeout=10)-> str :
         def api_call(api_result, event):
             try:
@@ -435,6 +464,41 @@ def unit_test_infer(estimate_idx:int):
     agent = Agent(estimate_idx)
     result = inference_module.infer(agent,game_info_list,game_setting)
     print(result)
+    
+def unit_test_attention_vizualizer(estimate_idx:int):
+    import os
+    from aiwolfk2b.utils.helper import load_default_GameInfo,load_default_GameSetting,load_config
+    from aiwolfk2b.AttentionReasoningAgent.Modules.ParseRuruLogToGameAttribution import load_sample_GameAttirbution
+
+    config_path = current_dir.parent / "config.ini"
+    config_ini = load_config(config_path)
+    # game_info = load_default_GameInfo()
+    # game_setting = load_default_GameSetting()
+
+    game_info_list,game_setting = load_sample_GameAttirbution(estimate_idx)
+    
+    estimator = BERTRoleEstimationModel(config_ini)
+    inference_module = BERTRoleInferenceModule(config_ini,estimator)
+    
+    estimator.initialize(game_info_list,game_setting)
+    inference_module.initialize(game_info_list,game_setting)
+    
+    agent = Agent(estimate_idx)
+    #推論に用いる入力の作成
+    estimate_text = estimator.preprocessor.create_estimation_text(agent,game_info_list,game_setting)
+    #役職推定の実行
+    result = estimator.estimate_from_text([estimate_text],game_setting)[0]
+    #attentionの可視化
+    html = inference_module.make_attention_html(estimate_text,result)
+    #ファイルに保存
+    output_path = current_dir.parent / "output" / "attention_vizualizer.html"
+    #ディレクトリがなければ作成
+    if not output_path.parent.exists():
+        os.makedirs(output_path.parent,exist_ok=True)
+    
+    with open(output_path,"w") as f:
+        f.write(html)
 
 if __name__ == "__main__":
-    unit_test_infer(3)
+    #unit_test_infer(3)
+    unit_test_attention_vizualizer(3)
