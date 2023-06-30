@@ -13,6 +13,7 @@ transformers
 fugashi
 ipadic
 pytorch-lightning
+tensorboard
 #OKAMI用
 numexpr
 # GPT用
