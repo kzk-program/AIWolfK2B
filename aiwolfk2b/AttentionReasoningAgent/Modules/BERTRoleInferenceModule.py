@@ -130,11 +130,12 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         
         
         estimate_text = self.estimator.preprocessor.create_estimation_text(agent,game_info,game_setting)
-        # #\nを[SEP]に変換する
-        # estimate_text = estimate_text.replace("\n","[SEP]")
         result = self.estimator.estimate_from_text([estimate_text])[0]
+        #\nを[SEP]に変換する
+        sep_estimate_text = estimate_text.replace("\n","[SEP]")
         
-        words,attens = self.calc_word_attention_pairs(estimate_text,result)
+        words = self.convert_to_tokens_without_joint_sign(sep_estimate_text)
+        _,attens = self.calc_word_attention_pairs(estimate_text,result)
         #estimate_textをパースして、推定に使った会話文と投票文を取得する
         
         accum_attens = 0.0
@@ -228,6 +229,36 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         
         return inference
         
+    def convert_to_tokens_without_joint_sign(self,text:str) -> List[str]:
+        """
+        Tokenizerのwordpieceによるトークン分割で生じた接続記号を除去したうえで、トークン列に変換
+
+        Parameters
+        ----------
+        text : str
+            接続記号を除去する文字列
+
+        Returns
+        -------
+        List[str]
+            分割したトークン列
+        """
+        
+        agg_words :List[str] =[]
+        text_tokens:List[str] = self.estimator.tokenizer.tokenize(text)
+        
+        for idx,token in enumerate(text_tokens):
+            if idx >= self.estimator.max_length-1:
+                break #最大長を超えたら終わり
+            #一つ前と連続するか
+            if token.startswith("##"):
+                # 単語
+                agg_words[-1] += token[2:]
+            else:
+                #連続しない場合
+                agg_words.append(token)
+        
+        return agg_words
     
     def calc_word_attention_pairs(self,estimate_text:str,result:RoleEstimationResult) -> Tuple[List[str],List[float]]:
         """

@@ -188,9 +188,8 @@ class RoleEstimationModelPreprocessor(AbstractModule):
         #Agent[数字]->[数字]に変換して情報を圧縮
         estimation_text = re.sub(r"agent\[(\d+)\]",lambda m: f"[{m.group(1)}]",estimation_text)
         
-        
         #\nを[SEP]に変換する
-        estimation_text = estimation_text.replace("\n","[SEP]")
+        # estimation_text = estimation_text.replace("\n","[SEP]")
         
         return estimation_text
     
