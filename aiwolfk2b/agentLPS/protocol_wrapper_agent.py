@@ -32,7 +32,7 @@ class ProtocolWrapperAgent:
         self.agent.initialize(base_info, p_diff_data, game_setting)
         # converterの初期化
         self.protocol_to_NL_converter = SimpleSpeaker(me="Agent[{:02d}]".format(base_info["agentIdx"]))
-        self.NL_to_protocol_converter = BERTJPToProtocolConverter()
+        #self.NL_to_protocol_converter = BERTJPToProtocolConverter()
 
     def update(self, base_info, diff_data, request):
         self.base_info = base_info
