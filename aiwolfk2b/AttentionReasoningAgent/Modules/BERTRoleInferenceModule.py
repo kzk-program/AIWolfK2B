@@ -294,7 +294,25 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         to_agent_idx = self.revert_agent_idx(int(split_text[1]), agent, game_setting)
         return Vote(agent=Agent(from_agent_idx),target=Agent(to_agent_idx))
 
-    def send_message_to_api(self,messages, max_retries=5, timeout=10)-> str :
+    def send_message_to_api(self,messages:List[Dict[str,str]], max_retries:int=5, timeout:int=10)-> str:
+        """
+        OpenAI APIにメッセージを送信し、返信を受け取る
+
+        Parameters
+        ----------
+        messages : List[Dict[str,str]]
+            送信するメッセージ
+        max_retries : int, optional
+            最大の再送処理回数, by default 5
+        timeout : int, optional
+            タイムアウトの時間[s], by default 10
+
+        Returns
+        -------
+        str
+            OpenAI APIからの返信(assistantの内容)
+        """
+
         def api_call(api_result, event):
             try:
                 # print("calling api")
