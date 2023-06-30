@@ -292,7 +292,7 @@ Agent[04]
         questioned_role_str = self.role_to_japanese(questioned_role)
         role_inference_results:List[RoleInferenceResult] = []
         for agent in self._game_info.agent_list:
-            role_inference_results.append(self.role_inference_module.infer(agent, self._game_info, self._game_setting))
+            role_inference_results.append(self.role_inference_module.infer(agent, [self._game_info], self._game_setting))
         max_prob = max([x.probs[questioned_role] for x in role_inference_results])
         high_prob_results = [x for x in role_inference_results if x.probs[questioned_role] > max_prob-0.1]
         if len(high_prob_results) == 1:

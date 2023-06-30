@@ -60,7 +60,7 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
         ----------
         estimated_agent : Agent
             推定対象のエージェント
-        game_info : List[GameInfo]
+        game_info_list : List[GameInfo]
             役職推定に用いるゲーム情報のリスト
         game_setting : GameSetting
             役職推定に用いるゲーム設定

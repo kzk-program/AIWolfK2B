@@ -25,7 +25,7 @@ class StrategyModule(AbstractStrategyModule):
         #各エージェントの役職を推定する
         inf_results:List[RoleInferenceResult] = []
         for a in game_info.alive_agent_list:
-            inf_results.append(self.role_inference_module.infer(a, game_info, game_setting))
+            inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))
 
         #エージェントの中から最も占い師の確率が高いエージェントを選ぶ
         #エージェントの中から最も狂人の確率が低いエージェントを選ぶ
@@ -53,7 +53,7 @@ class StrategyModule(AbstractStrategyModule):
         #各エージェントの役職を推定する
         inf_results:List[RoleInferenceResult] = []
         for a in game_info.alive_agent_list:
-            inf_results.append(self.role_inference_module.infer(a, game_info, game_setting))
+            inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))
 
         #エージェントの中から最も占い師の確率が高いエージェントを選ぶ
         #エージェントの中から最も狂人の確率が低いエージェントを選ぶ
@@ -73,7 +73,7 @@ class StrategyModule(AbstractStrategyModule):
         #各エージェントの役職を推定する
         inf_results:List[RoleInferenceResult] = []
         for a in game_info.alive_agent_list:
-            inf_results.append(self.role_inference_module.infer(a, game_info, game_setting))
+            inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))
 
         #人狼側である確率が最も低いエージェントを選ぶ
         min_wolf_agent = self.min_agent(inf_results, Role.WEREWOLF)

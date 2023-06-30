@@ -24,7 +24,7 @@ class SimpleStrategyModule(AbstractStrategyModule):
         #各エージェントの役職を推定する
         inf_results:List[RoleInferenceResult] = []
         for a in game_info.agent_list:
-            inf_results.append(self.role_inference_module.infer(a, game_info, game_setting))
+            inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))
         #エージェントの中から最も人狼の確率が高いエージェントを選ぶ
         max_wolf_prob = 0
         max_wolf_agent = None

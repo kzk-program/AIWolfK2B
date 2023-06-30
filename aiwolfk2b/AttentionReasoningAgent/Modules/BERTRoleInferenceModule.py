@@ -11,7 +11,7 @@ from aiwolf.vote import Vote
 from aiwolfk2b.AttentionReasoningAgent.Modules.RoleEstimationModelPreprocessor import RoleEstimationModelPreprocessor
 from aiwolfk2b.AttentionReasoningAgent.Modules.BERTRoleEstimationModel import BERTRoleEstimationModel
 from aiwolfk2b.AttentionReasoningAgent.AbstractModules import RoleEstimationResult,RoleInferenceResult,AbstractRoleEstimationModel,AbstractRoleInferenceModule
-
+from aiwolfk2b.utils.helper import get_openai_api_key
 
 import torch,re,openai,threading
 import numpy as np
@@ -24,7 +24,7 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         super().__init__(config,role_estimation_model)
         #計算に使うdeviceを取得
         #self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.device = "cpu" #多分推論はCPUの方が速い
+        self.device = "cpu" #TODO:多分推論はCPUの方が速いからこのように指定するが、GPUでの推論と比較してみる
         
         #上位何件までの情報をもとに推論するか
         self.top_n = self.config.getint("BERTRoleInferenceModule","top_n")
@@ -33,12 +33,8 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         self.gpt_model= self.config.get("BERTRoleInferenceModule","gpt_model")
         self.gpt_max_tokens = self.config.getint("BERTRoleInferenceModule","gpt_max_tokens")
         self.gpt_temperature = self.config.getfloat("BERTRoleInferenceModule","gpt_temperature")
-        self.gpt_api_key_path = self.config.get("BERTRoleInferenceModule","gpt_api_key_path")
-        self.gpt_api_key_path = Path(self.gpt_api_key_path).resolve()
         #openAIのAPIキーを読み込む
-        with open(self.gpt_api_key_path, "r",encoding="utf-8") as f:
-            openai.api_key = f.read().strip()
-        
+        openai.api_key = get_openai_api_key()
         
         #BERTのモデルを読み込むことを前提にする
         if not isinstance(self.role_estimation_model,BERTRoleEstimationModel):
@@ -52,7 +48,7 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         self.game_setting = game_setting
         
         
-    def infer(self,agent:Agent, game_info:List[GameInfo], game_setting: GameSetting) -> RoleInferenceResult:
+    def infer(self,agent:Agent, game_info_list:List[GameInfo], game_setting: GameSetting) -> RoleInferenceResult:
         """
         指定された情報から、BERTを使って指定されたエージェントの役職を推論する
 
@@ -61,7 +57,7 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         agent : Agent
             推論対象のエージェント
         game_info_list : List[GameInfo]
-            ゲームの情報
+            ゲームの情報のリスト
         game_setting : GameSetting
             ゲームの設定
 
@@ -129,8 +125,8 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
             return vote
         
         
-        estimate_text = self.estimator.preprocessor.create_estimation_text(agent,game_info,game_setting)
-        result = self.estimator.estimate_from_text([estimate_text])[0]
+        estimate_text = self.estimator.preprocessor.create_estimation_text(agent,game_info_list,game_setting)
+        result = self.estimator.estimate_from_text([estimate_text],game_setting)[0]
         #\nを[SEP]に変換する
         sep_estimate_text = estimate_text.replace("\n","[SEP]")
         
@@ -185,7 +181,6 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
             else:
                 accum_text += word
                 accum_attens += atten
-        #print(sentence_attens)
         
         #attentionの大きい順にソートする
         sentence_attens.sort(key=lambda x:x[0],reverse=True)
@@ -224,8 +219,8 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         explained_reason = self.send_message_to_api(explain_message)
         
         inference = RoleInferenceResult(agent,explained_reason,result.probs)
-        print(f"log_text:{estimate_text}")
-        print(f"explain_text:{explain_text}")
+        # print(f"log_text:{estimate_text}")
+        # print(f"explain_text:{explain_text}")
         
         return inference
         
@@ -353,21 +348,21 @@ def unit_test_infer(estimate_idx:int):
     from aiwolfk2b.utils.helper import load_default_GameInfo,load_default_GameSetting,load_config
     from aiwolfk2b.AttentionReasoningAgent.Modules.ParseRuruLogToGameAttribution import load_sample_GameAttirbution
 
-    config_path = current_dir.parent / "config_inference.ini"
+    config_path = current_dir.parent / "config.ini"
     config_ini = load_config(config_path)
     # game_info = load_default_GameInfo()
     # game_setting = load_default_GameSetting()
 
-    game_info,game_setting = load_sample_GameAttirbution(estimate_idx)
+    game_info_list,game_setting = load_sample_GameAttirbution(estimate_idx)
     
     estimator = BERTRoleEstimationModel(config_ini)
     inference_module = BERTRoleInferenceModule(config_ini,estimator)
     
-    estimator.initialize(game_info,game_setting)
-    inference_module.initialize(game_info,game_setting)
+    estimator.initialize(game_info_list,game_setting)
+    inference_module.initialize(game_info_list,game_setting)
     
     agent = Agent(estimate_idx)
-    result = inference_module.infer(agent,game_info,game_setting)
+    result = inference_module.infer(agent,game_info_list,game_setting)
     print(result)
 
 if __name__ == "__main__":
