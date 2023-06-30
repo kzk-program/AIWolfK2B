@@ -49,6 +49,33 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         
             
     def parse_estimate_text(self,estimate_text:str,result: RoleEstimationResult,agent: Agent, game_setting: GameSetting)->List[Tuple[float,Agent,Union[Agent,str,Species],str]]:
+        """
+        推定したテキストと推定結果をパースして、アクションごとのアテンションとアクションのリストに変換して返す
+
+        Parameters
+        ----------
+        estimate_text : str
+            推定に使用したテキスト(エージェント番号変更済み)
+        result : RoleEstimationResult
+            推定結果
+        agent : Agent
+            推定対象のエージェント
+        game_setting : GameSetting
+            ゲーム設定
+
+        Returns
+        -------
+        List[Tuple[float,Agent,Union[Agent,str,Species],str]]
+            [attentionの総和、アクションを行ったエージェント、アクションごとの個別の行動、アクションの種類]のリスト
+
+        Raises
+        ------
+        Exception
+            想定外のアクションがあった場合に発生
+        Exception
+            空行があった場合に発生
+        """
+        
         #\nを[SEP]に変換する
         sep_estimate_text = estimate_text.replace("\n","[SEP]")
         
@@ -107,7 +134,25 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
                 
         return sentence_attens
     
-    def format_reason_text(self,sentence_attens:List[Tuple[float,Agent,Union[Agent,str,Species],str]]):
+    def format_reason_text(self,sentence_attens:List[Tuple[float,Agent,Union[Agent,str,Species],str]])->str:
+        """
+        単語とattentionのペアのリストを受け取り、上位top_n個の会話文を取得し、chatgptに入力する形式に整形する
+
+        Parameters
+        ----------
+        sentence_attens : List[Tuple[float,Agent,Union[Agent,str,Species],str]]
+            [attentionの総和、アクションを行ったエージェント、アクションごとの個別の行動、アクションの種類]のリスト
+
+        Returns
+        -------
+        str
+            chatgptに理由として入力する形式に整形した文字列
+
+        Raises
+        ------
+        Exception
+           未定義行動が含まれている場合
+        """
         #attentionの大きい順にソートする
         sentence_attens.sort(key=lambda x:x[0],reverse=True)
         #上からtop_n個の会話文を取得する
@@ -156,94 +201,14 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         RoleInferenceResult
             指定されたエージェントの役職推論結果(理由・推論結果のペア)
         """
-            
+        #推論に用いる入力の作成
         estimate_text = self.estimator.preprocessor.create_estimation_text(agent,game_info_list,game_setting)
+        #役職推定の実行
         result = self.estimator.estimate_from_text([estimate_text],game_setting)[0]
+        #単語とattentionのペアのリストを作成
         sentence_attens = self.parse_estimate_text(estimate_text,result,agent,game_setting)
         
-        # #\nを[SEP]に変換する
-        # sep_estimate_text = estimate_text.replace("\n","[SEP]")
-        
-        # words = self.convert_to_tokens_without_joint_sign(sep_estimate_text)
-        # _,attens = self.calc_word_attention_pairs(estimate_text,result)
-        # #estimate_textをパースして、推定に使った会話文と投票文を取得する
-        
-        # accum_attens = 0.0
-        # accum_text =""
-        # phase = "talk"
-        # sentence_attens:List[Tuple[float,Agent,Union[Agent,str,Species],str]] = []       
-        
-        # day = 0
-        # for word,atten in zip(words,attens):
-        #     if word == "[SEP]":#一行終わったら終わり
-        #         if accum_text == "":
-        #             raise Exception("空行は想定していません") 
-        #         elif accum_text in ["talk","vote"]:
-        #             phase = accum_text
-        #         elif accum_text.startswith("day"):
-        #             day = int(accum_text.replace("day",""))
-        #         elif accum_text.startswith("role_map:"):
-        #             role_map = accum_text.replace("role_map:","")
-        #             sentence_attens.append((accum_attens,None,role_map,"role_map"))
-        #         else:
-        #             word_split = accum_text.split(",")
-        #             if phase == "talk":
-        #                 talk = self.decompose_talk_text(accum_text,agent,game_setting)
-        #                 sentence_attens.append((accum_attens,talk.agent,talk.text,"talk"))
-        #             elif phase == "vote":
-        #                 vote = self.decompose_vote_text(accum_text,agent,game_setting)
-        #                 sentence_attens.append((accum_attens,vote.agent,vote.target,"vote"))
-        #             else:
-        #                 action_type = word_split[0]
-        #                 if action_type == "divine":
-        #                     target_idx = self.revert_agent_idx(int(word_split[1]),agent,game_setting)
-        #                     species = Species(self.word_split[2])
-        #                     sentence_attens.append((accum_attens,Agent(target_idx),species,"divine"))
-        #                 elif action_type == "attacked":
-        #                     attacked_idx = self.revert_agent_idx(int(word_split[1]),agent,game_setting)
-        #                     sentence_attens.append((accum_attens,Agent(attacked_idx),None,"attacked"))
-        #                 elif action_type == "guarded":
-        #                     guarded_idx = self.revert_agent_idx(int(word_split[1]),agent,game_setting)
-        #                     sentence_attens.append((accum_attens,Agent(guarded_idx),None,"guarded"))
-        #                 elif action_type =="executed":
-        #                     executed_idx = self.revert_agent_idx(int(word_split[1]),agent,game_setting)
-        #                     sentence_attens.append((accum_attens,Agent(executed_idx),None,"executed"))
-        #                 else:
-        #                     raise Exception(f"想定外のaction_type:{action_type}")
-        #         accum_text = ""
-        #         accum_attens = 0.0
-        #     else:
-        #         accum_text += word
-        #         accum_attens += atten
-        
-        # #attentionの大きい順にソートする
-        # sentence_attens.sort(key=lambda x:x[0],reverse=True)
-        # #上からtop_n個の会話文を取得する
-        # reason_text = ""
-        # for attens, agent,uni,action_type in sentence_attens[:self.top_n]:
-        #     if action_type == "talk":
-        #         reason_text += f"{agent}が「{uni}」と言った\n"
-        #     elif action_type == "vote":
-        #         reason_text += f"{agent}が{uni}に投票した\n"
-        #     elif action_type == "divine":
-        #         reason_text += f"{agent}を占った結果、{uni}だった\n"
-        #     elif action_type == "attacked":
-        #         reason_text += f"{agent}が襲撃された\n"
-        #     elif action_type == "guarded":
-        #         reason_text += f"{agent}を護衛した\n"
-        #     elif action_type == "executed":
-        #         reason_text += f"{agent}が処刑された\n"
-        #     elif action_type == "role_map":
-        #         role_nums = [int(x) for x in uni.split(",")]
-        #         reason_text += "役職の分布が、"
-        #         for num,role in zip(role_nums,self.estimator.preprocessor.role_label_list):
-        #             if num == 0: #0人なら表示しない
-        #                 continue
-        #             reason_text += f"{role.name}が{num}人、"
-        #         reason_text += "である\n"
-        #     else:
-        #         raise Exception(f"想定外のaction_type:{action_type}")
-        
+        #chatgptに投げるために、推論理由を整形
         reason_text = self.format_reason_text(sentence_attens)
         
         # chatgptを用いて推論理由を生成
