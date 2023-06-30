@@ -373,40 +373,6 @@ def unit_test_infer(estimate_idx:int):
     result = inference_module.infer(agent,game_info_list,game_setting)
     print(result)
     
-# def unit_test_attention_vizualizer(estimate_idx:int):
-#     import os
-#     from aiwolfk2b.utils.helper import load_default_GameInfo,load_default_GameSetting,load_config
-#     from aiwolfk2b.AttentionReasoningAgent.Modules.ParseRuruLogToGameAttribution import load_sample_GameAttirbution
-
-#     config_path = current_dir.parent / "config.ini"
-#     config_ini = load_config(config_path)
-#     # game_info = load_default_GameInfo()
-#     # game_setting = load_default_GameSetting()
-
-#     game_info_list,game_setting = load_sample_GameAttirbution(estimate_idx)
-    
-#     estimator = BERTRoleEstimationModel(config_ini)
-#     inference_module = BERTRoleInferenceModule(config_ini,estimator)
-    
-#     estimator.initialize(game_info_list,game_setting)
-#     inference_module.initialize(game_info_list,game_setting)
-    
-#     agent = Agent(estimate_idx)
-#     #推論に用いる入力の作成
-#     estimate_text = estimator.preprocessor.create_estimation_text(agent,game_info_list,game_setting)
-#     #役職推定の実行
-#     result = estimator.estimate_from_text([estimate_text],game_setting)[0]
-#     #attentionの可視化
-#     html = inference_module.make_attention_html(estimate_text,result)
-#     #ファイルに保存
-#     output_path = current_dir.parent / "output" / "attention_vizualizer.html"
-#     #ディレクトリがなければ作成
-#     if not output_path.parent.exists():
-#         os.makedirs(output_path.parent,exist_ok=True)
-    
-#     with open(output_path,"w") as f:
-#         f.write(html)
 
 if __name__ == "__main__":
     unit_test_infer(3)
-    #unit_test_attention_vizualizer(3)
