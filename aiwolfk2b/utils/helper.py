@@ -131,3 +131,28 @@ def load_default_GameSetting()->GameSetting:
     game_setting = load_GameSetting(setting_path)
         
     return game_setting
+
+
+def get_openai_api_key()->str:
+    """
+    OpenAI APIのKEYを取得する
+
+    Returns
+    -------
+    str
+        OpenAI APIのKEY
+    """
+    key = ''
+    #環境変数にAPIキーがある場合
+    if 'OPENAI_API_KEY' in os.environ:
+        key = os.environ['OPENAI_API_KEY']
+    #環境変数にAPIキーがない場合
+    else:
+        #AIWOLFK2BにあるopenAIAPIkey.txtを読み込む
+        aiwolfk2b_path = current_dir.parent.parent
+        key_path = aiwolfk2b_path.joinpath("openAIAPIkey.txt")
+        #openAIのAPIキーを読み込む
+        with open(key_path, "r",encoding="utf-8") as f:
+            key = f.read().strip()
+            
+    return key
