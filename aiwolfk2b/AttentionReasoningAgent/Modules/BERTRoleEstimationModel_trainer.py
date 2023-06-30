@@ -188,6 +188,6 @@ if __name__ == "__main__":
     #最も良いモデルを保存
     model.load_from_checkpoint(checkpoint.best_model_path)
     out_filename = format(today, '%Y%m%d%H%M%S')
-    torch.save(model.bert_sc.state_dict(),out_model_dir.joinpath(f'{out_filename}.pth'))
+    torch.save(model.bert_sc.state_dict(),out_model_dir.joinpath(f'bert_sc_{out_filename}.pth'))
     model.bert_sc.save_pretrained(out_model_dir.joinpath("save_pretrained")) 
     

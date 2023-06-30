@@ -29,21 +29,21 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
         self.max_length = config.getint("RoleEstimationModel","max_length")
         self.preprocessor = RoleEstimationModelPreprocessor(config)
         
-        #計算に使うdeviceを取得
-        #self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.device = "cpu" #多分推論はCPUの方が速い
+        # 計算に使うdeviceを取得
+        # self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = "cpu" #TODO:多分推論はCPUの方が速いからこのように指定するが、GPUでの推論と比較してみる
         self.bert_sc = BertForSequenceClassification.from_pretrained(
             self.bert_pretrained_model_name,
             num_labels=len(self.preprocessor.role_label_list),
         )
         self.bert_sc.load_state_dict(torch.load(self.modelpath,map_location=self.device))
         
+        # Bertのsave_pretrainedでモデルを保存した場合は以下のように読み込む
         # self.bert_sc = BertForSequenceClassification.from_pretrained(
-        #     self.modelpath,
-        #     num_labels=len(self.preprocessor.role_label_list),
+        #     self.bert_pretrained_model_name
         # )
-        #self.bert_sc = self.bert_sc.to(self.device)
-        # self.bert_sc:BertForSequenceClassification = torch.load(self.modelpath,map_location=self.device)
+        # self.bert_sc = self.bert_sc.to(self.device)
+
         # 文章をトークンに変換するトークナイザーの読み込み
         self.tokenizer:BertJapaneseTokenizer = BertJapaneseTokenizer.from_pretrained(self.bert_tokenizer_name)
         
@@ -52,7 +52,6 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
         self.game_info = game_info
         self.game_setting = game_setting
           
-    
     def estimate(self,estimated_agent:Agent, game_info_list: List[GameInfo], game_setting: GameSetting,compress_text:bool=True) -> RoleEstimationResult:
         """
         BERTを使って役職を推定する
@@ -62,7 +61,7 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
         estimated_agent : Agent
             推定対象のエージェント
         game_info : List[GameInfo]
-            役職推定に用いるゲーム情報
+            役職推定に用いるゲーム情報のリスト
         game_setting : GameSetting
             役職推定に用いるゲーム設定
         compress_text : bool, optional
@@ -79,7 +78,7 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
         
         return results[0]
     
-    def estimate_from_text(self,text_list:List[str],game_setting: GameSetting=None)-> List[RoleEstimationResult]:
+    def estimate_from_text(self,text_list:List[str],game_setting: GameSetting)-> List[RoleEstimationResult]:
         """
         与えられたテキストからAgent[01]の役職を推定し、その結果を返す関数
 
@@ -87,16 +86,14 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
         ----------
         text_list : List[str]
             役職推定に用いるテキストのリスト
-        game_setting : GameSetting, optional
-            計算時に考慮するゲームの設定, by default None
+        game_setting : GameSetting
+            計算時に考慮するゲームの設定
 
         Returns
         -------
         List[RoleEstimationResult]
             役職推定結果のリスト
         """
-        if game_setting is None:
-            game_setting = self.game_setting
         
         #テキストをトークン化
         inputs = self.tokenizer(text_list,max_length=self.max_length, 
@@ -112,12 +109,12 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
             #推論結果をソフトマックス関数で正規化
             scores = outputs.logits
             attentions = outputs.attentions
-            #存在しない役職のスコアを-torch.infにする
+            #生存しない役職のスコアを-torch.infにする
             for idx,role in enumerate(self.preprocessor.role_label_list):
                 if game_setting.role_num_map[role] == 0:
                     scores[:,idx] = -torch.inf
-            
             probs = torch.nn.functional.softmax(scores,dim=1)
+            
             #各バッチに対して推論結果を取得
             probs = probs.cpu().double().numpy()
             for i in range(len(text_list)):
@@ -154,7 +151,7 @@ talk:
 """]                
 
     
-    result_list = estimator.estimate_from_text(test_text)
+    result_list = estimator.estimate_from_text(test_text,game_setting)
     for res in result_list:
         print(res.probs)
 
