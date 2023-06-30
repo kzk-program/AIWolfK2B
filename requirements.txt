@@ -22,6 +22,7 @@ Levenshtein
 
 #AttentionReasoningAgent用
 beautifulsoup4
+neologdn
 
 # バージョンを指定してインストールする場合(python3.8用)
 # #BERT学習用
