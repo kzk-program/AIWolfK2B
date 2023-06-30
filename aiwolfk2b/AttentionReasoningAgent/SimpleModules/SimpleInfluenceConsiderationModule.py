@@ -21,7 +21,7 @@ class SimpleInfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
             if is_request:
                 plan = self.request_processing_module.process_request(game_info, game_setting)
             else:
-                plan = self.question_processing_module.process_question(game_info, game_setting)
+                plan = self.question_processing_module.process_question("", Agent(random.randint(1, 5)), game_info, game_setting)
             return has_influence,plan
         else:
             return has_influence,None
