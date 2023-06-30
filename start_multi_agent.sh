@@ -28,14 +28,15 @@ else
 fi
 
 # NUM_AGENT分のエージェントを起動
-NUM_AGENT=5
+NUM_AGENT=1
 
 for i in `seq 1 $NUM_AGENT`
 do
     echo "start agent_$i"
     #リリースとデバッグでエージェントを切り替える
     if $DEBUG ; then
-        python3 aiwolfk2b/AttentionReasoningAgent/SimpleAttentionReasoningAgent.py -p $PORT -h $IP -n "python_agent_${i}" &
+        #python3 aiwolfk2b/AttentionReasoningAgent/SimpleAttentionReasoningAgent.py -p $PORT -h $IP -n "python_agent_${i}" &
+        python3 aiwolfk2b/AttentionReasoningAgent/AttentionReasoningAgent.py -p $PORT -h $IP -n "python_agent_${i}" &
         # python3 aiwolfk2b/agentLPS/python_simple_protocol_agent.py -p $PORT -h $IP -n "python_agent_${i}" &
     else
         python3 aiwolfk2b/agentLPS/protocol_wrapper_agent.py -p $PORT -h $IP -n "python_agent_${i}" &
