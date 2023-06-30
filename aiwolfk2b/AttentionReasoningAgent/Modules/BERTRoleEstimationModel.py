@@ -127,6 +127,113 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
             
         return results
 
+    def convert_to_tokens_without_joint_sign(self,text:str) -> List[str]:
+        """
+        Tokenizerのwordpieceによるトークン分割で生じた接続記号を除去したうえで、トークン列に変換
+
+        Parameters
+        ----------
+        text : str
+            接続記号を除去する文字列
+
+        Returns
+        -------
+        List[str]
+            分割したトークン列
+        """
+        
+        agg_words :List[str] =[]
+        text_tokens:List[str] = self.tokenizer.tokenize(text)
+        
+        for idx,token in enumerate(text_tokens):
+            if idx >= self.max_length-1:
+                break #最大長を超えたら終わり
+            #一つ前と連続するか
+            if token.startswith("##"):
+                # 単語
+                agg_words[-1] += token[2:]
+            else:
+                #連続しない場合
+                agg_words.append(token)
+        
+        return agg_words
+    
+    def calc_word_attention_pairs(self,estimate_text:str,result:RoleEstimationResult) -> Tuple[List[str],List[float]]:
+        """
+        roleEstimationResultの結果から単語とattentionのペアを計算する
+
+        Parameters
+        ----------
+        estimate_text : str
+            推定に使った文章
+        result : RoleEstimationResult
+            推定後の結果
+        Returns
+        -------
+        Tuple[List[str],List[float]]
+            単語とattentionのペア
+        """
+        
+        # 文章の長さ分のdarayを宣言
+        attention_weight = result.attention_map
+
+        seq_len = attention_weight.shape[1]
+        all_attens = np.zeros((seq_len))
+
+        all_attens = np.average(attention_weight[:,0,:], axis=0)
+        #最大値を1,最小値を0として正規化
+        min_val = all_attens.min()
+        max_val = all_attens.max()
+        all_attens = (all_attens - min_val) / (max_val - min_val)
+
+        #単語ごとにattentionの和を取る
+        agg_words :List[str] =[]
+        agg_attens :List[float]= []
+        text_tokens:List[str] = self.tokenizer.tokenize(estimate_text)
+        
+        
+        for idx,token in enumerate(text_tokens):
+            if idx >= self.max_length-1:
+                break #最大長を超えたら終わり
+            #一つ前と連続するか
+            if token.startswith("##"):
+                # 単語
+                agg_words[-1] += token[2:]
+                agg_attens[-1] += all_attens[idx+1]
+            else:
+                #連続しない場合
+                agg_words.append(token)
+                agg_attens.append(all_attens[idx+1])
+        
+        return (agg_words,agg_attens)
+    
+    def make_attention_html(self,estimate_text:str,result:RoleEstimationResult)-> str:
+        """
+        attention機構で着目された単語を視覚的にわかりやすくするためのhtmlを作成する
+
+        Parameters
+        ----------
+        estimate_text : str
+            推定に使った文章
+        result : RoleEstimationResult
+            推定結果
+
+        Returns
+        -------
+        str
+            attentionを視覚的にわかりやすくしたhtml
+        """
+        def highlight(word, attn):
+            html_color = '#%02X%02X%02X' % (255, int(255*(1 - attn)), int(255*(1 - attn)))
+            return '<span style="background-color: {}">{}</span>'.format(html_color, word)
+        
+        html = ""
+        agg_words,agg_attens = self.calc_word_attention_pairs(estimate_text,result)
+        for word, attn in zip(agg_words,agg_attens):
+            html += highlight(word, attn)
+        html += "<br><br>"
+        
+        return html
 
     
 def unit_test_estimate_from_text():
@@ -171,8 +278,40 @@ def unit_test_estimate(estimated_agent_idx):
     result = estimator.estimate(estimated_agent,game_info_list,game_setting)
     print(result.probs)
         
+def unit_test_attention_vizualizer(estimate_idx:int):
+    import os
+    from aiwolfk2b.utils.helper import load_default_GameInfo,load_default_GameSetting,load_config
+    from aiwolfk2b.AttentionReasoningAgent.Modules.ParseRuruLogToGameAttribution import load_sample_GameAttirbution
+
+    config_path = current_dir.parent / "config.ini"
+    config_ini = load_config(config_path)
+    # game_info = load_default_GameInfo()
+    # game_setting = load_default_GameSetting()
+
+    game_info_list,game_setting = load_sample_GameAttirbution(estimate_idx)
+    
+    estimator = BERTRoleEstimationModel(config_ini)
+
+    estimator.initialize(game_info_list,game_setting)
+    
+    agent = Agent(estimate_idx)
+    #推論に用いる入力の作成
+    estimate_text = estimator.preprocessor.create_estimation_text(agent,game_info_list,game_setting)
+    #役職推定の実行
+    result = estimator.estimate_from_text([estimate_text],game_setting)[0]
+    #attentionの可視化
+    html = estimator.make_attention_html(estimate_text,result)
+    #ファイルに保存
+    output_path = current_dir.parent / "output" / "attention_vizualizer.html"
+    #ディレクトリがなければ作成
+    if not output_path.parent.exists():
+        os.makedirs(output_path.parent,exist_ok=True)
+    
+    with open(output_path,"w") as f:
+        f.write(html)
 
 if __name__ == "__main__":
     unit_test_estimate_from_text()
     unit_test_estimate(1)
+    unit_test_attention_vizualizer(2)
         
