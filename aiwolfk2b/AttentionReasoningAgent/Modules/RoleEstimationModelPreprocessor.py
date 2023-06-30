@@ -51,7 +51,7 @@ class RoleEstimationModelPreprocessor(AbstractModule):
         #空白削除
         text = text.replace(" ","")
         #白・黒の記号(○・●)を置換
-        text = text.replace("○","白").replace("◯","白").replace("◦","白")
+        text = text.replace("○","白").replace("◯","白").replace("◦","白").replace("〇","白")
         text = text.replace("•","黒").replace("●","黒")
         
         return text
