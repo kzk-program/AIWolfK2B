@@ -541,14 +541,6 @@ class ParseRuruLogToGameAttribution:
         
         for player_name in self.player_to_agent_name_dict.keys():
             message = message.replace(player_name, str(self.player_to_agent_name_dict[player_name]))
-            
-
-        
-        # #可読性用
-        # #過去の文への言及「>>数字\n\n」での改行を削除
-        # message = re.sub(r'(>>\d+:\d+)|(>>\d+)\n\n', r'\1 ', message)
-        # #改行が連続している場合は一つにまとめる(可読性のため)
-        # message = re.sub(r'\n+', r'\n', message)
         
         #あいさつが邪魔なので消す
         morning_calls =["おはよう", "おはようございます" ,"おはよー", "おはよん", "おっは", "おは", "おっはー", "おはようございますっ", "お早う", "お早うございます", "お早よう", "早々", "朝のご挨拶", "おはようございまーす", "おっはよー", "早うございます", "モーニング", "グッドモーニング", "おはようサンシャイン", "お目覚めはいかがですか", "おはようございます、そして良い一日を", "おはよう、新しい一日が始まったね", "今日も一日おはよう", "おはよう、早起きさん", "素敵な朝ですね", "朝から元気ですね", "早起きは三文の得"]
@@ -685,6 +677,9 @@ def make_dataset(inputdir:Path,outputdir:Path,output_filename:str="dataset"):
     print(f"discard {count_discarded} files")
 
     #ファイルに書き込む
+    #ディレクトリがなければ作成
+    outputdir.mkdir(parents=True, exist_ok=True)
+    
     write = csv.writer(open(outputdir.joinpath(f"{output_filename}.csv") , "w"))
     write.writerows(dataset)
 

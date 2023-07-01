@@ -19,7 +19,7 @@ class RoleEstimationModelPreprocessor(AbstractModule):
     """ランダムに役職を推定するモデル"""
     def __init__(self, config: ConfigParser) -> None:
         super().__init__(config)
-        #役職推定に使うラベルのリスト(順番に意味あり)
+        #役職推定に使うラベルのリスト(順番に意味あり。変更注意！)
         self.role_label_list = [Role.VILLAGER,Role.SEER,Role.BODYGUARD,Role.MEDIUM,Role.WEREWOLF,Role.POSSESSED,Role.FOX,Role.FREEMASON]
         
     def preprocess_text(self,text: str)->str:
@@ -36,7 +36,7 @@ class RoleEstimationModelPreprocessor(AbstractModule):
         str
             前処理後の会話文
         """
-        #TODO:実装する
+        #TODO:改善する
         #Unicode正規化
         text = unicodedata.normalize("NFKC",text)
         #全部小文字にする
@@ -229,13 +229,3 @@ if __name__ == "__main__":
     # GameAttribution(GameInfo,GameSetting)からtextを生成できるか確認
     unit_test_make_estimation_text(view_agent_idx=1,estimated_agent_idx=2)
     
-    # #データ生成の単体テスト
-    # current_dir = pathlib.Path(__file__).resolve().parent
-    # #蒸留したデータを読み込んで、前処理を行い、１つのファイルにまとめる
-    # inputdir =  current_dir.joinpath("preprocessable_data")
-    # outputdir = current_dir.joinpath("preprocessed_data")
-    # make_dataset(inputdir,outputdir)
-    
-    
-    
-        
