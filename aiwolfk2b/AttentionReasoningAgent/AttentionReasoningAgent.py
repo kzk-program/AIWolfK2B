@@ -18,8 +18,11 @@ from aiwolf import (AbstractPlayer, Agent, Content, GameInfo, GameSetting,
                     VoteContentBuilder,SkipContentBuilder)
 from aiwolf.constant import AGENT_NONE
 
+from aiwolfk2b.utils.helper import load_default_config
 from aiwolfk2b.AttentionReasoningAgent.AbstractModules import *
 from aiwolfk2b.AttentionReasoningAgent.SimpleModules import *
+from aiwolfk2b.AttentionReasoningAgent.Modules import *
+
 
 CONTENT_SKIP: Content = Content(SkipContentBuilder())
 
@@ -60,8 +63,10 @@ class AttentionReasoningAgent(AbstractPlayer):
         self.talk_list_head = 0
         self.config = config
         #各モジュールの生成
-        self.role_estimation_model:AbstractRoleEstimationModel = RandomRoleEstimationModel(self.config)
-        self.role_inference_module:AbstractRoleInferenceModule = SimpleRoleInferenceModule(self.config,self.role_estimation_model)
+        #self.role_estimation_model:AbstractRoleEstimationModel = RandomRoleEstimationModel(self.config)
+        #self.role_inference_module:AbstractRoleInferenceModule = SimpleRoleInferenceModule(self.config,self.role_estimation_model)
+        self.role_estimation_model:AbstractRoleEstimationModel = BERTRoleEstimationModel(self.config)
+        self.role_inference_module:AbstractRoleInferenceModule = BERTRoleInferenceModule(self.config,self.role_estimation_model)
         self.strategy_module:AbstractStrategyModule = SimpleStrategyModule(self.config,self.role_estimation_model,self.role_inference_module)
         self.request_processing_module:AbstractRequestProcessingModule = SimpleRequestProcessingModule(self.config,self.role_estimation_model,self.strategy_module)
         self.question_processing_module:AbstractQuestionProcessingModule = SimpleQuestionProcessingModule(self.config,self.role_inference_module,self.strategy_module)
@@ -225,23 +230,13 @@ if __name__ == '__main__':
     parser.add_argument('-p', type=int, action='store', dest='port')
     parser.add_argument('-h', type=str, action='store', dest='hostname')
     parser.add_argument('-r', type=str, action='store', dest='role', default='none')
-    parser.add_argument('-n', type=str, action='store', dest='name', default='default_sample_python')
+    parser.add_argument('-n', type=str, action='store', dest='name', default='k2b_ara')
     input_args = parser.parse_args()
     
     # config
-    config_ini = configparser.ConfigParser()
-    config_ini_path = current_dir.joinpath("config.ini")
-
-    # iniファイルが存在するかチェック
-    if os.path.exists(config_ini_path):
-        # iniファイルが存在する場合、ファイルを読み込む
-        with open(config_ini_path, encoding='utf-8') as fp:
-            config_ini.read_file(fp)
-    else:
-        # iniファイルが存在しない場合、エラー発生
-        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), config_ini_path)
+    config_ini = load_default_config()
 
     agent: AbstractPlayer = AttentionReasoningAgent(config_ini)
     
-    client = TcpipClient(agent, input_args.name, input_args.hostname, input_args.port, input_args.role)
+    client = TcpipClient(agent, input_args.name, input_args.hostname, input_args.port, input_args.role, socket_timeout=1200)
     client.connect()

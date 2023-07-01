@@ -1,2 +1,9 @@
 *
 !.gitignore
+#実行用サンプル
+!sample_log_raw.txt
+!ruru_log/raw/log_381816_raw.txt
+!ruru_log/raw/log_381822_raw.txt
+!ruru_log/raw/log_381823_raw.txt
+!ruru_log/raw/log_381827_raw.txt
+!ruru_log/raw/log_381828_raw.txt
