@@ -88,8 +88,6 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         day = 0
         accum_attens = 0.0
         
-        words, attens = self.estimator.convert_to_tokens_without_joint_sign(accum_text), self.estimator.calc_word_attention_pairs(accum_text, result)[1]
-        
         for word,atten in zip(words,attens):
             if word == "[SEP]":#一行終わったら終わり
                 if accum_text == "":
@@ -207,6 +205,7 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         result = self.estimator.estimate_from_text([estimate_text],game_setting)[0]
         #単語とattentionのペアのリストを作成
         sentence_attens = self.parse_estimate_text(estimate_text,result,agent,game_setting)
+        #print(f"sentence_attens:{sentence_attens}")
         
         #chatgptに投げるために、推論理由を整形
         reason_text = self.format_reason_text(sentence_attens)
@@ -215,13 +214,13 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         #最大確率を持つラベルを予測結果とする
         pred_role = max(result.probs.items(), key=lambda x: x[1])[0]
         explain_text = f"人狼ゲームにて、以下の箇条書きの内容から{agent}が{pred_role.name}であると推定される。以下の情報を元に{agent}の役職が{pred_role.name}と呼べる理由を簡潔に50字内で述べなさい。だだし、文末は「から」で終わらせなさい\n{reason_text}"
+        #print(f"explain_text:{explain_text}")
         
         explain_message = [{"role":"user","content":explain_text}]
         explained_reason = self.send_message_to_api(explain_message)
+        #print(f"log_text:{estimate_text}")
         
         inference = RoleInferenceResult(agent,explained_reason,result.probs)
-        # print(f"log_text:{estimate_text}")
-        # print(f"explain_text:{explain_text}")
         
         return inference
     
