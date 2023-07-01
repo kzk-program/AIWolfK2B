@@ -213,7 +213,7 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         # chatgptを用いて推論理由を生成
         #最大確率を持つラベルを予測結果とする
         pred_role = max(result.probs.items(), key=lambda x: x[1])[0]
-        explain_text = f"人狼ゲームにて、以下の箇条書きの内容から{agent}が{pred_role.name}であると推定される。以下の情報を元に{agent}の役職が{pred_role.name}と呼べる理由を簡潔に50字内で述べなさい。だだし、文末は「から」で終わらせなさい\n{reason_text}"
+        explain_text = f"人狼ゲームにて、以下の箇条書きの内容から{agent}が{pred_role.name}であると推定される。以下の情報を元に{agent}の役職が{pred_role.name}と呼べる理由を論理的に簡潔に50字内で述べなさい。だだし、文末は「から」で終わらせなさい\n{reason_text}"
         #print(f"explain_text:{explain_text}")
         
         explain_message = [{"role":"user","content":explain_text}]
@@ -370,7 +370,9 @@ def unit_test_infer(estimate_idx:int):
     
     agent = Agent(estimate_idx)
     result = inference_module.infer(agent,game_info_list,game_setting)
-    print(result)
+    
+    pred_role = max(result.probs.items(), key=lambda x: x[1])[0]
+    print(f"{result.agent} is {pred_role.name} bacause {result.reason}")
     
 
 if __name__ == "__main__":
