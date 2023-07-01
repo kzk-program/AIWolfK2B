@@ -63,13 +63,11 @@ class AttentionReasoningAgent(AbstractPlayer):
         self.talk_list_head = 0
         self.config = config
         #各モジュールの生成
-        #self.role_estimation_model:AbstractRoleEstimationModel = RandomRoleEstimationModel(self.config)
-        #self.role_inference_module:AbstractRoleInferenceModule = SimpleRoleInferenceModule(self.config,self.role_estimation_model)
         self.role_estimation_model:AbstractRoleEstimationModel = BERTRoleEstimationModel(self.config)
         self.role_inference_module:AbstractRoleInferenceModule = BERTRoleInferenceModule(self.config,self.role_estimation_model)
-        self.strategy_module:AbstractStrategyModule = SimpleStrategyModule(self.config,self.role_estimation_model,self.role_inference_module)
+        self.strategy_module:AbstractStrategyModule = StrategyModule(self.config,self.role_estimation_model,self.role_inference_module)
         self.request_processing_module:AbstractRequestProcessingModule = SimpleRequestProcessingModule(self.config,self.role_estimation_model,self.strategy_module)
-        self.question_processing_module:AbstractQuestionProcessingModule = SimpleQuestionProcessingModule(self.config,self.role_inference_module,self.strategy_module)
+        self.question_processing_module:AbstractQuestionProcessingModule = QuestionProcessingModule(self.config,self.role_inference_module,self.strategy_module)
         self.influence_consideration_module:AbstractInfluenceConsiderationModule = SimpleInfluenceConsiderationModule(self.config,self.request_processing_module,self.question_processing_module)
         self.speaker_module:AbstractSpeakerModule = SimpleSpeakerModule(self.config)
 
