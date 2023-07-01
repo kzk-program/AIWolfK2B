@@ -181,10 +181,14 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
         all_attens = np.zeros((seq_len))
 
         all_attens = np.average(attention_weight[:,0,:], axis=0)
+        # #そのままだと大きすぎる値のせいで潰れてしまうので2乗根をとる
+        all_attens = np.power(all_attens,1/2)
+        
         #最大値を1,最小値を0として正規化
         min_val = all_attens.min()
         max_val = all_attens.max()
         all_attens = (all_attens - min_val) / (max_val - min_val)
+        
 
         #単語ごとにattentionの和を取る
         agg_words :List[str] =[]
@@ -224,7 +228,7 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
             attentionを視覚的にわかりやすくしたhtml
         """
         def highlight(word, attn):
-            html_color = '#%02X%02X%02X' % (255, int(255*(1 - attn)), int(255*(1 - attn)))
+            html_color = '#%02X%02X%02X' % (255, int(255*(np.clip(1 - attn,0,1))), int(255*(np.clip(1 - attn,0,1))))
             return '<span style="background-color: {}">{}</span>'.format(html_color, word)
         
         html = ""
@@ -299,6 +303,11 @@ def unit_test_attention_vizualizer(estimate_idx:int):
     estimate_text = estimator.preprocessor.create_estimation_text(agent,game_info_list,game_setting)
     #役職推定の実行
     result = estimator.estimate_from_text([estimate_text],game_setting)[0]
+    
+    words,attens = estimator.calc_word_attention_pairs(estimate_text,result)
+    for word,atten in zip(words,attens):
+        print(word,atten)
+    
     #attentionの可視化
     html = estimator.make_attention_html(estimate_text,result)
     #ファイルに保存
@@ -313,5 +322,5 @@ def unit_test_attention_vizualizer(estimate_idx:int):
 if __name__ == "__main__":
     unit_test_estimate_from_text()
     unit_test_estimate(1)
-    unit_test_attention_vizualizer(2)
+    unit_test_attention_vizualizer(1)
         
