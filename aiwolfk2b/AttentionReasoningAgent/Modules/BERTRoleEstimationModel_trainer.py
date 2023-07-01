@@ -11,8 +11,8 @@ from aiwolfk2b.AttentionReasoningAgent.Modules.RoleEstimationModelPreprocessor i
 from aiwolfk2b.utils.helper import load_default_config
 
 import os
-#使用するGPUの制限
-os.environ["CUDA_VISIBLE_DEVICES"]="2"
+# #使用するGPUの制限
+# os.environ["CUDA_VISIBLE_DEVICES"]="2"
 
 #計算に使うdeviceを取得
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -39,7 +39,9 @@ class BertForSequenceClassification_pl(pl.LightningModule):
             model_name,
             num_labels=num_labels
         )
-        self.weight = torch.tensor([0.2, 1.0, 1.0, 1.0, 1.0,1.0,1.0,1.0]).cuda()
+        self.weight = torch.tensor([0.2, 1.0, 1.0, 1.0, 1.0,1.0,1.0,1.0])
+        self.criterion = torch.nn.CrossEntropyLoss(weight=self.weight)
+        
         
     # 学習データのミニバッチ(`batch`)が与えられた時に損失を出力する関数を書く。
     # batch_idxはミニバッチの番号であるが今回は使わない。
@@ -48,8 +50,7 @@ class BertForSequenceClassification_pl(pl.LightningModule):
         #loss = output.loss
         logits = output['logits']
         #villagerの重みを下げる
-        criterion = torch.nn.CrossEntropyLoss(weight=self.weight)
-        loss = criterion(logits, batch['labels'])
+        loss = self.criterion(logits, batch['labels'])
                 
         self.log('train_loss', loss) # 損失を'train_loss'の名前でログをとる。
         return loss
@@ -62,9 +63,8 @@ class BertForSequenceClassification_pl(pl.LightningModule):
         #loss = output.loss
         logits = output['logits']
         #villagerの重みを下げる
-        criterion = torch.nn.CrossEntropyLoss(weight=self.weight)
-        loss = criterion(logits, batch['labels'])
-        self.log('val_loss', loss) # 損失を'val_loss'の名前でログをとる。
+        loss = self.criterion(logits, batch['labels'])
+        self.log('val_loss', loss ,sync_dist=True) # 損失を'val_loss'の名前でログをとる。
 
     # テストデータのミニバッチが与えられた時に、
     # テストデータを評価する指標を計算する関数を書く。
@@ -74,7 +74,7 @@ class BertForSequenceClassification_pl(pl.LightningModule):
         labels_predicted = output.logits.argmax(-1)
         num_correct = ( labels_predicted == labels ).sum().item()
         accuracy = num_correct/labels.size(0) #精度
-        self.log('micro accuracy', accuracy) # 精度を'accuracy'の名前でログをとる。
+        self.log('micro accuracy', accuracy, sync_dist=True) # 精度を'accuracy'の名前でログをとる。
         #各ラベルの精度を計算
         for i,label in enumerate(self.label_names):
             num_correct = ( labels_predicted[labels==i] == i ).sum().item()
@@ -82,7 +82,7 @@ class BertForSequenceClassification_pl(pl.LightningModule):
                 each_accuracy = -1
             else:
                 each_accuracy = num_correct/labels[labels==i].size(0)
-            self.log(f"{label.name}_accuracy", torch.tensor(each_accuracy,dtype=torch.float32)) # 各ラベル名_accuracyの名前でログをとる。
+            self.log(f"{label.name}_accuracy", torch.tensor(each_accuracy,dtype=torch.float32), sync_dist=True) # 各ラベル名_accuracyの名前でログをとる。
             
 
     # 学習に用いるオプティマイザを返す関数を書く。
@@ -94,11 +94,11 @@ if __name__ == "__main__":
     # 日本語の事前学習モデル
     MODEL_NAME = 'cl-tohoku/bert-base-japanese-whole-word-masking'
     MAX_LENGTH = 512
-    BATCH_SIZE = 128
+    BATCH_SIZE =256
     #学習パラメータまわり
-    NUM_WORKERS=16
+    NUM_WORKERS=2
     LEARNING_RATE=1e-5
-    MAX_EPOCHS=15
+    MAX_EPOCHS=20
     # 文章をトークンに変換するトークナイザーの読み込み
     tokenizer = BertJapaneseTokenizer.from_pretrained(MODEL_NAME)
     
@@ -113,7 +113,7 @@ if __name__ == "__main__":
 
     # データを取得
     dataset_for_loader = []
-    data_set_path=current_dir.joinpath("data","train",'dataset.pkl')
+    data_set_path=current_dir.joinpath("data","train",'dataset_long.pkl')
 
     data_set_plain = pickle.load(open(data_set_path, 'rb'))
     for data in data_set_plain:
@@ -162,7 +162,8 @@ if __name__ == "__main__":
     # 学習の方法を指定
     trainer = pl.Trainer(
         max_epochs=MAX_EPOCHS,
-        callbacks = [checkpoint]
+        callbacks = [checkpoint],
+        #devices=[0,1,2]
     )
     
     
