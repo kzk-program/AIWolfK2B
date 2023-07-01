@@ -5,3 +5,4 @@ from .RoleEstimationModelPreprocessor import RoleEstimationModelPreprocessor
 from .BERTRoleEstimationModel import BERTRoleEstimationModel
 from .BERTRoleInferenceModule import BERTRoleInferenceModule
 from .StrategyModule import StrategyModule
+from .QuestionProcessingModule import QuestionProcessingModule

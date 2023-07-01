@@ -5,6 +5,7 @@ from aiwolf import GameInfo, GameSetting
 from aiwolf.agent import Agent,Role
 
 from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractRoleEstimationModel,AbstractStrategyModule,AbstractRoleInferenceModule,RoleInferenceResult,OneStepPlan, ActionType
+from aiwolfk2b.utils.helper import load_default_config,get_openai_api_key,load_default_GameInfo,load_default_GameSetting
 import errno
 import os
 
@@ -164,24 +165,13 @@ if __name__=="__main__":
     import pickle
     from aiwolf.agent import Status
     from aiwolfk2b.AttentionReasoningAgent.SimpleModules import RandomRoleEstimationModel, SimpleRoleInferenceModule
-    config_ini = ConfigParser()
-    config_ini_path = os.pardir + '/config.ini'
-
-    # iniファイルが存在するかチェック
-    if os.path.exists(config_ini_path):
-        # iniファイルが存在する場合、ファイルを読み込む
-        with open(config_ini_path, encoding='utf-8') as fp:
-            config_ini.read_file(fp)
-    else:
-        # iniファイルが存在しない場合、エラー発生
-        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), config_ini_path)
+    
+    config_ini = load_default_config()
+    game_info = load_default_GameInfo()
+    game_setting = load_default_GameSetting()
     
     role_estimation_model = RandomRoleEstimationModel(config_ini)
     role_inference_module = SimpleRoleInferenceModule(config_ini, role_estimation_model)
-    with open(os.pardir +"/game_info.pkl", mode="rb") as f:
-        game_info:GameInfo = pickle.load(f)
-    with open(os.pardir + "/game_setting.pkl", mode="rb") as f:
-        game_setting:GameSetting = pickle.load(f)
     
     strategy_module = StrategyModule(config_ini, role_estimation_model, role_inference_module)
     strategy_module.initialize(game_info, game_setting)
