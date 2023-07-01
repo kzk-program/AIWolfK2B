@@ -366,7 +366,7 @@ class ParseRuruLogToGameAttribution:
             agent = self.player_to_agent_name_dict[speaker]
             _utterrance["day"] = self.day
             _utterrance["agent"] = agent.agent_idx
-            _utterrance["idx"] = speaker_idx
+            _utterrance["idx"] = int(speaker_idx)
             prep_message = self.preprocess_message(message)
             if prep_message == "": #空文字の場合は無視する
                 return 
