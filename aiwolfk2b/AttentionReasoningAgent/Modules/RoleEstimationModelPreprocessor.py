@@ -50,10 +50,11 @@ class RoleEstimationModelPreprocessor(AbstractModule):
         text = text.replace("\n","")
         #空白削除
         text = text.replace(" ","")
+        #全角括弧を削除
+        text =text.replace("【","").replace("】","")
         #白・黒の記号(○・●)を置換
         text = text.replace("○","白").replace("◯","白").replace("◦","白").replace("〇","白")
         text = text.replace("•","黒").replace("●","黒")
-        
         return text
         
 
