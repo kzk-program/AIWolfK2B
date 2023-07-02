@@ -211,13 +211,13 @@ Agent[04]
         """
 
         if question_actiontype == ActionType.ATTACK:
-            return "そもそも私は人狼ではありません。"
+            return OneStepPlan("人狼ではないから", ActionType.TALK, "そもそも私は人狼ではありません。")
         elif question_actiontype == ActionType.TALK:
-            return "どういうことですか"
+            return OneStepPlan("質問の意図が理解できないから", ActionType.TALK, "どういうことですか")
         
         corresponding_action = self._corresponding_future_action(question, question_actiontype)
         if corresponding_action == None:
-            return "まだどうするか決めていません。"
+            return OneStepPlan("深く考えていないから", ActionType.TALK, "まだどうするか決めていません。")
         
         if question_actiontype == ActionType.DIVINE:
             return OneStepPlan(corresponding_action.reason, ActionType.TALK, f">>{questioner} {str(corresponding_action.action)}を占うつもりです。")
