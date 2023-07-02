@@ -6,4 +6,4 @@ from utils.make_dataset_from_log import make_dataset
 from agentLPS.speaker import SimpleSpeaker
 from . import agentLPS
 from . import utils
-
+from . import AttentionReasoningAgent

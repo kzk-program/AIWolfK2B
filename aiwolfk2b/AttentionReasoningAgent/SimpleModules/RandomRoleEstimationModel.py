@@ -13,7 +13,7 @@ class RandomRoleEstimationModel(AbstractRoleEstimationModel):
     def __init__(self, config: ConfigParser) -> None:
         super().__init__(config)
         
-    def estimate(self,agent:Agent, game_info: GameInfo, game_setting: GameSetting) -> RoleEstimationResult:
+    def estimate(self,agent:Agent, game_info_list: List[GameInfo], game_setting: GameSetting) -> RoleEstimationResult:
         """ランダムに役職を推定する"""
         #１人以上存在する役職のリスト
         role_list = [role for role in game_setting.role_num_map.keys() if game_setting.role_num_map[role] > 0]

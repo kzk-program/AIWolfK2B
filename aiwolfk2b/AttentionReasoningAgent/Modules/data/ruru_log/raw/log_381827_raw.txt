@@ -1,0 +1,2913 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+  <meta content="ja" http-equiv="Content-Language"/>
+  <meta content="text/css" http-equiv="Content-Style-Type"/>
+  <meta content="text/javascript" http-equiv="Content-Script-Type"/>
+  <meta content="width=device-width" name="viewport"/>
+  <link href="../css/werewolf.css?v=20160711" rel="stylesheet" type="text/css"/>
+  <link href="../css/werewolf_day.css?v=20150328" rel="stylesheet" type="text/css"/>
+  <script src="../js/jquery-1.9.0.js" type="text/javascript">
+  </script>
+  <script src="../js/jquery-ui.min.js" type="text/javascript">
+  </script>
+  <script src="../js/jquery.cookie.js" type="text/javascript">
+  </script>
+  <script src="../js/common.js?v=20150323" type="text/javascript">
+  </script>
+  <script src="../js/village.js?v=20160429" type="text/javascript">
+  </script>
+  <script src="../js/spin.min.js?v=20131026" type="text/javascript">
+  </script>
+  <script src="../js/ad.js?v=20150323" type="text/javascript">
+  </script>
+  <title>
+   No.381827「ちゃちゃちゃ製氷」村
+  </title>
+  <script type="text/javascript">
+   var _gaq = _gaq || [];_gaq.push(['_setAccount', 'UA-6059289-4']);_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();
+  </script>
+ </head>
+ <body>
+  <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;">
+  </div>
+  <script language="JavaScript" src="../js/overlib.js?v=20130721">
+   <!-- overLIB (c) Erik Bosrup -->
+  </script>
+  <div id="pli">
+   <i class="fa fa-user-plus fa-2x fa-fw" onclick="users()">
+   </i>
+  </div>
+  <div class="d1">
+   <div class="d11">
+    No.381827
+    <span class="big" title="身内村です 関係者以外の方は入村お断り">
+     「ちゃちゃちゃ製氷」
+    </span>
+    村  参加:6名  [配役B]村3/狼1/占1/狐1  昼300秒/夜120秒(60/90/300)  GM制/ランダムCN(orange)/15秒制(役職即)/COコマンド無/アク元表示
+   </div>
+   <div class="d12_v2">
+    <div class="d121chat_v2">
+     <div id="chatscr2_2">
+      <div class="d1215">
+       <script type="text/javascript">
+        ad01();
+       </script>
+       <div class="d12150">
+        2016/09/11 04:11:27
+        <br/>
+        3日目 ゲーム終了 (ゲーム時間 17 分  ゲーム開始までの時間 6 分 )
+       </div>
+       <div class="d12151">
+        <table cellspacing="0">
+         <tbody>
+          <tr>
+           <td class="cng">
+            23
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             皆様お疲れ様でした。
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            22
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            お疲れ様でしたー　村立てむらむらくりくりありやでー
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            21
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            ですね　有人７にんはほしい
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            20
+            <span class="chartreuse oc00 name">
+             モナカ
+            </span>
+           </td>
+           <td class="cc">
+            お疲れ様でした
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            19
+            <span class="chartreuse oc00 name">
+             モナカ
+            </span>
+           </td>
+           <td class="cc">
+            寝よっか。明日もまたある
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            18
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            バイビー！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            17
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            流石にこの人数だとゲームが成立しづらいね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            16
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            おつ
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            15
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             第一犠牲者が占い師だった時点で
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            14
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            おつー
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            13
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            ねる(断言)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            12
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            まだやる？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            11
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            かえないか　かえないですね申し訳ない
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            10
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            メロンさんが狐だとおもってたーすいませーん
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            9
+            <span class="chartreuse oc00 name">
+             モナカ
+            </span>
+           </td>
+           <td class="cc">
+            あそこで人外は投票かえないよー
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            8
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            かなしみ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            7
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            よく考えたら狐言われた後とぼければワンチャンだったのか
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            6
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            5人で妖狐付きで最初に占い師消えるのはきついわ、うん
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            5
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             お疲れ様でした
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            4
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            たなぼた
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            3
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            わろた
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            2
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            だめかー
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            1
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            はいー
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            ゲーム時間 17 分  ゲーム開始までの時間 6 分 (04:11:27)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            トップに戻る場合は
+            <a href="/">
+             こちら
+            </a>
+            、ログは
+            <a href="/villagelog.jsp?day=All" target="_blank">
+             こちら
+            </a>
+            から参照できます。
+            <br/>
+            投票により迷惑者を報告できます。報告の集まり具合によってアクセス禁止となるため、よく考えてから行ってください。（報告者は匿名です）(04:11:27)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            <span class="result">
+             「
+             <span class="oc07">
+              妖　狐
+             </span>
+             」陣営の勝利です！！
+            </span>
+            <br/>
+            妖狐たちは村人と人狼を欺き、この村を支配したのであった…(04:11:27)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            <span class="death">
+             「
+             <span class="name">
+              メロン
+             </span>
+             」さんは村民協議の結果、処刑されました
+            </span>
+            (04:11:27)
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <div class="d12150">
+        3日目 昼
+       </div>
+       <div class="d12151">
+        <table cellspacing="0">
+         <tbody>
+          <tr>
+           <td class="cv" colspan="2">
+            3日目　投票結果
+            <br/>
+            <table>
+             <tbody>
+              <tr>
+               <td>
+                [村]
+                <span class="name">
+                 ゆず
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[村]
+                <span class="name">
+                 パン
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [狐]
+                <span class="name">
+                 ゲッペイ
+                </span>
+               </td>
+               <td>
+                1 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 メロン
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [村]
+                <span class="name">
+                 パン
+                </span>
+               </td>
+               <td>
+                1 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 メロン
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [狼]
+                <span class="name">
+                 メロン
+                </span>
+               </td>
+               <td>
+                2 票
+               </td>
+               <td>
+                投票先　→　[狐]
+                <span class="name">
+                 ゲッペイ
+                </span>
+               </td>
+              </tr>
+             </tbody>
+            </table>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            次メロンさんがゲッペイさんに入れないと負けるので、パンさんに入れます
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="chartreuse">
+             <span class="name">
+              モナカ
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            おしおし
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            よし
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            引き分けのため、
+            <span class="urge2">
+             再投票
+            </span>
+            になりました(引き分け回数＝1)　引き分けが4回続くと、引き分け終了となります(04:10:38)
+           </td>
+          </tr>
+          <tr>
+           <td class="cv" colspan="2">
+            3日目　投票結果
+            <br/>
+            <table>
+             <tbody>
+              <tr>
+               <td>
+                [村]
+                <span class="name">
+                 ゆず
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[狐]
+                <span class="name">
+                 ゲッペイ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [狐]
+                <span class="name">
+                 ゲッペイ
+                </span>
+               </td>
+               <td>
+                2 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 メロン
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [村]
+                <span class="name">
+                 パン
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 メロン
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [狼]
+                <span class="name">
+                 メロン
+                </span>
+               </td>
+               <td>
+                2 票
+               </td>
+               <td>
+                投票先　→　[狐]
+                <span class="name">
+                 ゲッペイ
+                </span>
+               </td>
+              </tr>
+             </tbody>
+            </table>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            メロンさんは私達どちらかを吊っても勝ちなので、ゲッペイさんにいれます
+            <br>
+             パンさんに入れるのもありか
+            </br>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            ん？いや
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            投票時間になりました。時間内に処刑の対象を決定してください(04:09:34)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            33
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            いやーちょっとあっけなかった
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            32
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            村人はそのまま行くと負けるから、投票先を完全に4回バラ消させれば引き分けになる
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            31
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            なるほど
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            30
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            投票外して引き分け狙おう　パンさん　バラ消させ続ければ勝てる
+            <br>
+             これしかないんじゃないかな　マナー的におっけーなのかはしらない
+            </br>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            29
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            うん、狼勝つね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            28
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            狼勝つなの？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            27
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            引き分けあるか？
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="chartreuse">
+             <span class="name">
+              モナカ
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            村は狼と組むんや
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            26
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            メロンに投票＝狐の勝ち
+            <br/>
+            ゲッペイさんに投票＝狼の勝ち
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            25
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            キング・クリムゾンッ！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            24
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            村はまけかく　げっぺいメロン人外　パンさん・・・短い人生だったね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            23
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            占い師欠けは無ゾ...
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            22
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            まさか最初の一発目が狐とは
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            21
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            あーんなるほど
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            20
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            というか今COしたら狼負けない？
+            <br/>
+            いや噛めばいいのね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            19
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            この時点で村人の勝ちはないです
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="chartreuse">
+             <span class="name">
+              モナカ
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            引き分けか
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            18
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            狐さんでないと負けるよー
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            17
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            なるほど
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            16
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            まあそうなるよね！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            15
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            ちょっと分かりにくい事になった
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            14
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            やっぱりね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            13
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            狼CO　ゲッペイさん噛みました
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            12
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            んーむ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            11
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            自自分から見るとゲッペイが狐ってことですかね？
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="gm">
+             <span class="name">
+              ＧＭ（霊話）
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            <span class="gm">
+             モナカになるとキャラが乗り移るんですか？
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            10
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            吊るのはパンさん？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            9
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            あー　これ占い欠けですね
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="chartreuse">
+             <span class="name">
+              モナカ
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            もなかは村人だYO
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            8
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            狐生存　モナカは村人です
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            7
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            さっきは素で言い間違えました。すまない
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            6
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            狼が狐をかんだようですね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            5
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            狐生きてますね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            4
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            占い結果：ゆずさんは人狼
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="chartreuse">
+             <span class="name">
+              モナカ
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            がんばえー
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            3
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            おや
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            2
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            おはようございます
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            1
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            おん？
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            3日目の朝になりました(04:04:34)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            平和な朝を迎えました(04:04:34)
+           </td>
+          </tr>
+         </tbody>
+        </table>
+        <script type="text/javascript">
+         ad01();
+        </script>
+       </div>
+       <div class="d12150">
+        2日目 夜
+       </div>
+       <div class="d12151 log_night">
+        <table cellspacing="0">
+         <tbody>
+          <tr>
+           <td class="ca" colspan="2">
+            <span class="wolf">
+             「
+             <span class="name">
+              メロン
+             </span>
+             」さんは「
+             <span class="name">
+              ゲッペイ
+             </span>
+             」さんを噛みました
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            あ、これは独り言ですだ
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            夜が明けようとしている。役職者は時間内に能力を実行してください。(04:04:23)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="fox">
+             しょうがない 今はメロンさんにお任せという事になるか
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             い
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             あ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             それはNGかと
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="chartreuse">
+             <span class="name">
+              モナカ
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            &gt;&gt;1145　なるほど
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             おわらなかったってことはモナカさんは人狼じゃないのね　と言おう
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            ここでもし　狐がつれていなければ、狼さんは村人を噛んだ時点で負け
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="fox">
+             GM通じて再度言うのは反則かな？
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="fox">
+             何故メロンさんと言ってしまったのか
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            んん?
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="fox">
+             素で間違えました。すまない
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            草
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            ふむぅ
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             占い師は占えないです…
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            <span class="death">
+             「
+             <span class="name">
+              モナカ
+             </span>
+             」さんは村民協議の結果、処刑されました
+            </span>
+            (04:02:23)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            2日目の夜になりました(04:02:23)
+           </td>
+          </tr>
+         </tbody>
+        </table>
+        <script type="text/javascript">
+         ad01();
+        </script>
+       </div>
+       <div class="d12150">
+        2日目 昼
+       </div>
+       <div class="d12151">
+        <table cellspacing="0">
+         <tbody>
+          <tr>
+           <td class="cv" colspan="2">
+            2日目　投票結果
+            <br/>
+            <table>
+             <tbody>
+              <tr>
+               <td>
+                [村]
+                <span class="name">
+                 ゆず
+                </span>
+               </td>
+               <td>
+                1 票
+               </td>
+               <td>
+                投票先　→　[村]
+                <span class="name">
+                 モナカ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [狐]
+                <span class="name">
+                 ゲッペイ
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[村]
+                <span class="name">
+                 モナカ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [村]
+                <span class="name">
+                 パン
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[村]
+                <span class="name">
+                 モナカ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [狼]
+                <span class="name">
+                 メロン
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[村]
+                <span class="name">
+                 モナカ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [村]
+                <span class="name">
+                 モナカ
+                </span>
+               </td>
+               <td>
+                4 票
+               </td>
+               <td>
+                投票先　→　[村]
+                <span class="name">
+                 ゆず
+                </span>
+               </td>
+              </tr>
+             </tbody>
+            </table>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="chartreuse oc00 name">
+             モナカ
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            遺言やで
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            これ　本物占い師なら勝ち確定
+            <br>
+             有能村人ですわ
+            </br>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            微妙なタイミング
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            自分は占えない、と発言お願します＞GM
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            メロンさんが占いじゃん
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            間違えたゾ……
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            投票時間になりました。時間内に処刑の対象を決定してください(04:01:28)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            32
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            占いメロン 吊りモナカでいきますか
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            31
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            げっぺいさん指定
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            30
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            どぞ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            29
+            <span class="chartreuse oc00 name">
+             モナカ
+            </span>
+           </td>
+           <td class="cc">
+            それでお願いします
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            28
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            ゲッペイさんから占い先指定があればそこ占いますよ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            27
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            ワイがやる？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            26
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            パンさんゆずさんモナカさんから指定するといいのかな？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            25
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            とりあえずグレーの3人、ゆずさんパンさんモナカさんを吊りたいのだけれど
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            24
+            <span class="chartreuse oc00 name">
+             モナカ
+            </span>
+           </td>
+           <td class="cc">
+            狼吊ったら負け
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            23
+            <span class="chartreuse oc00 name">
+             モナカ
+            </span>
+           </td>
+           <td class="cc">
+            占い師も指定した方がいいかな
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            22
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            占いと狼を吊っちゃったらマズイのかな
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            21
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            場合によってはワイか誰かを取り敢えず吊っといて呪殺か
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            20
+            <span class="chartreuse oc00 name">
+             モナカ
+            </span>
+           </td>
+           <td class="cc">
+            パンさん、ゆずさん、モナカ。誰吊るか指定した方がいい
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            19
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            メロンさん占いCO 他全員村COでいいのかな？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            18
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            狐呪殺が一番良いんだけど、んーどうしもなか
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            17
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            おっと、進行か
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            16
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            だねぇ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            15
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            一夜目で狐の死体が上がってこないってことは、狐が居ることになるので、先に狐を狙いましょう
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            14
+            <span class="chartreuse oc00 name">
+             モナカ
+            </span>
+           </td>
+           <td class="cc">
+            うーむ、仮白のゲッペイさん進行お願いします
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            13
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            占い対抗なし？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            12
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            村一人多いかね？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            11
+            <span class="chartreuse oc00 name">
+             モナカ
+            </span>
+           </td>
+           <td class="cc">
+            村COだYO
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            10
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            おはよーよー
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            9
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            村です
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            8
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            あーこれ占い欠けかも
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            7
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            占いCO　ゲッペイさんは○だったわ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            6
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            また食い物
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            5
+            <span class="chartreuse oc00 name">
+             モナカ
+            </span>
+           </td>
+           <td class="cc">
+            COどうぞ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            4
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            おはようございます...村人です
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            3
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            おは
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            2
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            おはっす
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            1
+            <span class="chartreuse oc00 name">
+             モナカ
+            </span>
+           </td>
+           <td class="cc">
+            おはYO！YO!
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            2日目の朝になりました(03:56:28)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            <span class="death">
+             「
+             <span class="name">
+              第一犠牲者
+             </span>
+             」さんは無残な姿で発見されました
+            </span>
+            (03:56:28)
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <div class="d12150">
+        1日目 夜
+       </div>
+       <div class="d12151 log_night">
+        <table cellspacing="0">
+         <tbody>
+          <tr>
+           <td class="ca" colspan="2">
+            <span class="wolf">
+             「
+             <span class="name">
+              メロン
+             </span>
+             」さんは「
+             <span class="name">
+              第一犠牲者
+             </span>
+             」さんを噛みました
+            </span>
+            (ランダム)
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             &gt;&gt;1034 丸見えです！
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            今日村側しかやってないなー
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            あ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            占いCO　ゲッペイさんは○だったわ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            このシステム噛めるの夜明けだし
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="gm">
+             <span class="name">
+              ＧＭ（霊話）
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            <span class="gm">
+             &gt;&gt;1034 すべて見えてますねぇ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            夜が明けようとしている。役職者は時間内に能力を実行してください。(03:55:28)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            よく考えたら共有者いねーし狼一匹だし夜ほぼいらんやんけ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            そうなると偽占い師が出るのが遅くなるから早めにCOしてきた占い師を真目でみよう
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="fox">
+             ゲッペイ！
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="mistyrose oc07 name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="fox">
+             ぼく誰
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="gm">
+             <span class="name">
+              ＧＭ（霊話）
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            <span class="gm">
+             &gt;&gt;1034 ばっちりお見通しですよ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="chartreuse oc00 name">
+             モナカ
+            </span>
+           </td>
+           <td class="cc">
+            おっぱいいっぱいちっぱいがいい
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            出来れば占いがいきなり狐潰して死体が二つ上がるのが理想。
+            <br/>
+            そうならなければ狐がいる事になる。
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="hotpink oc01 name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             わおーん
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            なんで毎回食いもの系なんだ！
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             頑張ってください～
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            &gt;&gt;1034　神様はどうみえてるんだろう
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="aquamarine oc00 name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            村人かーことごとく外れを
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc00 name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            はーい
+           </td>
+          </tr>
+          <tr>
+           <td class="ca" colspan="2">
+            <span class="fortune">
+             「
+             <span class="name">
+              第一犠牲者
+             </span>
+             」さんは「
+             <span class="name">
+              パン
+             </span>
+             」さんを占いました　結果：
+             <span class="oc00">
+              【村　人】
+             </span>
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            以下のとおり、名前をランダムに割当てました
+            <br/>
+            <table>
+             <tbody>
+              <tr>
+               <td>
+                ゆず
+               </td>
+               <td rowspan="5">
+                ←
+               </td>
+               <td>
+                うーろんちゃ
+               </td>
+              </tr>
+              <tr>
+               <td>
+                ゲッペイ
+               </td>
+               <td>
+                ばれ
+               </td>
+              </tr>
+              <tr>
+               <td>
+                パン
+               </td>
+               <td>
+                कालीKālī
+               </td>
+              </tr>
+              <tr>
+               <td>
+                メロン
+               </td>
+               <td>
+                レオ党
+               </td>
+              </tr>
+              <tr>
+               <td>
+                モナカ
+               </td>
+               <td>
+                小倉県民
+               </td>
+              </tr>
+             </tbody>
+            </table>
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            この村ではランダムにCNが割当てられています。まずは名前を確認してください。(03:53:28)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            夜になった…。月の明かりがまぶしいほどに輝いている。何かが起こりそうな予感がする、そんな夜だ。村人たちが昼間に話していた人狼の噂…。本当に人狼なんて、いるのだろうか？(03:53:28)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            1日目の夜になりました(03:53:28)
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <div class="d12150">
+        1日目 開始前
+       </div>
+       <div class="d12151">
+        <table cellspacing="0">
+         <tbody>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            39
+            <span class="tomato name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            名前の下の時間が緑だったらば、点呼してないってことやで
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            38
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             開始しますね
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            37
+            <span class="aquamarine name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            GO
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            36
+            <span class="mistyrose name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            いた
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            35
+            <span class="mistyrose name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            とうさんどこ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            34
+            <span class="hotpink name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            やふー
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            33
+            <span class="aquamarine name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            名前の下の時間のとこが緑じゃなければいい
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            32
+            <span class="chartreuse name">
+             モナカ
+            </span>
+           </td>
+           <td class="cc">
+            全員いるで
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            31
+            <span class="mistyrose name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            できてるぞい
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            30
+            <span class="aquamarine name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            点呼できてるぞい
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            29
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             点呼できてなさそう
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            28
+            <span class="mistyrose name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            なるほろ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            27
+            <span class="tomato name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            狐が有利なだけじゃないかな
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            26
+            <span class="aquamarine name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            いや狐吊ればいい
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            25
+            <span class="mistyrose name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            狼の勝つビジョンが見えなくて草 まあいいや
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            24
+            <span class="mistyrose name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            あれそれ狼まけかく？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            23
+            <span class="aquamarine name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            ええんちゃう？はじめて
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            22
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             点呼します
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            21
+            <span class="tomato name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            村か占いがかけるならば、村３狼１狐１の絶望ムラも起こるのかな
+            <br/>
+            人狼と狐は欠けないらしいから
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            20
+            <span class="mistyrose name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            なるほろ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            19
+            <span class="aquamarine name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            占われると逝く
+            <br/>
+            噛まれてもしなない
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            18
+            <span class="aquamarine name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            生き残ることが勝ち条件
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            17
+            <span class="mistyrose name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            おk
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            16
+            <span class="chartreuse name">
+             モナカ
+            </span>
+           </td>
+           <td class="cc">
+            人狼か村が勝利したときに生きてればかち
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            15
+            <span class="aquamarine name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            割と皆勝つ感じじゃなかだたかね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            14
+            <span class="tomato name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            これ役は欠けるの？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            13
+            <span class="mistyrose name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            狐の勝利条件おせーて
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            12
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             狐出てくるのね
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            11
+            <span class="mistyrose name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            ちょいまって
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            10
+            <span class="tomato name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            よかよか
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            9
+            <span class="mistyrose name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            はえっこれ難易度つらそ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            8
+            <span class="aquamarine name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            はじめてよかろ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            7
+            <span class="aquamarine name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            大丈夫かな、たぶん
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            6
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             足りないものがあればお申し付けください
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            5
+            <span class="hotpink name">
+             メロン
+            </span>
+           </td>
+           <td class="cc">
+            こんな狼がいる村なんかに居られるか！ワシは自分の部屋で休むぞ！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            4
+            <span class="aquamarine name">
+             パン
+            </span>
+           </td>
+           <td class="cc">
+            むらひとつおおいぞ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            3
+            <span class="mistyrose name">
+             ゲッペイ
+            </span>
+           </td>
+           <td class="cc">
+            さんむら
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             ばれ
+            </span>
+            」さんが、村に入りました（6人目）(03:48:55)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            2
+            <span class="chartreuse name">
+             モナカ
+            </span>
+           </td>
+           <td class="cc">
+            むらむらサンクス
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             कालीKālī
+            </span>
+            」さんが、村に入りました（5人目）(03:48:39)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             レオ党
+            </span>
+            」さんが、村に入りました（4人目）(03:48:31)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             小倉県民
+            </span>
+            」さんが、村に入りました（3人目）(03:48:30)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            1
+            <span class="tomato name">
+             ゆず
+            </span>
+           </td>
+           <td class="cc">
+            村立てむらむらくりくりありがとう
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             うーろんちゃ
+            </span>
+            」さんが、村に入りました（2人目）(03:47:47)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <a href="/gmlog.jsp?hn=%E3%82%AF%E3%83%AA&amp;trip=KO-cafcNu3&amp;w=new" target="_blank">
+             <span class="name">
+              クリ
+             </span>
+            </a>
+            」さんが、GMとして村に入りました [チベット自治区
+            <span class="device">
+             s
+            </span>
+            ] (03:46:47)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             第一犠牲者
+            </span>
+            」さんが、村に入りました（1人目）(03:46:47)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            TIPS: 現在、選択できるカラーは 21 種類です(03:46:47)
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+      </div>
+      <div class="margin">
+      </div>
+     </div>
+    </div>
+    <div class="d122">
+     <span title="参加者欄を固定して会話ログのみをスクロールできます">
+      <input id="SC" onclick="resizeTextArea()" type="checkbox" value="true"/>
+      <i class="fa fa-arrows-v">
+      </i>
+     </span>
+     <span title="ログを逆順に表示します">
+      <input id="reverse" onchange="revchg()" type="checkbox" value="true"/>
+      <i class="fa fa-sort-amount-asc">
+      </i>
+     </span>
+     <div class="d1221">
+      <table cellspacing="0" class="iconsmall">
+       <tbody>
+        <tr>
+         <td class="icon" rowspan="2">
+          <div class="icon001as" style="background-position:-735px 0px;">
+          </div>
+         </td>
+         <td class="name">
+          <a class="report" href="../villagerlog.jsp?hn=HN&amp;trip=-iqJLuUrNv&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="tomato">
+            ゆず
+           </span>
+           【HN
+           <wbr/>
+           ◆-iqJLuUrNv】
+          </a>
+         </td>
+         <td class="icon" rowspan="2">
+          <div class="icon001as" style="background-position:-637px 0px;">
+          </div>
+         </td>
+         <td class="name">
+          <a class="report" href="../villagerlog.jsp?hn=%E3%82%86%E3%81%8D%E3%82%86%E3%81%8D%E3%81%99%E3%81%AE%E3%83%BC&amp;trip=&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="mistyrose">
+            ゲッペイ
+           </span>
+           【ゆきゆきすのー】
+          </a>
+         </td>
+        </tr>
+        <tr>
+         <td class="val">
+          04:14:11
+          <br/>
+          <span class="oc00">
+           村　人
+          </span>
+          [福岡県]
+         </td>
+         <td class="val">
+          <span class="timeover2">
+           04:13:26
+          </span>
+          <br/>
+          <span class="oc07">
+           妖　狐
+          </span>
+          [沖縄県
+          <span class="device">
+           t
+          </span>
+          ]
+         </td>
+        </tr>
+        <tr>
+         <td class="icon" rowspan="2">
+          <div class="icon001as" style="background-position:-343px 0px;">
+          </div>
+         </td>
+         <td class="name">
+          <a class="report" href="../villagerlog.jsp?hn=%E3%81%8B%E3%82%8A%E3%82%84%E3%81%96%E3%81%8D&amp;trip=udSHowOY1C&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="aquamarine">
+            パン
+           </span>
+           【かりやざき
+           <wbr/>
+           ◆udSHowOY1C】
+          </a>
+         </td>
+         <td class="icon dv" rowspan="2">
+          <div class="wolf_icon001as" style="background-position:-49px 0px;">
+          </div>
+         </td>
+         <td class="name dv">
+          <a class="report" href="../villagerlog.jsp?hn=%E3%83%AC%E3%82%AA%E5%85%9A&amp;trip=PG4LipwVIk&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="dead">
+            メロン
+           </span>
+           【レオ党
+           <wbr/>
+           ◆PG4LipwVIk】
+          </a>
+         </td>
+        </tr>
+        <tr>
+         <td class="val">
+          <span class="timeover2">
+           04:13:27
+          </span>
+          <br/>
+          <span class="oc00">
+           村　人
+          </span>
+          [catv?
+          <span class="device">
+           s
+          </span>
+          ]
+         </td>
+         <td class="val dv">
+          <span class="timeover2">
+           04:13:27
+          </span>
+          <br/>
+          <span class="oc01">
+           人　狼
+          </span>
+          [チベット自治区]
+         </td>
+        </tr>
+        <tr>
+         <td class="icon dv" rowspan="2">
+          <div class="dead_icon001as" style="background-position:-245px 0px;">
+          </div>
+         </td>
+         <td class="name dv">
+          <a class="report" href="../villagerlog.jsp?hn=%E7%AC%AC%E4%B8%80%E7%8A%A0%E7%89%B2%E8%80%85&amp;trip=hogehogeho&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="dead">
+            第一犠牲者
+           </span>
+           【第一犠牲者
+           <wbr/>
+           ◆hogehogeho】
+          </a>
+         </td>
+         <td class="icon dv" rowspan="2">
+          <div class="dead_icon001as" style="background-position:-490px 0px;">
+          </div>
+         </td>
+         <td class="name dv">
+          <a class="report" href="../villagerlog.jsp?hn=%E5%B0%8F%E5%80%89%E7%9C%8C%E6%B0%91&amp;trip=a25BdhIQqD&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="dead">
+            モナカ
+           </span>
+           【小倉県民
+           <wbr/>
+           ◆a25BdhIQqD】
+          </a>
+         </td>
+        </tr>
+        <tr>
+         <td class="val dv">
+          <span class="timeover1">
+           03:46:47
+          </span>
+          <br/>
+          <span class="oc02">
+           占い師
+          </span>
+          [第一国]
+         </td>
+         <td class="val dv">
+          04:13:45
+          <br/>
+          <span class="oc00">
+           村　人
+          </span>
+          [長屋]
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+     <br/>
+     <br/>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>
+

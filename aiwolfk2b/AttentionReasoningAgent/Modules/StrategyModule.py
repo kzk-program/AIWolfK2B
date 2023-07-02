@@ -3,24 +3,65 @@ from typing import List,Tuple,Dict,Any,Union, Optional
 from enum import Enum
 
 from aiwolf import GameInfo, GameSetting
+from aiwolf.utterance import Talk
 from aiwolf.agent import Agent,Role, Species
 
 from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractRoleEstimationModel,AbstractStrategyModule,AbstractRoleInferenceModule,RoleInferenceResult,OneStepPlan, ActionType
-import errno
-import os
-import random
-import openai
-import Levenshtein
+from aiwolfk2b.utils.helper import load_default_config,get_openai_api_key,load_default_GameInfo,load_default_GameSetting
+import os,random
+import openai,Levenshtein
+import numpy as np
 import pathlib
 
 class GameLog:
     """ゲームのログを保存するクラス"""
-    def __init__(self, game_info:GameInfo, game_setting:GameSetting) -> None:
-        self.log = ""
+    
+    _talk_list:List[Talk]
+    """talkの履歴をゲームを通して保存"""
+    _log:str
+    """talkの履歴を文字列で保存"""
+    _log_talk_numbers:int
+    """logで保存しているtalkの数"""
+    _talk_list_updated:bool
+    """talk_listが更新されたか=logを更新する必要があるかどうか"""
+    @property
+    def log(self)->str:
+        if self._talk_list_updated:
+            #更新を記録
+            for talk in self._talk_list[self._log_talk_numbers:]:
+                self._log += f"{talk.day}日目 {talk.agent}の発言 :{talk.text}\n"
+            #更新済みに変更
+            self._talk_list_updated = False
+            self._log_talk_numbers = len(self._log)
+        #文字数が多いとGPTに入力できないため、最後のtruncate_words文字を返す
+        if len(self._log) > self.truncate_words:
+            return self._log[-self.truncate_words:]
+        else:
+            return self._log #ログが短いときはそのまま返す
+    
+    def __init__(self, game_info:GameInfo, game_setting:GameSetting,truncate_words = 2000) -> None:
+        """
+        コンストラクタ
+
+        Parameters
+        ----------
+        game_info : GameInfo
+            ゲームの情報
+        game_setting : GameSetting
+            ゲームの設定
+        truncate_words : int, optional
+            入力最大文字数(GPTに入力できなくなるため), by default 2000
+        """
+        self._log = ""
+        self._talk_list = []
+        self._log_talk_numbers = 0
+        self._talk_list_updated = True
+        self.truncate_words = truncate_words
     
     def update(self, game_info:GameInfo, game_setting:GameSetting)->None:
-        for talk in game_info.talk_list:
-            self.log += f"{talk.day}日目 {talk.agent}の発言 :{talk.text}\n"
+        self._talk_list.extend(game_info.talk_list)
+        self._talk_list_updated = True
+
 
 class GPT3API:
     """
@@ -142,9 +183,10 @@ class StrategyModule(AbstractStrategyModule):
         self.game_log = GameLog(game_info, game_setting)
         self.gpt4_api = GPT4API()
 
-    def talk(self,game_info: GameInfo, game_setting: GameSetting) -> str:
+    def talk(self,game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         if game_info.day == 0:
-            return "よろしくお願いします！"
+            talk_plan = OneStepPlan("挨拶をする必要があるから",ActionType.TALK,"よろしくお願いします！")
+            return talk_plan
         
         if game_info.day != self.today:
             self.today = game_info.day
@@ -166,32 +208,36 @@ class StrategyModule(AbstractStrategyModule):
                     role_action_result = self.talk_roleaction_result(game_info, game_setting)
                     if role_action_result != None:
                         print("role_action_result", role_action_result)
-                        return role_action_result
+                        talk_plan = OneStepPlan("勝つために自分の役職に関わる情報をみんなに伝えたいから",ActionType.TALK,role_action_result)
+                        return talk_plan
                 elif topic == TalkTopic.ROLEACTION_REACTION:
                     roleaction_reaction =  self.talk_roleaction_reaction(game_info, game_setting)
                     if roleaction_reaction != None:
                         self.today_talked_topic[topic] = True
                         print("roleaction_reaction", roleaction_reaction)
-                        return roleaction_reaction
+                        talk_plan = OneStepPlan("勝つために情報を得たいから",ActionType.TALK,roleaction_reaction)
+                        return talk_plan
                 elif topic == TalkTopic.WHO_TO_VOTE:
                     who_to_vote = self.talk_who_to_vote(game_info, game_setting)
                     if who_to_vote != None:
                         self.today_talked_topic[topic] = True
                         print("who_to_vote", who_to_vote)
-                        return who_to_vote
+                        talk_plan = OneStepPlan("勝つために周りの投票先を知りたいから",ActionType.TALK,who_to_vote)
+                        return talk_plan
                 
         # 会話デッキを使い果たしたら
         no_topic = self.talk_no_topic(game_info, game_setting)
         print("no topic", no_topic)
-        return no_topic
+        talk_plan = OneStepPlan("特に話すことがないから",ActionType.TALK,no_topic)
+        return talk_plan
 
     
-    def vote(self, game_info: GameInfo, game_setting: GameSetting) -> Agent:
+    def vote(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """投票"""
         #各エージェントの役職を推定する
         inf_results:List[RoleInferenceResult] = []
         for a in game_info.alive_agent_list:
-            inf_results.append(self.role_inference_module.infer(a, game_info, game_setting))
+            inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))
 
         #エージェントの中から最も占い師の確率が高いエージェントを選ぶ
         #エージェントの中から最も狂人の確率が低いエージェントを選ぶ
@@ -205,21 +251,22 @@ class StrategyModule(AbstractStrategyModule):
             #占い師が生きている確率が高い場合
             if self.check_survive_seer(inf_results):
                 #最も占い師の確率が高いエージェントに投票する
-                return max_seer_agent
+                vote_plan = OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,max_seer_agent)
             else:
                 #最も狂人の確率が低いエージェントに投票する
-                return min_poss_agent
+                vote_plan = OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,min_poss_agent)
         #村人側の場合、誰に投票するか決める
         else:
             #最も人狼の確率が高いエージェントに投票する
-            return max_wolf_agent
+            vote_plan = OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,max_wolf_agent)
+        return vote_plan
     
-    def attack(self, game_info: GameInfo, game_setting: GameSetting) -> Agent:
+    def attack(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """襲撃"""
         #各エージェントの役職を推定する
         inf_results:List[RoleInferenceResult] = []
         for a in game_info.alive_agent_list:
-            inf_results.append(self.role_inference_module.infer(a, game_info, game_setting))
+            inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))
 
         #エージェントの中から最も占い師の確率が高いエージェントを選ぶ
         #エージェントの中から最も狂人の確率が低いエージェントを選ぶ
@@ -229,30 +276,31 @@ class StrategyModule(AbstractStrategyModule):
         #占い師が生きている確率が高い場合
         if self.check_survive_seer(inf_results):
             #最も占い師の確率が高いエージェントに襲撃する
-            return max_seer_agent
+            attack_plan = OneStepPlan("最も占い師の確率が高いから",ActionType.ATTACK,max_seer_agent)
         else:
             #最も狂人の確率が低いエージェントに襲撃する
-            return min_poss_agent
+            attack_plan = OneStepPlan("最も狂人の確率が低いから",ActionType.ATTACK,min_poss_agent)
+        return attack_plan
     
-    def divine(self, game_info: GameInfo, game_setting: GameSetting) -> Agent:
+    def divine(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """占い"""
         #各エージェントの役職を推定する
         inf_results:List[RoleInferenceResult] = []
         for a in game_info.alive_agent_list:
-            inf_results.append(self.role_inference_module.infer(a, game_info, game_setting))
+            inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))
 
         #人狼側である確率が最も低いエージェントを選ぶ
         min_wolf_agent = self.min_agent(inf_results, Role.WEREWOLF)
-
-        #最も人狼の確率が低いエージェントに投票する
-        return min_wolf_agent
+        divine_plan = OneStepPlan("人狼側である確率が低いものを確定させたいから",ActionType.DIVINE,min_wolf_agent)
+        return divine_plan
     
-    def guard(self, game_info: GameInfo, game_setting: GameSetting) -> Agent:
+    
+    def guard(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """護衛"""
         """５人人狼では不要"""
         raise NotImplementedError
     
-    def whisper(self, game_info: GameInfo, game_setting: GameSetting) -> str:
+    def whisper(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """人狼同士の相談"""
         """５人人狼では不要"""
         raise NotImplementedError
@@ -401,36 +449,26 @@ class StrategyModule(AbstractStrategyModule):
     
     def talk_no_topic(self, game_info:GameInfo, game_setting:GameSetting)->Optional[str]:
         """話題がないときに話す"""
-        messages = [{"role": "system", "content":f"あなたは今人狼ゲームをしています。あなたは{game_info.me}です。対戦ログと指示が送られてきますので、対戦ログの結果と発言するべきことが送られてきますので、適切に返答してください。"}, 
-                        {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。まだ何か人狼ゲーム上重要なことで言うべきことがあれば言ってください(弁明、他者への質問など)。言うことが無ければ「Over」と返してください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
-        response = self.gpt4_api.complete(messages)
-        return response
+        # GPT4にやらせる
+        # messages = [{"role": "system", "content":f"あなたは今人狼ゲームをしています。あなたは{game_info.me}です。対戦ログと指示が送られてきますので、対戦ログの結果と発言するべきことが送られてきますので、適切に返答してください。"}, 
+        #                 {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。まだ何か人狼ゲーム上重要なことで言うべきことがあれば言ってください(弁明、他者への質問など)。言うことが無ければ「Over」と返してください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
+        # response = self.gpt4_api.complete(messages)
+        # return response
         
+        #トークン数の関係で、常にOverを返すようにする
+        return "Over"
 
 
 if __name__=="__main__":
-    import pickle
     from aiwolf.agent import Status
     from aiwolfk2b.AttentionReasoningAgent.SimpleModules import RandomRoleEstimationModel, SimpleRoleInferenceModule
-    from aiwolf import Talk
-    config_ini = ConfigParser()
-    config_ini_path = os.pardir + '/config.ini'
-
-    # iniファイルが存在するかチェック
-    if os.path.exists(config_ini_path):
-        # iniファイルが存在する場合、ファイルを読み込む
-        with open(config_ini_path, encoding='utf-8') as fp:
-            config_ini.read_file(fp)
-    else:
-        # iniファイルが存在しない場合、エラー発生
-        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), config_ini_path)
+    
+    config_ini = load_default_config()
+    game_info = load_default_GameInfo()
+    game_setting = load_default_GameSetting()
     
     role_estimation_model = RandomRoleEstimationModel(config_ini)
     role_inference_module = SimpleRoleInferenceModule(config_ini, role_estimation_model)
-    with open(os.pardir +"/game_info.pkl", mode="rb") as f:
-        game_info:GameInfo = pickle.load(f)
-    with open(os.pardir + "/game_setting.pkl", mode="rb") as f:
-        game_setting:GameSetting = pickle.load(f)
     
     strategy_module = StrategyModule(config_ini, role_estimation_model, role_inference_module)
     strategy_module.initialize(game_info, game_setting)

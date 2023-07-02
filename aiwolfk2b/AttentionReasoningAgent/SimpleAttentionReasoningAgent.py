@@ -18,6 +18,7 @@ from aiwolf.constant import AGENT_NONE
 
 from aiwolfk2b.AttentionReasoningAgent.AbstractModules import *
 from aiwolfk2b.AttentionReasoningAgent.SimpleModules import *
+from aiwolfk2b.utils.helper import load_default_config
 
 CONTENT_SKIP: Content = Content(SkipContentBuilder())
 
@@ -161,35 +162,49 @@ class AttentionReasoningAgent(AbstractPlayer):
                 self.identification_reports.append(Judge(talker, game_info.day, content.target, content.result))
         self.talk_list_head = len(game_info.talk_list)  # All done.
 
-    def talk(self) -> Content:
-        strategy_content = self.strategy_module.talk(self.game_info,self.game_setting)
+    def talk(self) -> str:
+        strategy_plan = self.strategy_module.talk(self.game_info,self.game_setting)
         influenced = self.influence_consideration_module.check_influence(self.game_info,self.game_setting)
+        executed_plan:OneStepPlan = None
         if influenced[0]:
-            return influenced[1].action
+            #他者影響モジュールのplanを採用
+            executed_plan = influenced[1]
         else:
-            return strategy_content
+            #戦略立案モジュールのplanを採用
+            executed_plan = strategy_plan
+        text = executed_plan.action
+        rich_text = self.speaker_module.enhance_speech(text)
+        self.strategy_module.update_history(self.game_info,self.game_setting,executed_plan)
+        return rich_text
 
     def vote(self) -> Agent:
-        return self.strategy_module.vote(self.game_info,self.game_setting)
-        #return self.vote_candidate if self.vote_candidate != AGENT_NONE else self.me
+        plan = self.strategy_module.vote(self.game_info,self.game_setting)
+        self.strategy_module.update_history(self.game_info,self.game_setting,plan)
+        return plan.action
 
     def attack(self) -> Agent:
-        return self.strategy_module.attack(self.game_info,self.game_setting)
-        #return self.vote_candidate if self.vote_candidate != AGENT_NONE else self.me
+        plan = self.strategy_module.attack(self.game_info,self.game_setting)
+        self.strategy_module.update_history(self.game_info,self.game_setting,plan)
+        return plan.action
+       
 
     def divine(self) -> Agent:
-        return self.strategy_module.divine(self.game_info,self.game_setting)
-        #return self.vote_candidate if self.vote_candidate != AGENT_NONE else self.me
+        plan = self.strategy_module.divine(self.game_info,self.game_setting)
+        self.strategy_module.update_history(self.game_info,self.game_setting,plan)
+        return plan.action
     
     def guard(self) -> Agent:
-        return self.strategy_module.guard(self.game_info,self.game_setting)
-        #return self.vote_candidate if self.vote_candidate != AGENT_NONE else self.me
+        plan = self.strategy_module.guard(self.game_info,self.game_setting)
+        self.strategy_module.update_history(self.game_info,self.game_setting,plan)
+        return plan.action
 
-    def whisper(self) -> Content:
-        text =self.strategy_module.whisper(self.game_info,self.game_setting)
+    def whisper(self) -> str:
+        plan = self.strategy_module.whisper(self.game_info,self.game_setting)
+        text = plan.action
         rich_text = self.speaker_module.enhance_speech(text)
+        self.strategy_module.update_history(self.game_info,self.game_setting,plan)
+        
         return rich_text
-        #return CONTENT_SKIP
 
     def finish(self) -> None:
         pass
@@ -205,17 +220,7 @@ if __name__ == '__main__':
     input_args = parser.parse_args()
     
     # config
-    config_ini = configparser.ConfigParser()
-    config_ini_path = current_dir.joinpath("config.ini")
-
-    # iniファイルが存在するかチェック
-    if os.path.exists(config_ini_path):
-        # iniファイルが存在する場合、ファイルを読み込む
-        with open(config_ini_path, encoding='utf-8') as fp:
-            config_ini.read_file(fp)
-    else:
-        # iniファイルが存在しない場合、エラー発生
-        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), config_ini_path)
+    config_ini = load_default_config()
 
     agent: AbstractPlayer = AttentionReasoningAgent(config_ini)
     
