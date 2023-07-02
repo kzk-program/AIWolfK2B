@@ -42,7 +42,7 @@ git submodule update
 ```bash
 cd [path to AIWolfK2B]
 pip install AIWolfPy/
-pip install git+https://github.com/HoneyMack/aiwolf-python-nl.git@feature/nl_adjust
+pip install git+https://github.com/HoneyMack/aiwolf-python-nl.git
 pip install -e .
 ```
 

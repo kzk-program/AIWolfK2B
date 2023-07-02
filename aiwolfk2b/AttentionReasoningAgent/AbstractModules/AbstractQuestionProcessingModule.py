@@ -3,7 +3,7 @@ from typing import List,Tuple,Dict,Any,Union
 from configparser import ConfigParser
 from enum import Enum
 
-from aiwolf import GameInfo,GameSetting
+from aiwolf import GameInfo,GameSetting, Agent
 from AbstractModule import AbstractModule
 from AbstractRoleInferenceModule import AbstractRoleInferenceModule
 from AbstractStrategyModule import AbstractStrategyModule,OneStepPlan
@@ -48,7 +48,7 @@ class AbstractQuestionProcessingModule(AbstractModule):
 
         
     @abstractmethod
-    def process_question(self,game_info: GameInfo, game_setting: GameSetting)->OneStepPlan:
+    def process_question(self,question:str, questioner:Agent, game_info: GameInfo, game_setting: GameSetting)->OneStepPlan:
         """
         他者からの質問を処理し、その結果を返す
 
