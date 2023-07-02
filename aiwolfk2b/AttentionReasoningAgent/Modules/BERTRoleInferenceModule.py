@@ -46,91 +46,6 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         super().initialize(game_info, game_setting)
         self.game_info = game_info
         self.game_setting = game_setting
-        
-            
-    def parse_estimate_text(self,estimate_text:str,result: RoleEstimationResult,agent: Agent, game_setting: GameSetting)->List[Tuple[float,Agent,Union[Agent,str,Species],str]]:
-        """
-        推定したテキストと推定結果をパースして、アクションごとのアテンションとアクションのリストに変換して返す
-
-        Parameters
-        ----------
-        estimate_text : str
-            推定に使用したテキスト(エージェント番号変更済み)
-        result : RoleEstimationResult
-            推定結果
-        agent : Agent
-            推定対象のエージェント
-        game_setting : GameSetting
-            ゲーム設定
-
-        Returns
-        -------
-        List[Tuple[float,Agent,Union[Agent,str,Species],str]]
-            [attentionの総和、アクションを行ったエージェント、アクションごとの個別の行動、アクションの種類]のリスト
-
-        Raises
-        ------
-        Exception
-            想定外のアクションがあった場合に発生
-        Exception
-            空行があった場合に発生
-        """
-        
-        #\nを[SEP]に変換する
-        sep_estimate_text = estimate_text.replace("\n","[SEP]")
-        
-        words = self.estimator.convert_to_tokens_without_joint_sign(sep_estimate_text)
-        _,attens = self.estimator.calc_word_attention_pairs(estimate_text,result)
-
-        sentence_attens:List[Tuple[float,Agent,Union[Agent,str,Species],str]] = []
-        accum_text=""
-        phase = ""
-        day = 0
-        accum_attens = 0.0
-        
-        for word,atten in zip(words,attens):
-            if word == "[SEP]":#一行終わったら終わり
-                if accum_text == "":
-                    raise Exception("空行は想定していません") 
-                elif accum_text in ["talk","vote"]:
-                    phase = accum_text
-                elif accum_text.startswith("day"):
-                    day = int(accum_text.replace("day",""))
-                elif accum_text.startswith("role_map:"):
-                    role_map = accum_text.replace("role_map:","")
-                    sentence_attens.append((accum_attens,None,role_map,"role_map"))
-                else:
-                    word_split = accum_text.split(",")
-                    if phase == "talk":
-                        talk = self.decompose_talk_text(accum_text,agent,game_setting)
-                        sentence_attens.append((accum_attens,talk.agent,talk.text,"talk"))
-                    elif phase == "vote":
-                        vote = self.decompose_vote_text(accum_text,agent,game_setting)
-                        sentence_attens.append((accum_attens,vote.agent,vote.target,"vote"))
-                    else:
-                        action_type = word_split[0]
-                        if action_type == "divine":
-                            target_idx = self.revert_agent_idx(int(word_split[1]),agent,game_setting)
-                            species = Species(word_split[2])
-                            sentence_attens.append((accum_attens,Agent(target_idx),species,"divine"))
-                        elif action_type == "attacked":
-                            attacked_idx = self.revert_agent_idx(int(word_split[1]),agent,game_setting)
-                            sentence_attens.append((accum_attens,Agent(attacked_idx),None,"attacked"))
-                        elif action_type == "guarded":
-                            guarded_idx = self.revert_agent_idx(int(word_split[1]),agent,game_setting)
-                            sentence_attens.append((accum_attens,Agent(guarded_idx),None,"guarded"))
-                        elif action_type =="executed":
-                            executed_idx = self.revert_agent_idx(int(word_split[1]),agent,game_setting)
-                            sentence_attens.append((accum_attens,Agent(executed_idx),None,"executed"))
-                        else:
-                            raise Exception(f"想定外のaction_type:{action_type}")
-                accum_text = ""
-                accum_attens = 0.0
-            else:
-                accum_text += word
-                accum_attens += atten
-                
-        return sentence_attens
     
     def format_reason_text(self,sentence_attens:List[Tuple[float,Agent,Union[Agent,str,Species],str]])->str:
         """
@@ -204,7 +119,7 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         #役職推定の実行
         result = self.estimator.estimate_from_text([estimate_text],game_setting)[0]
         #単語とattentionのペアのリストを作成
-        sentence_attens = self.parse_estimate_text(estimate_text,result,agent,game_setting)
+        sentence_attens = self.estimator.parse_estimate_text(estimate_text,result,agent,game_setting)
         #print(f"sentence_attens:{sentence_attens}")
         
         #chatgptに投げるために、推論理由を整形
@@ -233,75 +148,6 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         inference = RoleInferenceResult(agent,explained_reason,result.probs)
         
         return inference
-    
-    def revert_agent_idx(self, agent_idx:int, agent: Agent, game_setting: GameSetting) -> int:
-        """
-        推定するエージェントの番号が01になるようにインデックスを入れ替える
-
-        Parameters
-        ----------
-        agent_idx : int
-            入れ替え後のエージェントの番号
-        agent : Agent
-            推論対象のエージェント
-        game_setting : GameSetting
-            ゲームの設定
-            
-        Returns
-        -------
-        int
-            基準をもとに戻したエージェントの番号
-        """
-        return (agent_idx + agent.agent_idx + game_setting.player_num) % game_setting.player_num + 1
-
-    def decompose_talk_text(self, talk_text:str, agent: Agent, game_setting: GameSetting) -> Talk:
-        """
-        会話文を分解する
-
-        Parameters
-        ----------
-        talk_text : str
-            分解する会話文
-        agent : Agent
-            推論対象のエージェント
-        game_setting : GameSetting
-            ゲームの設定
-
-        Returns
-        -------
-        List[str]
-            分解した会話文
-        """
-        split_text = talk_text.split(",")
-        # TODO:他の情報も復元する
-        agent_idx = self.revert_agent_idx(int(split_text[0]), agent, game_setting)
-        #[2桁の数字]->Agent[revert_agent_idx(2桁の数字)]に変換
-        rev_text = re.sub(r"\[([0-9]{2})\]",lambda m: f"Agent[{self.revert_agent_idx(int(m.group(1)), agent, game_setting):02d}]",split_text[1])
-        return Talk(agent=Agent(agent_idx),text=rev_text)
-    
-    def decompose_vote_text(self, vote_text:str, agent: Agent, game_setting: GameSetting) -> Vote:
-        """
-        投票文を分解する
-
-        Parameters
-        ----------
-        vote_text : str
-            分解する投票文
-        agent : Agent
-            推論対象のエージェント
-        game_setting : GameSetting
-            ゲームの設定
-
-        Returns
-        -------
-        Vote
-            分解した投票文
-        """
-        split_text = vote_text.split(",")
-        #TODO:他の情報も復元する
-        from_agent_idx = self.revert_agent_idx(int(split_text[0]), agent, game_setting)
-        to_agent_idx = self.revert_agent_idx(int(split_text[1]), agent, game_setting)
-        return Vote(agent=Agent(from_agent_idx),target=Agent(to_agent_idx))
 
     def send_message_to_api(self,messages:List[Dict[str,str]], max_retries:int=5, timeout:int=10)-> str:
         """
