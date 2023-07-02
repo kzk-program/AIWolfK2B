@@ -5,5 +5,6 @@ from .RoleEstimationModelPreprocessor import RoleEstimationModelPreprocessor
 from .BERTRoleEstimationModel import BERTRoleEstimationModel
 from .BERTRoleInferenceModule import BERTRoleInferenceModule
 from .StrategyModule import StrategyModule
+from .InfluenceConsiderationModule import InfluenceConsiderationModule
 from .QuestionProcessingModule import QuestionProcessingModule
 from .GPTProxy import GPTAPI,ChatGPTAPI
