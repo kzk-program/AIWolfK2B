@@ -36,12 +36,8 @@ class RequestProcessingModule(AbstractRequestProcessingModule):
     def process_request(self, request:str, requester:Agent, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         request_actiontype = self.classify_request_actiontype(request)
         if request_actiontype == ActionType.VOTE:
-            target_agent = self.classify_request_target_vote(request)
-            plan_vote_agent = self.strategy_module.vote(game_info,game_setting)
-            if target_agent.agent_idx == plan_vote_agent.agent_idx:
-                plan = OneStepPlan("賛同するから", ActionType.TALK, f">>{requester} 良いですね、{target_agent}に投票しましょう。")
-            else:
-                plan = OneStepPlan("賛同しないから", ActionType.TALK, f">>{requester} いいえ、私は{plan_vote_agent}に投票します。")
+            return self.discuss_who_to_vote(game_info, game_setting)
+            
         elif request_actiontype == ActionType.DIVINE:
             target_agent = self.classify_request_target_divine(request)
             plan_divine_agent = self.strategy_module.divine(game_info,game_setting)
