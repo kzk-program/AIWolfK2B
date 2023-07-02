@@ -5,6 +5,7 @@ from aiwolf import GameInfo, GameSetting
 from aiwolf.agent import Agent,Role
 
 from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractRoleEstimationModel,AbstractStrategyModule,AbstractRoleInferenceModule,RoleInferenceResult,OneStepPlan, ActionType
+from aiwolfk2b.utils.helper import load_default_config,get_openai_api_key,load_default_GameInfo,load_default_GameSetting
 import errno
 import os
 
@@ -17,15 +18,16 @@ class StrategyModule(AbstractStrategyModule):
         self.future_plan = []
         self.next_plan = None
 
-    def talk(self,game_info: GameInfo, game_setting: GameSetting) -> str:
-        return "実装お願いします"
+    def talk(self,game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
+        talk_plan = OneStepPlan("未実装だから",ActionType.TALK,"実装お願いします(from strategy module)")
+        return talk_plan
     
-    def vote(self, game_info: GameInfo, game_setting: GameSetting) -> Agent:
+    def vote(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """投票"""
         #各エージェントの役職を推定する
         inf_results:List[RoleInferenceResult] = []
         for a in game_info.alive_agent_list:
-            inf_results.append(self.role_inference_module.infer(a, game_info, game_setting))
+            inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))
 
         #エージェントの中から最も占い師の確率が高いエージェントを選ぶ
         #エージェントの中から最も狂人の確率が低いエージェントを選ぶ
@@ -39,21 +41,22 @@ class StrategyModule(AbstractStrategyModule):
             #占い師が生きている確率が高い場合
             if self.check_survive_seer(inf_results):
                 #最も占い師の確率が高いエージェントに投票する
-                return max_seer_agent
+                vote_plan = OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,max_seer_agent)
             else:
                 #最も狂人の確率が低いエージェントに投票する
-                return min_poss_agent
+                vote_plan = OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,min_poss_agent)
         #村人側の場合、誰に投票するか決める
         else:
             #最も人狼の確率が高いエージェントに投票する
-            return max_wolf_agent
+            vote_plan = OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,max_wolf_agent)
+        return vote_plan
     
-    def attack(self, game_info: GameInfo, game_setting: GameSetting) -> Agent:
+    def attack(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """襲撃"""
         #各エージェントの役職を推定する
         inf_results:List[RoleInferenceResult] = []
         for a in game_info.alive_agent_list:
-            inf_results.append(self.role_inference_module.infer(a, game_info, game_setting))
+            inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))
 
         #エージェントの中から最も占い師の確率が高いエージェントを選ぶ
         #エージェントの中から最も狂人の確率が低いエージェントを選ぶ
@@ -63,30 +66,31 @@ class StrategyModule(AbstractStrategyModule):
         #占い師が生きている確率が高い場合
         if self.check_survive_seer(inf_results):
             #最も占い師の確率が高いエージェントに襲撃する
-            return max_seer_agent
+            attack_plan = OneStepPlan("最も占い師の確率が高いから",ActionType.ATTACK,max_seer_agent)
         else:
             #最も狂人の確率が低いエージェントに襲撃する
-            return min_poss_agent
+            attack_plan = OneStepPlan("最も狂人の確率が低いから",ActionType.ATTACK,min_poss_agent)
+        return attack_plan
     
-    def divine(self, game_info: GameInfo, game_setting: GameSetting) -> Agent:
+    def divine(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """占い"""
         #各エージェントの役職を推定する
         inf_results:List[RoleInferenceResult] = []
         for a in game_info.alive_agent_list:
-            inf_results.append(self.role_inference_module.infer(a, game_info, game_setting))
+            inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))
 
         #人狼側である確率が最も低いエージェントを選ぶ
         min_wolf_agent = self.min_agent(inf_results, Role.WEREWOLF)
-
-        #最も人狼の確率が低いエージェントに投票する
-        return min_wolf_agent
+        divine_plan = OneStepPlan("人狼側である確率が低いものを確定させたいから",ActionType.DIVINE,min_wolf_agent)
+        return divine_plan
     
-    def guard(self, game_info: GameInfo, game_setting: GameSetting) -> Agent:
+    
+    def guard(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """護衛"""
         """５人人狼では不要"""
         raise NotImplementedError
     
-    def whisper(self, game_info: GameInfo, game_setting: GameSetting) -> str:
+    def whisper(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """人狼同士の相談"""
         """５人人狼では不要"""
         raise NotImplementedError
@@ -161,27 +165,15 @@ class StrategyModule(AbstractStrategyModule):
             return False
         
 if __name__=="__main__":
-    import pickle
     from aiwolf.agent import Status
     from aiwolfk2b.AttentionReasoningAgent.SimpleModules import RandomRoleEstimationModel, SimpleRoleInferenceModule
-    config_ini = ConfigParser()
-    config_ini_path = os.pardir + '/config.ini'
-
-    # iniファイルが存在するかチェック
-    if os.path.exists(config_ini_path):
-        # iniファイルが存在する場合、ファイルを読み込む
-        with open(config_ini_path, encoding='utf-8') as fp:
-            config_ini.read_file(fp)
-    else:
-        # iniファイルが存在しない場合、エラー発生
-        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), config_ini_path)
+    
+    config_ini = load_default_config()
+    game_info = load_default_GameInfo()
+    game_setting = load_default_GameSetting()
     
     role_estimation_model = RandomRoleEstimationModel(config_ini)
     role_inference_module = SimpleRoleInferenceModule(config_ini, role_estimation_model)
-    with open(os.pardir +"/game_info.pkl", mode="rb") as f:
-        game_info:GameInfo = pickle.load(f)
-    with open(os.pardir + "/game_setting.pkl", mode="rb") as f:
-        game_setting:GameSetting = pickle.load(f)
     
     strategy_module = StrategyModule(config_ini, role_estimation_model, role_inference_module)
     strategy_module.initialize(game_info, game_setting)

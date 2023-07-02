@@ -50,7 +50,7 @@ class AbstractRoleEstimationModel(AbstractModule):
         super().initialize(game_info, game_setting)
 
     @abstractmethod
-    def estimate(self,agent:Agent, game_info: GameInfo, game_setting: GameSetting) -> RoleEstimationResult:
+    def estimate(self,agent:Agent, game_info_list: List[GameInfo], game_setting: GameSetting) -> RoleEstimationResult:
         """
         指定された情報から、指定されたエージェントの役職を推定し、その結果を返す
 
@@ -58,8 +58,8 @@ class AbstractRoleEstimationModel(AbstractModule):
         ----------
         agent : Agent
             推定対象のエージェント
-        game_info : GameInfo
-            ゲームの情報
+        game_info_list : List[GameInfo]
+            役職推定に用いるゲーム情報のリスト
         game_setting : GameSetting
             ゲームの設定
 

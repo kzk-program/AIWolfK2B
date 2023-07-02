@@ -35,7 +35,7 @@ class RoleInferenceResult:
         self.probs = result
         
     def __str__(self) -> str:
-        return self.agent + "is reason: " + self.reason + "\nresult: " + str(self.probs)
+        return str(self.agent) + "is reason: " + self.reason + "\nresult: " + str(self.probs)
 
 
 class AbstractRoleInferenceModule(AbstractModule):
@@ -71,7 +71,7 @@ class AbstractRoleInferenceModule(AbstractModule):
         super().initialize(game_info, game_setting)
   
     @abstractmethod
-    def infer(self,agent:Agent, game_info: GameInfo, game_setting: GameSetting) -> RoleInferenceResult:
+    def infer(self,agent:Agent, game_info_list: List[GameInfo], game_setting: GameSetting) -> RoleInferenceResult:
         """
         指定された情報から、指定されたエージェントの役職を推論する
 
@@ -79,8 +79,8 @@ class AbstractRoleInferenceModule(AbstractModule):
         ----------
         agent : Agent
             推論対象のエージェント
-        game_info : GameInfo
-            ゲームの情報
+        game_info_list : List[GameInfo]
+            ゲームの情報のリスト
         game_setting : GameSetting
             ゲームの設定
 
