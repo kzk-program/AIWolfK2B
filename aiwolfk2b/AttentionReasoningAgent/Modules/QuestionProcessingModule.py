@@ -3,16 +3,12 @@ from configparser import ConfigParser
 from aiwolfk2b.AttentionReasoningAgent.SimpleModules import SimpleRoleInferenceModule, SimpleStrategyModule, RandomRoleEstimationModel
 from aiwolfk2b.utils.helper import load_default_config,get_openai_api_key,load_default_GameInfo,load_default_GameSetting
 from aiwolf import GameInfo, GameSetting
-from aiwolf.gameinfo import _GameInfo
-from aiwolf.gamesetting import _GameSetting
 from enum import Enum
 from aiwolf.agent import Agent,Role
 from typing import List, Optional
-import configparser
-import errno
-import os
 import openai
 import Levenshtein
+import numpy as np
 
 class QuestionType(Enum):
     """質問の種類"""
@@ -20,7 +16,7 @@ class QuestionType(Enum):
     """過去の行動の理由"""
     ACTION_PLAN = "ACTION_PLAN"
     """将来の行動のプラン"""
-    ROLE_INFERENCE = "OLE_INFERENCE"
+    ROLE_INFERENCE = "ROLE_INFERENCE"
     """役職推定"""
 
 class GPT3API:
@@ -30,12 +26,12 @@ class GPT3API:
     def __init__(self):
         openai.api_key = get_openai_api_key()
 
-    def complete(self, input:str)->str:
+    def complete(self, input:str,model="text-davinci-003",max_tokens=100,temperature=0)->str:
         """GPT3でCompletionを行う"""
-        response = openai.Completion.create(engine="text-davinci-003",
+        response = openai.Completion.create(engine=model,
             prompt=input,
-            max_tokens=100,
-            temperature=0)
+            max_tokens=max_tokens,
+            temperature=temperature)
         return response['choices'][0]['text']
 
 class QuestionProcessingModule(AbstractQuestionProcessingModule):
@@ -314,7 +310,7 @@ Agent[04]
         
     def closest_str(self, str_list:List[str], target_str:str)->str:
         """str_listの中からtarget_strに最も近い文字列を返す"""
-        min_distance = 100000
+        min_distance = np.inf
         min_str = ""
         for str in str_list:
             distance = Levenshtein.distance(str, target_str)
@@ -326,8 +322,6 @@ Agent[04]
 
 
 if __name__ == "__main__":
-    import pickle
-
     config_ini = load_default_config()
     game_info = load_default_GameInfo()
     game_setting = load_default_GameSetting()
