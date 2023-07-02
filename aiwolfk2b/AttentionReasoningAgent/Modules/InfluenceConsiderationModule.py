@@ -52,14 +52,36 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
                 continue
             
             #正規表現を使って>> Agent[自分のid]があるかを判定
-            mentioned = re.match(r'^\s*>>\s*' + re.escape(str(game_info.me)), talk.text)
+            mentioned = re.match(r'>>\s*' + re.escape(str(game_info.me)), talk.text)
             mentioned = True if mentioned is not None else False
+
+            prompt = f"以下のテキストは、{game_info.me}への質問・要求を 0.含まない 1.含む に分類されます。\n"
+
+            dics={
+                f"なぜ{game_info.me}はAgent[01]を占ったのですか":1,
+                "皆さんは誰に投票しますか":1,
+                "皆さんは誰が人狼だと思いますか":1,
+                "Agent[01]が人狼だと思う":0,
+                f"{game_info.me}はAgent[04]を占ってほしい":1,
+                "頑張ってほしい":0,
+            }
+            
+            for q,a in dics.items():
+                prompt += "Q: {question}\nA: {answer}\n".format(question=q, answer=a)
+            prompt += f"Q: {talk.text}\nA:"
+            
+            #GPTによって分類
+            completion = self.gpt.complete(prompt,max_tokens=150).strip()
+            print(completion)
+            idx = int(calc_closest_str(["0","1"],completion))
+            if idx==1:
+                mentioned = True
             
             if mentioned: #自分の投げかけがある場合
                 print("in mentioned")
                 #要求か質問かをGPTによって判定
                 #先頭の言及部分を削除
-                text_removed = re.sub(r'^\s*>>\s*' + re.escape(str(game_info.me)), '', talk.text)
+                text_removed = re.sub(r'>>\s*' + re.escape(str(game_info.me)), '', talk.text)
                 #GPTによって要求か質問かを判定
                 influence_type = self.classify_question_or_request(text_removed)
                 if influence_type == InfluenceType.REQUEST:

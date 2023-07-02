@@ -66,10 +66,10 @@ class AttentionReasoningAgent(AbstractPlayer):
         self.role_estimation_model:AbstractRoleEstimationModel = BERTRoleEstimationModel(self.config)
         self.role_inference_module:AbstractRoleInferenceModule = BERTRoleInferenceModule(self.config,self.role_estimation_model)
         self.strategy_module:AbstractStrategyModule = StrategyModule(self.config,self.role_estimation_model,self.role_inference_module)
-        self.request_processing_module:AbstractRequestProcessingModule = SimpleRequestProcessingModule(self.config,self.role_estimation_model,self.strategy_module)
+        self.request_processing_module:AbstractRequestProcessingModule = RequestProcessingModule(self.config,self.role_estimation_model,self.strategy_module)
         self.question_processing_module:AbstractQuestionProcessingModule = QuestionProcessingModule(self.config,self.role_inference_module,self.strategy_module)
         self.influence_consideration_module:AbstractInfluenceConsiderationModule = InfluenceConsiderationModule(self.config,self.request_processing_module,self.question_processing_module)
-        self.speaker_module:AbstractSpeakerModule = SimpleSpeakerModule(self.config)
+        self.speaker_module:AbstractSpeakerModule = SpeakerModule(self.config)
 
     def is_alive(self, agent: Agent) -> bool:
         """Return whether the agent is alive.

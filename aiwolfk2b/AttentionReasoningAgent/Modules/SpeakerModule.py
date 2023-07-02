@@ -1,6 +1,8 @@
 from configparser import ConfigParser
 from typing import List,Tuple,Dict,Any,Union
 
+from aiwolf import GameInfo,GameSetting
+
 from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractSpeakerModule
 from aiwolfk2b.AttentionReasoningAgent.Modules.GPTProxy import ChatGPTAPI
 
@@ -8,11 +10,19 @@ class SpeakerModule(AbstractSpeakerModule):
     """発話を豊かにするモジュール。まだ簡易的。"""
     def __init__(self, config: ConfigParser) -> None:
         super().__init__(config)
-        self.chatgpt_api = ChatGPTAPI()
-        self.character:str = config.get("SpeakerModule","character")
+        self.config=config
     
+    def initialize(self, game_info: GameInfo, game_setting:GameSetting) -> None:
+        super().initialize(game_info, game_setting)
+        self.chatgpt_api = ChatGPTAPI()
+        self.character:str = self.config.get("SpeakerModule",f"character{game_info.me.agent_idx}")
+
     def enhance_speech(self,speech:str) -> str:
-        messages = [{"role":"system", "content": f"入力される文章を{self.character}のキャラ付けに変換してください。Agent[xx]という表現は変えないでください。"},
+        if "Skip" in speech:
+            return "Skip"
+        if "Over" in speech:
+            return "Over"
+        messages = [{"role":"system", "content": f"入力される文章を{self.character}のキャラ付けに変換してください。Agentという表現は変えないでください。"},
                     {"role": "user", "content":speech}]
         response = self.chatgpt_api.complete(messages)
         return response

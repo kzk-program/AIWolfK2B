@@ -400,14 +400,14 @@ class StrategyModule(AbstractStrategyModule):
             # 1日目はCOの状況に反応する(状況を整理する)
             # GPT4にやらせる
             messages = [{"role": "system", "content":f"あなたは今人狼ゲームをしています。あなたは{game_info.me}です。対戦ログと指示が送られてきますので、対戦ログの結果と発言するべきことが送られてきますので、適切に返答してください。"}, 
-                        {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。誰が占い師カミングアウトしているかなどの状況を整理して会話を発展させてください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
+                        {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。誰が占い師カミングアウトしているかなどの状況を整理して会話を発展させてください。誰かに向けて発言するときは、「>>Agent[01] 」などと文頭につけてください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
             response = self.chatgpt_api.complete(messages)
             return response
         else:
             # 2日目は占い理由を聞く
             # GPT4にやらせる
             messages = [{"role": "system", "content":"あなたは今人狼ゲームをしています。あなたは{game_info.me}です。対戦ログと指示が送られてきますので、対戦ログの結果と発言するべきことが送られてきますので、適切に返答してください。"}, 
-                        {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。占い師COした人に、なぜその人を占ったか聞くなどしてください。ただし他の人が既に聞いてた場合は、もう言う必要は無いので、SKIPと発言してください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
+                        {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。占い師COした人に、なぜその人を占ったか聞くなどしてください。誰かに向けて発言するときは、「>>Agent[01] 」などと文頭につけてください。ただし他の人が既に聞いてた場合は、もう言う必要は無いので、SKIPと発言してください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
             response = self.chatgpt_api.complete(messages)
             return response
 
@@ -418,6 +418,12 @@ class StrategyModule(AbstractStrategyModule):
         # future_planに投票を入れる
         self.add_vote_future_plan(OneStepPlan("最も人狼ぽかったから", ActionType.VOTE, vote_target))
         # 自己対戦で要求処理モジュールが起動するように、要求型の言い方にした
+        mention = ""
+        for agent in game_info.alive_agent_list:
+            if agent != game_info.me:
+                mention += f">>{agent} "
+            
+        # return f"{mention}{vote_target}が人狼だと思うので投票したいと思います、皆さん{vote_target}に投票しましょう！"
         return f"{vote_target}が人狼だと思うので投票したいと思います、皆さん{vote_target}に投票しましょう！"
     
     def talk_no_topic(self, game_info:GameInfo, game_setting:GameSetting)->Optional[str]:
