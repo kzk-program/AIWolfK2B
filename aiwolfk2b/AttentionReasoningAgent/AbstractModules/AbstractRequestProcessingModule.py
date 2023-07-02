@@ -3,7 +3,7 @@ from abc import abstractmethod
 from typing import List,Tuple,Dict,Any,Union
 from configparser import ConfigParser
 
-from aiwolf import GameInfo,GameSetting
+from aiwolf import GameInfo,GameSetting, Agent
 from AbstractModule import AbstractModule
 from AbstractRoleEstimationModel import AbstractRoleEstimationModel
 from AbstractStrategyModule import AbstractStrategyModule,OneStepPlan
@@ -48,12 +48,16 @@ class AbstractRequestProcessingModule(AbstractModule):
     
 
     @abstractmethod
-    def process_request(self, game_info: GameInfo, game_setting: GameSetting)->OneStepPlan:
+    def process_request(self, request:str, requester:Agent,game_info: GameInfo, game_setting: GameSetting)->OneStepPlan:
         """
         他者からの要求を処理し、その結果を返す
 
         Parameters
         ----------
+        request : str
+            要求内容
+        requester : Agent
+            要求者
         game_info : GameInfo
             ゲームの情報
         game_setting : GameSetting
@@ -63,5 +67,6 @@ class AbstractRequestProcessingModule(AbstractModule):
         -------
         OneStepPlan
             行う戦略（他者影響を考慮した行動の根拠と行動のペア）
-        """
+        """        
+    
         pass

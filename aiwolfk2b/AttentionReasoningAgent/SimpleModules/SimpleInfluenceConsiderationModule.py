@@ -19,7 +19,7 @@ class SimpleInfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
             #要求か質問のどちらかをランダムに選ぶ
             is_request = random.random() > 0.5
             if is_request:
-                plan = self.request_processing_module.process_request(game_info, game_setting)
+                plan = self.request_processing_module.process_request("", Agent(random.randint(1, 5)),game_info, game_setting)
             else:
                 plan = self.question_processing_module.process_question("", Agent(random.randint(1, 5)), game_info, game_setting)
             return has_influence,plan
