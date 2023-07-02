@@ -96,8 +96,8 @@ class RequestProcessingModule(AbstractRequestProcessingModule):
         evaluation_message = ""
         for one_step_plan, eval in evaluation:
             evaluation_message += f"{one_step_plan.action}に投票するべき度合い（確率）は{eval}です。なぜなら、{one_step_plan.reason}です。\n"
-        messages = [{"system": f"あなたは人狼ゲームをしています。あなたは{game_info.me}です。あなたは今、投票先を決める議論をしています。投票先がバラけることはあまり良いことではありませんから、過半数の票が一人に集まるように合意を形成してください。"},
-                    {"user": f"今の人狼ゲームのログは以下です。\n===========\n{self.strategy_module.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。\n{evaluation_message}\nより投票するべき度合いが高い方に誘導・説得しながら、多少妥協もしながら合意を形成してください。最後に会話内容とは別に、「結論：」に続いて投票することにするエージェントをAgent[01]~Agent[{game_setting.player_num:02d}]で答えてください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
+        messages = [{"role":"system", "content": f"あなたは人狼ゲームをしています。あなたは{game_info.me}です。あなたは今、投票先を決める議論をしています。投票先がバラけることはあまり良いことではありませんから、過半数の票が一人に集まるように合意を形成してください。"},
+                    {"role":"user", "content": f"今の人狼ゲームのログは以下です。\n===========\n{self.strategy_module.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。\n{evaluation_message}\nより投票するべき度合いが高い方に誘導・説得しながら、多少妥協もしながら合意を形成してください。最後に会話内容とは別に、「結論：」に続いて投票することにするエージェントをAgent[01]~Agent[{game_setting.player_num:02d}]で答えてください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
         response = self.chatgpt_api.complete(messages)
         if len(response.split("結論："))==2:
             vote_agent = closest_str([f"{agent}" for agent in game_info.alive_agent_list], response.split("結論：")[1].strip())
