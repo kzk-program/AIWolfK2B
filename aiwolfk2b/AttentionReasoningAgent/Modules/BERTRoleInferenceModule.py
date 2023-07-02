@@ -84,7 +84,7 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
 
         sentence_attens:List[Tuple[float,Agent,Union[Agent,str,Species],str]] = []
         accum_text=""
-        phase = "talk"
+        phase = ""
         day = 0
         accum_attens = 0.0
         
@@ -111,7 +111,7 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
                         action_type = word_split[0]
                         if action_type == "divine":
                             target_idx = self.revert_agent_idx(int(word_split[1]),agent,game_setting)
-                            species = Species(self.word_split[2])
+                            species = Species(word_split[2])
                             sentence_attens.append((accum_attens,Agent(target_idx),species,"divine"))
                         elif action_type == "attacked":
                             attacked_idx = self.revert_agent_idx(int(word_split[1]),agent,game_setting)
@@ -213,10 +213,20 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         # chatgptを用いて推論理由を生成
         #最大確率を持つラベルを予測結果とする
         pred_role = max(result.probs.items(), key=lambda x: x[1])[0]
+        
+        # 与え方1
         explain_text = f"人狼ゲームにて、以下の箇条書きの内容から{agent}が{pred_role.name}であると推定される。以下の情報を元に{agent}の役職が{pred_role.name}と呼べる理由を論理的に簡潔に50字内で述べなさい。だだし、文末は「から」で終わらせなさい\n{reason_text}"
         #print(f"explain_text:{explain_text}")
         
         explain_message = [{"role":"user","content":explain_text}]
+        
+        # # 与え方2
+        # explain_text = f"人狼ゲームにて、以下の箇条書きの内容から{agent}が{pred_role.name}であると推定される。以下の情報を元に{agent}の役職が{pred_role.name}と呼べる理由を論理的に簡潔に50字内で述べなさい。だだし、文末は「から」で終わらせなさい\n"
+        # #print(f"explain_text:{explain_text}")
+        
+        # explain_message = [{"role":"system","content":explain_text},{"role":"user","content":reason_text}]
+        
+        
         explained_reason = self.send_message_to_api(explain_message)
         #print(f"log_text:{estimate_text}")
         
