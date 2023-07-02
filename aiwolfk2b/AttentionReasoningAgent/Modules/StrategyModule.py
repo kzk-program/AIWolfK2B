@@ -1,26 +1,179 @@
+import os,random
 from configparser import ConfigParser
-from typing import List,Tuple,Dict,Any,Union
+from typing import List,Tuple,Dict,Any,Union, Optional
+from enum import Enum
 
 from aiwolf import GameInfo, GameSetting
-from aiwolf.agent import Agent,Role
+from aiwolf.utterance import Talk
+from aiwolf.agent import Agent,Role, Species
 
 from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractRoleEstimationModel,AbstractStrategyModule,AbstractRoleInferenceModule,RoleInferenceResult,OneStepPlan, ActionType
-from aiwolfk2b.utils.helper import load_default_config,get_openai_api_key,load_default_GameInfo,load_default_GameSetting
-import errno
-import os
+from aiwolfk2b.AttentionReasoningAgent.Modules.GPTProxy import GPTAPI,ChatGPTAPI
+from aiwolfk2b.utils.helper import load_default_config,load_default_GameInfo,load_default_GameSetting,calc_closest_str
+
+class GameLog:
+    """ゲームのログを保存するクラス"""
+    
+    _talk_list:List[Talk]
+    """talkの履歴をゲームを通して保存"""
+    _log:str
+    """talkの履歴を文字列で保存"""
+    _log_talk_numbers:int
+    """logで保存しているtalkの数"""
+    _talk_list_updated:bool
+    """talk_listが更新されたか=logを更新する必要があるかどうか"""
+    @property
+    def log(self)->str:
+        if self._talk_list_updated:
+            #更新を記録
+            for talk in self._talk_list[self._log_talk_numbers:]:
+                self._log += f"{talk.day}日目 {talk.agent}の発言 :{talk.text}\n"
+            #更新済みに変更
+            self._talk_list_updated = False
+            self._log_talk_numbers = len(self._log)
+        #文字数が多いとGPTに入力できないため、最後のtruncate_words文字を返す
+        if len(self._log) > self.truncate_words:
+            return self._log[-self.truncate_words:]
+        else:
+            return self._log #ログが短いときはそのまま返す
+    
+    def __init__(self, game_info:GameInfo, game_setting:GameSetting,truncate_words = 2000) -> None:
+        """
+        コンストラクタ
+
+        Parameters
+        ----------
+        game_info : GameInfo
+            ゲームの情報
+        game_setting : GameSetting
+            ゲームの設定
+        truncate_words : int, optional
+            入力最大文字数(GPTに入力できなくなるため), by default 2000
+        """
+        self._log = ""
+        self._talk_list = []
+        self._log_talk_numbers = 0
+        self._talk_list_updated = True
+        self.truncate_words = truncate_words
+    
+    def update(self, game_info:GameInfo, game_setting:GameSetting)->None:
+        self._talk_list.extend(game_info.talk_list)
+        self._talk_list_updated = True
+
+
+class TalkTopic(Enum):
+    """会話のトピック"""
+    ROLEACTION_RESULT = "ROLEACTION_RESULT"
+    ROLEACTION_REACTION = "ROLEACTION_REACTION"
+    WHO_TO_VOTE = "WHO_TO_VOTE"
+
+class ComingOutStatus:
+    """
+    各エージェントのカミングアウトの状態
+    1日目の最初の会話より前ならUNC, COしたらその役職、COしなかったらVILLAGER
+    """
+    all_comingout_status:Dict[Agent,Role] = {}
+    def __init__(self, game_info:GameInfo, game_setting:GameSetting) -> None:
+        for agent in game_info.agent_list:
+            self.all_comingout_status[agent] = Role.UNC
+            self.gpt3_api =GPTAPI()
+
+    def update(self, game_info:GameInfo, game_setting:GameSetting)->None:
+        if not self.is_all_comingout():
+            for talk in game_info.talk_list:
+                prompt = f"""以下の発言に対し、カミングアウト(役職の公開)かどうかとその役職を判定してください。カミングアウトが無ければ無しとこたえてください。役職は、人狼・狂人・占い師・村人の4種類で答えてください。
+「占いCOします。Agent[01]は白でした。」 :占い師
+「ガオー、人狼だぞー」:人狼
+「俺は村人です。仲良くやりましょう！」:村人
+「みなさんよろしくお願いします」:無し
+「{talk.text}」 :"""
+                response = self.gpt3_api.complete(prompt)
+                CO_role = calc_closest_str(["無し","人狼","狂人","占い師","村人"], response)
+                if CO_role == "無し":
+                    if self.all_comingout_status[talk.agent] == Role.UNC:
+                        self.all_comingout_status[talk.agent] = Role.VILLAGER
+                elif CO_role == "人狼":
+                    self.all_comingout_status[talk.agent] = Role.WEREWOLF
+                elif CO_role == "狂人":
+                    self.all_comingout_status[talk.agent] = Role.POSSESSED
+                elif CO_role == "占い師":
+                    self.all_comingout_status[talk.agent] = Role.SEER
+                elif CO_role == "村人":
+                    self.all_comingout_status[talk.agent] = Role.VILLAGER
+                else:
+                    raise ValueError
+
+    def is_all_comingout(self)->bool:
+        for agent, role in self.all_comingout_status.items():
+            if role == Role.UNC:
+                return False
+        return True
 
 class StrategyModule(AbstractStrategyModule):
     """戦略立案モジュール"""
     
     def __init__(self,config:ConfigParser,role_estimation_model: AbstractRoleEstimationModel, role_inference_module: AbstractRoleInferenceModule) -> None:
         super().__init__(config,role_estimation_model,role_inference_module)
+
+    def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
+        super().initialize(game_info, game_setting)
         self.history = []
         self.future_plan = []
         self.next_plan = None
+        self.today = 0
+        self.today_talked_topic:Dict[TalkTopic, bool] = {TalkTopic.ROLEACTION_RESULT:False, TalkTopic.ROLEACTION_REACTION:False, TalkTopic.WHO_TO_VOTE:False}
+        self.comingout_status = ComingOutStatus(game_info, game_setting)
+        self.game_log = GameLog(game_info, game_setting)
+        self.chatgpt_api = ChatGPTAPI()
 
     def talk(self,game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
-        talk_plan = OneStepPlan("未実装だから",ActionType.TALK,"実装お願いします(from strategy module)")
+        if game_info.day == 0:
+            talk_plan = OneStepPlan("挨拶をする必要があるから",ActionType.TALK,"よろしくお願いします！")
+            return talk_plan
+        
+        if game_info.day != self.today:
+            self.today = game_info.day
+            self.reset_talked_topic()
+
+        self.comingout_status.update(game_info, game_setting)
+        self.game_log.update(game_info, game_setting)
+
+        # next_planがあればそれを言う
+        if self.next_plan != None:
+            if self.next_plan.action_type == ActionType.TALK:
+                plan = self.next_plan
+                self.next_plan = None
+                return plan
+        
+        for topic, is_talked in self.today_talked_topic.items():
+            if is_talked == False:
+                if topic == TalkTopic.ROLEACTION_RESULT:
+                    role_action_result = self.talk_roleaction_result(game_info, game_setting)
+                    if role_action_result != None:
+                        print("role_action_result", role_action_result)
+                        talk_plan = OneStepPlan("勝つために自分の役職に関わる情報をみんなに伝えたいから",ActionType.TALK,role_action_result)
+                        return talk_plan
+                elif topic == TalkTopic.ROLEACTION_REACTION:
+                    roleaction_reaction =  self.talk_roleaction_reaction(game_info, game_setting)
+                    if roleaction_reaction != None:
+                        self.today_talked_topic[topic] = True
+                        print("roleaction_reaction", roleaction_reaction)
+                        talk_plan = OneStepPlan("勝つために情報を得たいから",ActionType.TALK,roleaction_reaction)
+                        return talk_plan
+                elif topic == TalkTopic.WHO_TO_VOTE:
+                    who_to_vote = self.talk_who_to_vote(game_info, game_setting)
+                    if who_to_vote != None:
+                        self.today_talked_topic[topic] = True
+                        print("who_to_vote", who_to_vote)
+                        talk_plan = OneStepPlan("勝つために周りの投票先を知りたいから",ActionType.TALK,who_to_vote)
+                        return talk_plan
+                
+        # 会話デッキを使い果たしたら
+        no_topic = self.talk_no_topic(game_info, game_setting)
+        print("no topic", no_topic)
+        talk_plan = OneStepPlan("特に話すことがないから",ActionType.TALK,no_topic)
         return talk_plan
+
     
     def vote(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """投票"""
@@ -163,7 +316,92 @@ class StrategyModule(AbstractStrategyModule):
             return True
         else:
             return False
+    
+    def species_to_japanese(self, species: Species) -> str:
+        """種族を日本語に変換する"""
+        if species == Species.HUMAN:
+            return "人間"
+        elif species == Species.WEREWOLF:
+            return "人狼"
+        else:
+            raise ValueError("不正な種族です")
         
+    def reset_talked_topic(self)->None:
+        """話したトピックをリセットする"""
+        for topic in self.today_talked_topic.keys():
+            self.today_talked_topic[topic] = False
+        return
+    
+    def talk_roleaction_result(self, game_info:GameInfo, game_setting:GameSetting) -> Optional[str]:
+        """占い結果を言う。霊媒師がいる場合は霊媒結果を言うことも想定した関数。"""
+        self.today_talked_topic[TalkTopic.ROLEACTION_RESULT] = True
+        if game_info.my_role == Role.SEER or game_info.my_role == Role.POSSESSED:
+            #　占い結果を言う
+            if game_info.my_role == Role.SEER:
+                # 真占い師のとき
+                divine_target = game_info.divine_result.target
+                divine_result = game_info.divine_result.result
+            else:
+                #狂人のとき
+                if game_info.day == 1:
+                    divine_target = random.choice(game_info.alive_agent_list)
+                    divine_result = Species.HUMAN
+                else:
+                    # 最も人狼の確率が低い人を指名して、黒出しする
+                    inf_results:List[RoleInferenceResult] = []
+                    for a in game_info.alive_agent_list:
+                        if a != game_info.me:
+                            inf_results.append(self.role_inference_module.infer(a, game_info, game_setting))
+                    
+                    divine_target = self.min_agent(inf_results, Role.WEREWOLF)
+                    divine_result = Species.WEREWOLF
+                    self.history.append(OneStepPlan("一番怪しいと思ったから", ActionType.DIVINE, divine_target))
+            
+            if game_info.day == 1:
+                return f"占い師COします。{divine_target}は{self.species_to_japanese(divine_result)}でした。"
+            else:
+                return f"占い結果です。{divine_target}は{self.species_to_japanese(divine_result)}でした。"
+        else:
+            return "村人です。頑張りましょう！"
+        
+    def talk_roleaction_reaction(self, game_info:GameInfo, game_setting:GameSetting)->Optional[str]:
+        """COや占い結果に反応したり、占い理由を聞いたりする。"""
+        if not self.comingout_status.is_all_comingout:
+            return "占い師の人がいたらCOしてください"
+        self.today_talked_topic[TalkTopic.ROLEACTION_REACTION] = True
+        if self.today == 1:
+            # 1日目はCOの状況に反応する(状況を整理する)
+            # GPT4にやらせる
+            messages = [{"role": "system", "content":f"あなたは今人狼ゲームをしています。あなたは{game_info.me}です。対戦ログと指示が送られてきますので、対戦ログの結果と発言するべきことが送られてきますので、適切に返答してください。"}, 
+                        {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。誰が占い師カミングアウトしているかなどの状況を整理して会話を発展させてください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
+            response = self.chatgpt_api.complete(messages)
+            return response
+        else:
+            # 2日目は占い理由を聞く
+            # GPT4にやらせる
+            messages = [{"role": "system", "content":"あなたは今人狼ゲームをしています。あなたは{game_info.me}です。対戦ログと指示が送られてきますので、対戦ログの結果と発言するべきことが送られてきますので、適切に返答してください。"}, 
+                        {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。占い師COした人に、なぜその人を占ったか聞くなどしてください。ただし他の人が既に聞いてた場合は、もう言う必要は無いので、SKIPと発言してください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
+            response = self.chatgpt_api.complete(messages)
+            return response
+
+    def talk_who_to_vote(self, game_info:GameInfo, game_setting:GameSetting)->Optional[str]:
+        """誰に投票するかの話題を振る(他の人に聞かれて答えるのは要求処理モジュールの役割なのでやらない)"""
+        self.today_talked_topic[TalkTopic.WHO_TO_VOTE] = True
+        vote_target = self.vote(game_info, game_setting)
+        return f"{vote_target}が人狼だと思うので投票したいと思うのですが、皆さんはどう思いますか？"
+    
+    def talk_no_topic(self, game_info:GameInfo, game_setting:GameSetting)->Optional[str]:
+        """話題がないときに話す"""
+        # GPT4にやらせる
+        # messages = [{"role": "system", "content":f"あなたは今人狼ゲームをしています。あなたは{game_info.me}です。対戦ログと指示が送られてきますので、対戦ログの結果と発言するべきことが送られてきますので、適切に返答してください。"}, 
+        #                 {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。まだ何か人狼ゲーム上重要なことで言うべきことがあれば言ってください(弁明、他者への質問など)。言うことが無ければ「Over」と返してください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
+        # response = self.gpt4_api.complete(messages)
+        # return response
+        
+        #トークン数の関係で、常にOverを返すようにする
+        return "Over"
+
+
 if __name__=="__main__":
     from aiwolf.agent import Status
     from aiwolfk2b.AttentionReasoningAgent.SimpleModules import RandomRoleEstimationModel, SimpleRoleInferenceModule
@@ -178,4 +416,8 @@ if __name__=="__main__":
     strategy_module = StrategyModule(config_ini, role_estimation_model, role_inference_module)
     strategy_module.initialize(game_info, game_setting)
     game_info.status_map= {Agent(1):Status.ALIVE, Agent(2):Status.ALIVE, Agent(3):Status.ALIVE, Agent(4):Status.ALIVE, Agent(5):Status.ALIVE}
-    print(strategy_module.vote(game_info, game_setting))
+    game_info.talk_list = [Talk(day=1,agent=game_info.agent_list[0], idx=1, text="占い師COします。占い結果はAgent[02]が白でした。", turn=1),Talk(day=1,agent=game_info.agent_list[1], idx=2, text="1占いCO把握", turn=1),Talk(day=1,agent=game_info.agent_list[2], idx=3, text="占い師COします。Agent[01]を占って黒でした。", turn=1) , Talk(day=1,agent=game_info.agent_list[3], idx=4, text="村人です", turn=1), Talk(day=1,agent=game_info.agent_list[4], idx=5, text="村人です。", turn=1)]
+    game_info.day = 1
+    print(strategy_module.talk(game_info, game_setting))
+    print(strategy_module.talk(game_info, game_setting))
+    print(strategy_module.comingout_status.all_comingout_status)
