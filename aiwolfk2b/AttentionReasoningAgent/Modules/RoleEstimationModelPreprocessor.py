@@ -148,7 +148,7 @@ class RoleEstimationModelPreprocessor(AbstractModule):
             if game_info.divine_result is not None: #占い結果があれば
                 target_agent_idx = rotate_agent_idx(game_info.divine_result.target.agent_idx)
                 species = game_info.divine_result.result
-                daily_text += f"divine,{target_agent_idx},{species}\n"
+                daily_text += f"divine,{target_agent_idx},{species.name}\n"
             if game_info.attacked_agent is not None: #襲撃結果があれば
                 agent_idx = rotate_agent_idx(game_info.attacked_agent.agent_idx)
                 daily_text += f"attacked,{agent_idx}\n"
