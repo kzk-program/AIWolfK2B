@@ -8,3 +8,4 @@ from .BERTRoleInferenceModule import BERTRoleInferenceModule
 from .StrategyModule import StrategyModule
 from .QuestionProcessingModule import QuestionProcessingModule
 from .InfluenceConsiderationModule import InfluenceConsiderationModule
+from .SpeakerModule import SpeakerModule
