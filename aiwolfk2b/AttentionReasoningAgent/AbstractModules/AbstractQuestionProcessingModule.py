@@ -54,6 +54,10 @@ class AbstractQuestionProcessingModule(AbstractModule):
 
         Parameters
         ----------
+        question : str
+            質問内容
+        questioner : Agent
+            質問者
         game_info : GameInfo
             ゲームの情報
         game_setting : GameSetting
@@ -63,5 +67,5 @@ class AbstractQuestionProcessingModule(AbstractModule):
         -------
         OneStepPlan
             行う戦略(他者影響を考慮した行動の根拠と行動のペア)
-        """
+        """        
         pass
