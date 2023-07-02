@@ -18,8 +18,11 @@ from aiwolf import (AbstractPlayer, Agent, Content, GameInfo, GameSetting,
                     VoteContentBuilder,SkipContentBuilder)
 from aiwolf.constant import AGENT_NONE
 
+from aiwolfk2b.utils.helper import load_default_config
 from aiwolfk2b.AttentionReasoningAgent.AbstractModules import *
 from aiwolfk2b.AttentionReasoningAgent.SimpleModules import *
+from aiwolfk2b.AttentionReasoningAgent.Modules import *
+
 
 CONTENT_SKIP: Content = Content(SkipContentBuilder())
 
@@ -60,11 +63,11 @@ class AttentionReasoningAgent(AbstractPlayer):
         self.talk_list_head = 0
         self.config = config
         #各モジュールの生成
-        self.role_estimation_model:AbstractRoleEstimationModel = RandomRoleEstimationModel(self.config)
-        self.role_inference_module:AbstractRoleInferenceModule = SimpleRoleInferenceModule(self.config,self.role_estimation_model)
-        self.strategy_module:AbstractStrategyModule = SimpleStrategyModule(self.config,self.role_estimation_model,self.role_inference_module)
+        self.role_estimation_model:AbstractRoleEstimationModel = BERTRoleEstimationModel(self.config)
+        self.role_inference_module:AbstractRoleInferenceModule = BERTRoleInferenceModule(self.config,self.role_estimation_model)
+        self.strategy_module:AbstractStrategyModule = StrategyModule(self.config,self.role_estimation_model,self.role_inference_module)
         self.request_processing_module:AbstractRequestProcessingModule = SimpleRequestProcessingModule(self.config,self.role_estimation_model,self.strategy_module)
-        self.question_processing_module:AbstractQuestionProcessingModule = SimpleQuestionProcessingModule(self.config,self.role_inference_module,self.strategy_module)
+        self.question_processing_module:AbstractQuestionProcessingModule = QuestionProcessingModule(self.config,self.role_inference_module,self.strategy_module)
         self.influence_consideration_module:AbstractInfluenceConsiderationModule = SimpleInfluenceConsiderationModule(self.config,self.request_processing_module,self.question_processing_module)
         self.speaker_module:AbstractSpeakerModule = SimpleSpeakerModule(self.config)
 
@@ -164,56 +167,47 @@ class AttentionReasoningAgent(AbstractPlayer):
                 self.identification_reports.append(Judge(talker, game_info.day, content.target, content.result))
         self.talk_list_head = len(game_info.talk_list)  # All done.
 
-    def talk(self) -> Content:
-        # # Choose an agent to be voted for while talking.
-        # #
-        # # The list of fake seers that reported me as a werewolf.
-        # fake_seers: List[Agent] = [j.agent for j in self.divination_reports
-        #                            if j.target == self.me and j.result == Species.WEREWOLF]
-        # # Vote for one of the alive agents that were judged as werewolves by non-fake seers.
-        # reported_wolves: List[Agent] = [j.target for j in self.divination_reports
-        #                                 if j.agent not in fake_seers and j.result == Species.WEREWOLF]
-        # candidates: List[Agent] = self.get_alive_others(reported_wolves)
-        # # Vote for one of the alive fake seers if there are no candidates.
-        # if not candidates:
-        #     candidates = self.get_alive(fake_seers)
-        # # Vote for one of the alive agents if there are no candidates.
-        # if not candidates:
-        #     candidates = self.get_alive_others(self.game_info.agent_list)
-        # # Declare which to vote for if not declare yet or the candidate is changed.
-        # if self.vote_candidate == AGENT_NONE or self.vote_candidate not in candidates:
-        #     self.vote_candidate = self.random_select(candidates)
-        #     if self.vote_candidate != AGENT_NONE:
-        #         return Content(VoteContentBuilder(self.vote_candidate))
-        # return CONTENT_SKIP
-        strategy_content = self.strategy_module.talk(self.game_info,self.game_setting)
+    def talk(self) -> str:
+        strategy_plan = self.strategy_module.talk(self.game_info,self.game_setting)
         influenced = self.influence_consideration_module.check_influence(self.game_info,self.game_setting)
+        executed_plan:OneStepPlan = None
         if influenced[0]:
-            return influenced[1].action
+            #他者影響モジュールのplanを採用
+            executed_plan = influenced[1]
         else:
-            return strategy_content
+            #戦略立案モジュールのplanを採用
+            executed_plan = strategy_plan
+        text = executed_plan.action
+        rich_text = self.speaker_module.enhance_speech(text)
+        self.strategy_module.update_history(self.game_info,self.game_setting,executed_plan)
+        return rich_text
 
     def vote(self) -> Agent:
-        return self.strategy_module.vote(self.game_info,self.game_setting)
-        #return self.vote_candidate if self.vote_candidate != AGENT_NONE else self.me
+        plan = self.strategy_module.vote(self.game_info,self.game_setting)
+        self.strategy_module.update_history(self.game_info,self.game_setting,plan)
+        return plan.action
 
     def attack(self) -> Agent:
-        return self.strategy_module.attack(self.game_info,self.game_setting)
-        #return self.vote_candidate if self.vote_candidate != AGENT_NONE else self.me
+        plan = self.strategy_module.attack(self.game_info,self.game_setting)
+        self.strategy_module.update_history(self.game_info,self.game_setting,plan)
+        return plan.action
 
     def divine(self) -> Agent:
-        return self.strategy_module.divine(self.game_info,self.game_setting)
-        #return self.vote_candidate if self.vote_candidate != AGENT_NONE else self.me
+        plan = self.strategy_module.divine(self.game_info,self.game_setting)
+        self.strategy_module.update_history(self.game_info,self.game_setting,plan)
+        return plan.action
     
     def guard(self) -> Agent:
-        return self.strategy_module.guard(self.game_info,self.game_setting)
-        #return self.vote_candidate if self.vote_candidate != AGENT_NONE else self.me
+        plan = self.strategy_module.guard(self.game_info,self.game_setting)
+        self.strategy_module.update_history(self.game_info,self.game_setting,plan)
+        return plan.action
 
-    def whisper(self) -> Content:
-        text =self.strategy_module.whisper(self.game_info,self.game_setting)
+    def whisper(self) -> str:
+        plan = self.strategy_module.whisper(self.game_info,self.game_setting)
+        text = plan.action
         rich_text = self.speaker_module.enhance_speech(text)
+        self.strategy_module.update_history(self.game_info,self.game_setting,plan)
         return rich_text
-        #return CONTENT_SKIP
 
     def finish(self) -> None:
         pass
@@ -225,23 +219,13 @@ if __name__ == '__main__':
     parser.add_argument('-p', type=int, action='store', dest='port')
     parser.add_argument('-h', type=str, action='store', dest='hostname')
     parser.add_argument('-r', type=str, action='store', dest='role', default='none')
-    parser.add_argument('-n', type=str, action='store', dest='name', default='default_sample_python')
+    parser.add_argument('-n', type=str, action='store', dest='name', default='k2b_ara')
     input_args = parser.parse_args()
     
     # config
-    config_ini = configparser.ConfigParser()
-    config_ini_path = current_dir.joinpath("config.ini")
-
-    # iniファイルが存在するかチェック
-    if os.path.exists(config_ini_path):
-        # iniファイルが存在する場合、ファイルを読み込む
-        with open(config_ini_path, encoding='utf-8') as fp:
-            config_ini.read_file(fp)
-    else:
-        # iniファイルが存在しない場合、エラー発生
-        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), config_ini_path)
+    config_ini = load_default_config()
 
     agent: AbstractPlayer = AttentionReasoningAgent(config_ini)
     
-    client = TcpipClient(agent, input_args.name, input_args.hostname, input_args.port, input_args.role)
+    client = TcpipClient(agent, input_args.name, input_args.hostname, input_args.port, input_args.role, socket_timeout=1200)
     client.connect()

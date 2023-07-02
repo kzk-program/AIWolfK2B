@@ -95,7 +95,7 @@ class AbstractStrategyModule(AbstractModule):
         super().initialize(game_info, game_setting)
         
     @abstractmethod
-    def talk(self,game_info: GameInfo, game_setting: GameSetting) -> str:
+    def talk(self,game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """
         指定された情報から、talk要求時に発話すべき内容を返す
 
@@ -108,8 +108,8 @@ class AbstractStrategyModule(AbstractModule):
 
         Returns
         -------
-        str
-            発話する内容
+        OneStepPlan
+            発話すべき内容を表すOneStepPlan(発話の理由,ActionType.TALK,発話の内容)
 
         Raises
         ------
@@ -119,7 +119,7 @@ class AbstractStrategyModule(AbstractModule):
         raise NotImplementedError()
 
     @abstractmethod
-    def vote(self,game_info: GameInfo, game_setting: GameSetting) -> Agent:
+    def vote(self,game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """
         指定された情報から、vote要求時に投票すべきエージェントを返す
 
@@ -132,8 +132,8 @@ class AbstractStrategyModule(AbstractModule):
 
         Returns
         -------
-        Agent
-            投票するエージェント
+        OneStepPlan
+            投票すべきエージェントを表すOneStepPlan(投票の理由,ActionType.VOTE,投票先のエージェント)
 
         Raises
         ------
@@ -143,7 +143,7 @@ class AbstractStrategyModule(AbstractModule):
         raise NotImplementedError()
 
     @abstractmethod
-    def attack(self,game_info: GameInfo, game_setting: GameSetting) -> Agent:
+    def attack(self,game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """
         指定された情報から、attack要求時に襲撃すべきエージェントを返す
 
@@ -156,8 +156,8 @@ class AbstractStrategyModule(AbstractModule):
 
         Returns
         -------
-        Agent
-            襲撃するエージェント
+        OneStepPlan
+            襲撃すべきエージェントを表すOneStepPlan(襲撃の理由,ActionType.ATTACK,襲撃相手)
 
         Raises
         ------
@@ -167,7 +167,7 @@ class AbstractStrategyModule(AbstractModule):
         raise NotImplementedError()
 
     @abstractmethod
-    def divine(self,game_info: GameInfo, game_setting: GameSetting) -> Agent:
+    def divine(self,game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """
         指定された情報から、divine要求時に占うべきエージェントを返す
 
@@ -180,8 +180,8 @@ class AbstractStrategyModule(AbstractModule):
 
         Returns
         -------
-        Agent
-            占うエージェント
+        OneStepPlan
+            占うべきエージェントを表すOneStepPlan(占いの理由,ActionType.DIVINE,占い対象のエージェント)
 
         Raises
         ------
@@ -191,7 +191,7 @@ class AbstractStrategyModule(AbstractModule):
         raise NotImplementedError()
 
     @abstractmethod
-    def guard(self,game_info: GameInfo, game_setting: GameSetting) -> Agent:
+    def guard(self,game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """
         指定された情報から、guard要求時に護衛すべきエージェントを返す
 
@@ -204,8 +204,8 @@ class AbstractStrategyModule(AbstractModule):
 
         Returns
         -------
-        Agent
-            護衛するエージェント
+        OneStepPlan
+            護衛すべきエージェントを表すOneStepPlan(護衛の理由,ActionType.GUARD,護衛対象のエージェント)
 
         Raises
         ------
@@ -215,7 +215,7 @@ class AbstractStrategyModule(AbstractModule):
         raise NotImplementedError()
 
     @abstractmethod
-    def whisper(self,game_info: GameInfo, game_setting: GameSetting) -> str:
+    def whisper(self,game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """
         指定された情報から、whisper要求時に囁く内容を返す
 
@@ -228,8 +228,8 @@ class AbstractStrategyModule(AbstractModule):
 
         Returns
         -------
-        str
-            囁く内容
+        OneStepPlan
+            囁く内容を表すOneStepPlan(囁きの理由,ActionType.WHISPER,囁く内容)
 
         Raises
         ------

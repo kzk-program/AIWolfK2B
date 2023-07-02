@@ -1,0 +1,6803 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+  <meta content="ja" http-equiv="Content-Language"/>
+  <meta content="text/css" http-equiv="Content-Style-Type"/>
+  <meta content="text/javascript" http-equiv="Content-Script-Type"/>
+  <meta content="width=device-width" name="viewport"/>
+  <link href="../css/werewolf.css?v=20160711" rel="stylesheet" type="text/css"/>
+  <link href="../css/werewolf_day.css?v=20150328" rel="stylesheet" type="text/css"/>
+  <script src="../js/jquery-1.9.0.js" type="text/javascript">
+  </script>
+  <script src="../js/jquery-ui.min.js" type="text/javascript">
+  </script>
+  <script src="../js/jquery.cookie.js" type="text/javascript">
+  </script>
+  <script src="../js/common.js?v=20150323" type="text/javascript">
+  </script>
+  <script src="../js/village.js?v=20160429" type="text/javascript">
+  </script>
+  <script src="../js/spin.min.js?v=20131026" type="text/javascript">
+  </script>
+  <script src="../js/ad.js?v=20150323" type="text/javascript">
+  </script>
+  <title>
+   No.381828「12A猫」村
+  </title>
+  <script type="text/javascript">
+   var _gaq = _gaq || [];_gaq.push(['_setAccount', 'UA-6059289-4']);_gaq.push(['_trackPageview']);(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();
+  </script>
+ </head>
+ <body>
+  <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;">
+  </div>
+  <script language="JavaScript" src="../js/overlib.js?v=20130721">
+   <!-- overLIB (c) Erik Bosrup -->
+  </script>
+  <div id="pli">
+   <i class="fa fa-user-plus fa-2x fa-fw" onclick="users()">
+   </i>
+  </div>
+  <div class="d1">
+   <div class="d11">
+    No.381828
+    <span class="big" title="PRはお断りでした (ﾟωﾟ)">
+     「12A猫」
+    </span>
+    村  参加:12名  [配役A]村4/狼3/占1/霊1/狂1/狩1/猫1  昼270秒/夜180秒(60/120/300)  GM制/ランダムCN(AAイラスト)/15秒制(役職即)/トリ有＆1戦以上/COコマンド無/アク元表示
+   </div>
+   <div class="d12_v2">
+    <div class="d121chat_v2">
+     <div id="chatscr2_2">
+      <div class="d1215">
+       <div class="sponsor2">
+        <h3>
+         スポンサード リンク
+        </h3>
+        <script async="" src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js">
+        </script>
+        <!-- その他横長（RWD） -->
+        <ins class="adsbygoogle" data-ad-client="ca-pub-3617535858677960" data-ad-format="auto" data-ad-slot="5267590137" style="display:block">
+        </ins>
+        <script>
+         (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+       </div>
+       <div class="d12150">
+        2016/09/11 04:26:10
+        <br/>
+        4日目 ゲーム終了 (ゲーム時間 24 分  ゲーム開始までの時間 3 分 )
+       </div>
+       <div class="d12151">
+        <table cellspacing="0">
+         <tbody>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            57
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            消化不良でおじゃる
+            <br/>
+            次村希望するでおじゃる
+            <br/>
+            なかったら、別の村へ行くでおじゃる
+            <br/>
+            村立て同村感謝でおじゃる
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            56
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            同村村建てありがとうございました。
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            55
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            村建て同村お疲れ様でした、村の皆様ありがとうございました
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            54
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            むらむらありがと
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            53
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            村立て同村ありがとうございました
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            52
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            流石に3日目は護衛はもらえないなと思ってました…
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            51
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            1枚1万円から
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【15】
+           </td>
+           <td class="ccw">
+            11A！
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            50
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             それでは入村観戦ありがとうございました
+             <br/>
+             遅くまで皆さんおつかれさまでした
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            49
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            おつかれさまでしたん
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            48
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            村々長々とお付き合いいたがきありがとうございました
+            <br/>
+            自分の連敗記録更新も見えてきております。
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【12】
+           </td>
+           <td class="ccw">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ギコ','「【1】やめてもらっていいですか？」')">
+             &gt;&gt;45
+            </span>
+            キャッシュ削除教に入りませんか
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            47
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            連敗街道がどこまで伸びるか張った張った
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('擬人化しぃ','「【7】それでグレラン村にしたら狼大分勝率ありそうです」')">
+             &gt;&gt;44
+            </span>
+            そのルートが村が一番嫌なルートと思います
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            46
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            【7】あそこで毒護衛する狩人いたら変態オブ変態だよね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            45
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            【1】やめてもらっていいですか？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            44
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            【7】それでグレラン村にしたら狼大分勝率ありそうです
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('できない子','「【7】絶対噛み通るもんね」')">
+             &gt;&gt;37
+            </span>
+            吠え見てもあれでいきなり占い護衛できたら狩人変態と思うレベルだしね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            43
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            ロケットCO白だしが精一杯の狂アピだったでおじゃる
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            42
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ギコ','「&amp;gt;&amp;gt;32初手狼吊れ翌日パンダはかなーり楽な展開だよ」')">
+             &gt;&gt;35
+            </span>
+            指定する立場の自分は胃痛でしたよ･･･狩人吊ってたら間違いなく土下座案件だった
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【1】
+           </td>
+           <td class="ccw">
+            なお【1】は以下の事言っている鬼畜です
+            <br/>
+            俺にはわかる！トンマさんは無様にまた連敗記録を増やす！（鬼畜）
+            <br/>
+            誰か「こいつ鬼畜過ぎ」と言ってください！なんでもしますから！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            41
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            3日目にグレー吊りは有りな選択肢ではありましたね
+            <br/>
+            個人的にはパンダ吊りに行きますけど
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            40
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            票合わせ先をwhoで決めたら霊能と○もらいだったというところから流れ最悪
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            39
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            トンマの呪いには勝てなかったよ…
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            38
+            <span class="burlywood oc10 name">
+             ぞぬ
+            </span>
+           </td>
+           <td class="cc">
+            村建て同村ありがとうございました
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            37
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            【7】絶対噛み通るもんね
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            36
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm gm_color">
+             <span class="ref" onmouseout="nd()" onmouseover="refer('しぃ','「というか初心者で霊能であの展開は酷い、もう少し緩やかにして欲しかった！」')">
+              &gt;&gt;32
+             </span>
+             霊能の第一歩は間違っても指定をすることなので、その点は文句なしに合格です
+             <br/>
+             その上今回は指定成功もしている
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【6】
+           </td>
+           <td class="ccw">
+            全体期にふわふわしてきたし終了でよさそうやな
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            35
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('しぃ','「というか初心者で霊能であの展開は酷い、もう少し緩やかにして欲しかった！」')">
+             &gt;&gt;32
+            </span>
+            初手狼吊れ翌日パンダはかなーり楽な展開だよ
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【9】
+           </td>
+           <td class="ccw">
+            もうねワロタｗ
+            <br/>
+            勝たせてやれよｗｗｗ
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【12】
+           </td>
+           <td class="ccw">
+            1 次こそは勝てるよ！負け続けるなんてないよ！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            34
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            ＞サバンナ
+            <br/>
+            自分がなんでぞぬ投票したかって？自分にもわかりませんわ　見落としてたと思う
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            初日で毒男噛んでよかったと思った（こなみかん
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【19】
+           </td>
+           <td class="ccw">
+            &gt;&gt;【1】　全力で煽ってこそ観戦の鏡
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            33
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ギコ','「お付き合いいただきありがとうございました&lt;br /&gt;私の心は折れております」')">
+             &gt;&gt;22
+            </span>
+            今日は勝てない運命だったんです。明日は絶対勝てます。
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            32
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            というか初心者で霊能であの展開は酷い、もう少し緩やかにして欲しかった！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            31
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            ＧＭもtonnmaさんもお疲れ様でした(白目
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            30
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            とっとと毒男噛まないとイカンかった
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            29
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            8連敗から脱出っと
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ＧＭ','「tonnmaさんの心が折れたのでGMもそろそろ寝ますかね」')">
+             &gt;&gt;24
+            </span>
+            ワロタｗ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            28
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            霊か毒男チャレ通さないと負け濃厚なのさ
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【1】
+           </td>
+           <td class="ccw">
+            俺は11連敗の人にどう声をかけてやればいいんだ・・・
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            27
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            せっかくご主人か越えてたのに！
+            <br/>
+            麻呂はエロ画像を所望するでおじゃる！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            26
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ギコ','「お付き合いいただきありがとうございました&lt;br /&gt;私の心は折れております」')">
+             &gt;&gt;22
+            </span>
+            次村で頑張れ！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            25
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            個人的には三日目はギコ吊らずにグレー詰めても良かったと思うけどどうかね？
+            <br/>
+            猫狩出てたし
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            24
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm gm_color">
+             tonnmaさんの心が折れたのでGMもそろそろ寝ますかね
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            23
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            よって寝ます
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            22
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            お付き合いいただきありがとうございました
+            <br/>
+            私の心は折れております
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            21
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ギコ','「お疲れ様でした&lt;br /&gt;私の心は折れました」')">
+             &gt;&gt;2
+            </span>
+            あれ、連敗街道の称号は？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            20
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            できない子→毒男で噛むと最高でも引き分けだ
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【13】
+           </td>
+           <td class="ccw">
+            狼仲良すぎやんｗ上に固まってるｗ
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【12】
+           </td>
+           <td class="ccw">
+            どんまいお疲れおやすみ
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【1】
+           </td>
+           <td class="ccw">
+            そして泥沼11連敗、知ってた
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            19
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ギコ','「これが連敗中ってやつです」')">
+             &gt;&gt;17
+            </span>
+            あっ･･･
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【20】
+           </td>
+           <td class="ccw">
+            村誰も死ななかったｗ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            18
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            なぜ出来ない子を噛まなかったでおじゃる？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            17
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            これが連敗中ってやつです
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            16
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm gm_color">
+             ハハ
+             <br/>
+             (ﾟωﾟ)
+             <br/>
+             ／　　＼
+             <br/>
+             ((⊂ )　 ﾉ＼つ))
+             <br/>
+             (＿⌒ヽ
+             <br/>
+             ヽ　ﾍ |
+             <br/>
+             εﾆ三 ﾉノ Ｊ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            15
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            お疲れ様でした、胃が痛かった、何この村の展開、辛過ぎ･･･
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            だよねーｗ
+            <br/>
+            さっきの奇策やってたと思った＞ギコさん
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            14
+            <span class="burlywood oc10 name">
+             ぞぬ
+            </span>
+           </td>
+           <td class="cc">
+            お疲れ様でした
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            13
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            tonnmaさん・・・・
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            12
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            完全勝利やんけ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            11
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            お疲れ様でした。
+            <br/>
+            初手から少し不利だったけど、勝てて良かったです。
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            10
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            お疲れ様でした
+            <br/>
+            潜伏気味でグレラン抜けられない無能で申し訳ないです
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            9
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            なにもかもがうまくいかない
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            8
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            うーんこれはなぁ…うん。
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【12】
+           </td>
+           <td class="ccw">
+            そして……連敗…
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            7
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             できない子はできる子でした
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            6
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            おつかれさまでした
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            5
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            お疲れでおじゃる
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【13】
+           </td>
+           <td class="ccw">
+            お疲れ様でした( ﾟωﾟ )
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            4
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            お疲れ様でした
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            3
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            お疲れ様でした
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            2
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            お疲れ様でした
+            <br/>
+            私の心は折れました
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            1
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ふわしょぼーん','「できない子→毒男で噛むと最高でも引き分けだ」')">
+             &gt;&gt;20
+            </span>
+            <br/>
+            おいおい、それはないでおじゃるよ相方
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            ゲーム時間 24 分  ゲーム開始までの時間 3 分 (04:26:10)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            トップに戻る場合は
+            <a href="/">
+             こちら
+            </a>
+            、ログは
+            <a href="/villagelog.jsp?day=All" target="_blank">
+             こちら
+            </a>
+            から参照できます。
+            <br/>
+            投票により迷惑者を報告できます。報告の集まり具合によってアクセス禁止となるため、よく考えてから行ってください。（報告者は匿名です）(04:26:10)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            <span class="result">
+             「
+             <span class="oc00">
+              村　人
+             </span>
+             」陣営の勝利です！！
+            </span>
+            <br/>
+            勇敢なる村人たちにより、村の平和は保たれた！さあ、復興だ！(04:26:10)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            <span class="death">
+             「
+             <span class="name">
+              ふわしょぼーん
+             </span>
+             」さんはGMにより殺害されました
+            </span>
+            (04:26:10)
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <div class="d12150">
+        4日目 昼
+       </div>
+       <div class="d12151">
+        <table cellspacing="0">
+         <tbody>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            34
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            スキップ済み
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            33
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            (ﾟωﾟ)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            32
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            あ、はい
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            31
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            お疲れ様でした
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            30
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ふわしょぼーん','「投了」')">
+             &gt;&gt;20
+            </span>
+            私即噛んで麻呂噛めばワンチャンあったんじゃ･･･
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            29
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            そう言えば平和なんだから結果隠しで良かった件…
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            28
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            って言ったけど、護衛毒男で良いよね
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            27
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm gm_big">
+             （ﾟωﾟ）
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【16】
+           </td>
+           <td class="ccw">
+            しょぼーん（´・ω・｀）
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            26
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            (ﾟωﾟ)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            25
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            あ、はい
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            24
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('サバンナ','「麻呂狂人なんだがからグレロラ、正確に言うとスカルチノフとふわ(ﾟωﾟ)ロラしたら正直勝てる気が…」')">
+             &gt;&gt;21
+            </span>
+            <br/>
+            分かったでおじゃるよ、相方
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【12】
+           </td>
+           <td class="ccw">
+            あ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            23
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            グレー数足りねえんだ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            22
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             さて、初日に毒男吊るとか言ってたやつ探すか
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="tomato">
+             <span class="name">
+              ギコ
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            ちくしょう！ちくしょう！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            21
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            麻呂狂人なんだがからグレロラ、正確に言うとスカルチノフとふわ(ﾟωﾟ)ロラしたら正直勝てる気が…
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            20
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             投了
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="tomato">
+             <span class="name">
+              ギコ
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            【19】お察しのとおりだよ！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            19
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             今日は取り合えず麻呂吊り、護衛は毒男、自分が死んだら猫進行よろしくー
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            あ、連敗の人俺は人外陣営と思うよ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            18
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            占い両偽追うなら麻呂吊りでもおｋ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            17
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            今日は取り合えず麻呂吊り、護衛は毒男、自分が死んだら猫進行よろしくー
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            16
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            マジかよ…大正義過ぎんだろ……欠けてる可能性考えよ…。
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            15
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            画像も貼らずに村建てとな！？
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【13】
+           </td>
+           <td class="ccw">
+            LWは4縄から逃れられるのか！
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【19】
+           </td>
+           <td class="ccw">
+            あとは連敗の人がどっち陣営なのかだけしか興味がないもう。
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            14
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            残り4吊り1w1m
+            <br/>
+            グレー吊るなり麻呂吊るなりどうぞ
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="tomato">
+             <span class="name">
+              ギコ
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            麻呂は破綻はしてないんだよなあ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            13
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            あ、でも奇数になったから狂人吊らなくてもいいのか
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            12
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            画像も貼らずにスレ立てとな！？
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            知ってた状態
+            <br/>
+            これ完全に詰んだなこれ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            11
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            じゃ、麻呂狂人まで把握
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            10
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             毒男真進行でどうぞ、破綻の麻呂吊り
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            9
+            <span class="burlywood oc10 name">
+             ぞぬ
+            </span>
+           </td>
+           <td class="cc">
+            おはよう
+            <br/>
+            でかした！
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【20】
+           </td>
+           <td class="ccw">
+            これは狐嚙みやな（錯乱）
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="tomato">
+             <span class="name">
+              ギコ
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            こうなるんです
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            8
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             霊能CO：ギコ●！
+             <br/>
+             <br/>
+             つまり、麻呂さんは自分視点で偽確定、毒男さんが限りなく真目で良いですね、自分が噛まれたら以降は猫進行でよろしくですー
+             <br/>
+             <br/>
+             <br/>
+             平和ー！
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            7
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            完全グレー擬人化しぃ、しょぼーん、荒巻か？
+            <br/>
+            <br/>
+            草。
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            6
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            さて、毒男真なら対抗は狂人なのでグレーに１ｗ
+            <br/>
+            麻呂真なら対抗は狂狼どっちでもあり得るのでグレーに最大２ｗ。
+            <br/>
+            投票から擬人化しぃは完全に村おきできるから、スカルチノフ、ふわ(ﾟωﾟ)から選択する形か。
+            <br/>
+            霊能が生き残っていたら一番いいですね。どっちが真のパターンでも全然戦える。この霊能乗っ取りだけは見れない。
+            <br/>
+            なにやってるのー？しゃばんにゃしゃばんにゃ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            5
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            おは
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="yellow">
+             <span class="name">
+              カツオ武士
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            平和出すのぉ！？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            4
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            残り１ｗと予想。なお霊能が抜かれたらできない子偽狩りと断定します。できない子→毒男釣りで残り４人で１ｗになる。
+            <br/>
+            ギコ狼という予想が当たっていた場合は、狩人がかまれていたら麻呂を吊っていいと思います。占いが抜かれた場合でも麻呂吊っていいです。噛まれる分グレーが減るので勝負は後の方がいいです
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            3
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             占いCO　擬人化しぃ　●
+             <br/>
+             初日から寡黙気味でおじゃったので占ってみるでおじゃる
+             <br/>
+             やはりクロであったな。毒男の中身が●であれば、麻呂のお仕事終了でおじゃる
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            2
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             占いCO。荒巻スカルチノフ○
+             <br/>
+             ふわしょぼーんは村置きかな。昨日書ききれなかったけど、あそこで身内票はあまり見れないし
+             <br/>
+             サバンナは昨日言った通り村置きで良いと思う
+             <br/>
+             <br/>
+             残りは荒巻と擬人化しぃ
+             <br/>
+             再び身内票を考えないなら、荒巻スカルチノフが狼で確定はするね
+             <br/>
+             …流石にそういう考えも甘いと思うけど、ほぼ2択だし荒巻占いで良いかな
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            1
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             護衛：しぃ
+             <br/>
+             本当は真見えた毒男護衛したいんだよ？
+             <br/>
+             でも霊噛まれて占いの真偽が村視点見えなくなるよりはこっち護衛します。
+             <br/>
+             私噛んでくれれば御の字、毒男視点のグレーが１つ狭まる。
+             <br/>
+             毒男噛まれたら･･･偶数だし麻呂を吊るべきかどうかってところではある。
+             <br/>
+             ｗｗｗｗｗ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+            ⑮
+           </td>
+           <td class="cc">
+            ！？
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="tomato">
+             <span class="name">
+              ギコ
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            優しくしてくれるのはありがたいけれど、もうキツイっす
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="gm">
+             <span class="name">
+              ＧＭ（霊話）
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            <span class="gm">
+             おわたわ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【16】
+           </td>
+           <td class="ccw">
+            つーか麻呂が真見えない
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            4日目の朝になりました(04:24:11)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            平和な朝を迎えました(04:24:11)
+           </td>
+          </tr>
+         </tbody>
+        </table>
+        <div class="sponsor2">
+         <h3>
+          スポンサード リンク
+         </h3>
+         <script async="" src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js">
+         </script>
+         <!-- その他横長（RWD） -->
+         <ins class="adsbygoogle" data-ad-client="ca-pub-3617535858677960" data-ad-format="auto" data-ad-slot="5267590137" style="display:block">
+         </ins>
+         <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+         </script>
+        </div>
+       </div>
+       <div class="d12150">
+        3日目 夜
+       </div>
+       <div class="d12151 log_night">
+        <table cellspacing="0">
+         <tbody>
+          <tr>
+           <td class="ca" colspan="2">
+            <span class="wolf">
+             「
+             <span class="name">
+              ふわしょぼーん
+             </span>
+             」さんは「
+             <span class="name">
+              しぃ
+             </span>
+             」さんを噛みました
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【6】
+           </td>
+           <td class="ccw">
+            仲良し♂だな
+           </td>
+          </tr>
+          <tr>
+           <td class="ca" colspan="2">
+            <span class="fortune">
+             「
+             <span class="name">
+              毒男
+             </span>
+             」さんは「
+             <span class="name">
+              荒巻スカルチノフ
+             </span>
+             」さんを占いました　結果：
+             <span class="oc00">
+              【村　人】
+             </span>
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            だから俺も真狂ー真で見てる
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【12】
+           </td>
+           <td class="ccw">
+            優しい
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【17】
+           </td>
+           <td class="ccw">
+            ●出ししておけばパンダの経費吊りとかで吊り消費誘導しやすいとかあるんじゃないかな
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            <span class="name">
+             <span class="gm">
+              ＧＭ(観戦者へ)
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             【15】連敗中の人が勝つか心折れるまでは付き合う所存（ﾟωﾟ）
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            占いCO　擬人化しぃ　●
+            <br/>
+            初日から寡黙気味でおじゃったので占ってみるでおじゃる
+            <br/>
+            やはりクロであったな。毒男の中身が●であれば、麻呂のお仕事終了でおじゃる
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            乗っ取りならカツオ●でも○で出しそうだな
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            初日●じゃなかったらこの感じは通用してねぇなぁ…
+            <br/>
+            かなり強気な進行
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="yellow">
+             <span class="name">
+              カツオ武士
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            じゃけん勝てるまでいきましょう
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            夜が明けようとしている。役職者は時間内に能力を実行してください。(04:23:26)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            ううううう、狩人が頑張ってくれるのを祈ろう
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【16】
+           </td>
+           <td class="ccw">
+            カツオみたいなオオカミもままあるっしょ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             ああああああああああ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【15】
+           </td>
+           <td class="ccw">
+            GM寝るつもりないのか
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            霊能CO：ギコ●！
+            <br/>
+            <br/>
+            つまり、麻呂さんは自分視点で偽確定、毒男さんが限りなく真目で良いですね、自分が噛まれたら以降は猫進行でよろしくですー
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="tomato">
+             <span class="name">
+              ギコ
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            相方には悪いけれど連敗中だからこそ言える
+            <br/>
+            ムリだと思います
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【16】
+           </td>
+           <td class="ccw">
+            カツお非狼だとしても、乗っ取った霊能が●だすかね？
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            あ、LWっぽ
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="yellow">
+             <span class="name">
+              カツオ武士
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            ふわしょぼさん村で見られてますからまだチャンスは…チャンスは…
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             ああああああああああああ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             ん ああああああああああああああ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="tomato">
+             <span class="name">
+              ギコ
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            観戦、多分正解です
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            進行として正解なのは
+            <br/>
+            出来ない子→毒男
+            <br/>
+            ギコ→毒男
+            <br/>
+            のグレランじゃないかな？
+            <br/>
+            もう狩猫でてたし。
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            カツオ●は正直信用しにくいのはあるけど
+            <br/>
+            １１連敗に増えると予想しとく
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="tomato">
+             <span class="name">
+              ギコ
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            パンダになった瞬間、心が折れる音が聞こえました
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            サバンナ囲ってても意味ないか。ここで霊能護衛を外すわけないし、絶望狼
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【12】
+           </td>
+           <td class="ccw">
+            10連敗の人勝てそうかな
+           </td>
+          </tr>
+          <tr>
+           <td class="ca" colspan="2">
+            <span class="hunter">
+             「
+             <span class="name">
+              できない子
+             </span>
+             」さんは「
+             <span class="name">
+              しぃ
+             </span>
+             」さんを護衛しました
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【6】
+           </td>
+           <td class="ccw">
+            カツオ●ってのがね　真狂-狼あったりして
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            でもこれ、何とかして占い護衛して欲しい、狩人に頼むしかないなあ･･･
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            サバンナで囲えてればいいけどなぁ・・・ここは黒出し
+            <br/>
+            誰がいいかな？
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="tomato">
+             <span class="name">
+              ギコ
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            毒男真見えてたなら毒男噛みでよかったじゃないか
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             ふわしょぼーん	ああああああああああああああああああああああ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            やったー！勝負に勝てた！あああああああ、恐かった、恐かったああああああああ！
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            これ猫ふまねーかな
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             あああああああああああああああああああああああああああああ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="gm">
+             <span class="name">
+              ＧＭ（霊話）
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            <span class="gm">
+             おつかれさまでした（ﾟωﾟ）
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             あああああああああああああああああああああああああああああああああああああ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="yellow">
+             <span class="name">
+              カツオ武士
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            初日グレラン抜けられない無能で申し訳ない
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="tomato">
+             <span class="name">
+              ギコ
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            もう勝っても負けても寝ます
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【14】
+           </td>
+           <td class="ccw">
+            真狂-狼ねぇかな
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            <span class="death">
+             「
+             <span class="name">
+              ギコ
+             </span>
+             」さんは村民協議の結果、処刑されました
+            </span>
+            (04:20:26)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            3日目の夜になりました(04:20:26)
+           </td>
+          </tr>
+         </tbody>
+        </table>
+        <div class="sponsor2">
+         <h3>
+          スポンサード リンク
+         </h3>
+         <script async="" src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js">
+         </script>
+         <!-- その他横長（RWD） -->
+         <ins class="adsbygoogle" data-ad-client="ca-pub-3617535858677960" data-ad-format="auto" data-ad-slot="5267590137" style="display:block">
+         </ins>
+         <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+         </script>
+        </div>
+       </div>
+       <div class="d12150">
+        3日目 昼
+       </div>
+       <div class="d12151">
+        <table cellspacing="0">
+         <tbody>
+          <tr>
+           <td class="cv" colspan="2">
+            3日目　投票結果
+            <br/>
+            <table>
+             <tbody>
+              <tr>
+               <td>
+                [狼]
+                <span class="name">
+                 ギコ
+                </span>
+               </td>
+               <td>
+                9 票
+               </td>
+               <td>
+                投票先　→　[狩]
+                <span class="name">
+                 できない子
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [狼]
+                <span class="name">
+                 ふわしょぼーん
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 ギコ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [村]
+                <span class="name">
+                 サバンナ
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 ギコ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [村]
+                <span class="name">
+                 荒巻スカルチノフ
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 ギコ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [猫]
+                <span class="name">
+                 ぞぬ
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 ギコ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [占]
+                <span class="name">
+                 毒男
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 ギコ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [狂]
+                <span class="name">
+                 麻呂
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 ギコ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [霊]
+                <span class="name">
+                 しぃ
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 ギコ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [村]
+                <span class="name">
+                 擬人化しぃ
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 ギコ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [狩]
+                <span class="name">
+                 できない子
+                </span>
+               </td>
+               <td>
+                1 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 ギコ
+                </span>
+               </td>
+              </tr>
+             </tbody>
+            </table>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            せっかくご主人捕捉できたのに・・・
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            流石に心が折れました
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            これが連敗中の力ってやつさ！
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            投票時間になりました。時間内に処刑の対象を決定してください(04:20:07)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            62
+            <span class="burlywood oc10 name">
+             ぞぬ
+            </span>
+           </td>
+           <td class="cc">
+            了解です　私は猫ですが霊能に従います。
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            61
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            ＣＯ遅すぎたし妥当
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            60
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            護衛はお任せです
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            59
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            ナイス指定
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            58
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            (ﾟωﾟ)指定入ってた
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            57
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            妥当
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            56
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            (ﾟωﾟ)(ﾟωﾟ)(ﾟωﾟ)え？ギコ吊でいいんじゃないの？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            55
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            指定はするならはっきりとしてくれないと人外の組織票入る
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            54
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('できない子','「&amp;gt;&amp;gt;44　何で私視点毒男真なのにそっち護衛しなきゃいけないのか」')">
+             &gt;&gt;50
+            </span>
+            逆に見えてたわすまんｗｗｗ
+            <br>
+             出来ない子毒おだわｗｗｗ疲れてるｗｗｗｗ
+            </br>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            53
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             ごめん、キツいかもしれないけど指定ギコさん
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            52
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            しぃじゃねえできない子
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            51
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('しぃ','「ううん、正直ギコさん吊りたい」')">
+             &gt;&gt;46
+            </span>
+            それは正しいよ。自信を持ってくださいな
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            50
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             <span class="ref" onmouseout="nd()" onmouseover="refer('荒巻スカルチノフ','「出来ない子が麻呂護衛、ぎこしぃ護衛で良さそうだが……&lt;br /&gt;パンダ吊って色見るのもあり」')">
+              &gt;&gt;44
+             </span>
+             何で私視点毒男真なのにそっち護衛しなきゃいけないのか
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            49
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('しぃ','「ううん、正直ギコさん吊りたい」')">
+             &gt;&gt;46
+            </span>
+            <br/>
+            クロス護衛をさせてみてはどうじゃ？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            48
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            しぃが出なかったらギコ残してグレー詰めた
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            47
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            ギコ吊っていいんじゃないの？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            46
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            ううん、正直ギコさん吊りたい
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            45
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ふわしょぼーん','「ギコの真も一応見るならギコ残してグレーから霊が指定&lt;br /&gt;後日出ればいい&lt;br /&gt;&lt;br /&gt;出ちまった以上もうギコ吊りでいい」')">
+             &gt;&gt;40
+            </span>
+            ごめん何言ってるかわからない
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            44
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            出来ない子が麻呂護衛、ぎこしぃ護衛で良さそうだが……
+            <br/>
+            パンダ吊って色見るのもあり
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            43
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            …誤字ったけど察して下さいな…
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            42
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            失礼
+            <span class="ref" onmouseout="nd()" onmouseover="refer('しぃ','「うーん、猫狩は誰でしたっけ」')">
+             &gt;&gt;32
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            41
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            初日の猫狩なんて大体猫だよね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            40
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            ギコの真も一応見るならギコ残してグレーから霊が指定
+            <br/>
+            後日出ればいい
+            <br/>
+            <br/>
+            出ちまった以上もうギコ吊りでいい
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            39
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ギコ','「&amp;gt;&amp;gt;29出ない選択肢ないと思うんですけど」')">
+             &gt;&gt;33
+            </span>
+            <br/>
+            猫狩はぞぬでおじゃる。
+            <br/>
+            そしてねこCOしてるでおじゃる
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            38
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            占い真狂だったからグレランで１Ｗ吊れたって見てよさそうかね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            37
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            今2w1mですか。今日村吊ったとして、8人だね
+            <br/>
+            ギコ即吊りなり、護衛指示でぐr-絵吊りなり
+            <br/>
+            どっちでもどうぞ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            36
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('しぃ','「うーん、猫狩は誰でしたっけ」')">
+             &gt;&gt;32
+            </span>
+            猫狩COしたのはぞぬだよ
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            占い真狼で見て麻呂護衛とか大草原
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            35
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            そりゃ、今日平和が出てカツオ●なら霊能平和でしょ…
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            34
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            失礼、ぞぬさんでしたね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            33
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ふわしょぼーん','「&amp;gt;&amp;gt;23こんなん出えへんで良かったんやで」')">
+             &gt;&gt;29
+            </span>
+            出ない選択肢ないと思うんですけど
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            32
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            うーん、猫狩は誰でしたっけ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            31
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ふわしょぼーん','「&amp;gt;&amp;gt;23こんなん出えへんで良かったんやで」')">
+             &gt;&gt;29
+            </span>
+            これで真誤認されたら困るじゃないの
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【16】
+           </td>
+           <td class="ccw">
+            できる子やんけ！！
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            できない子が狩人か
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            30
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            一気にフルオープンでおじゃるな
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            29
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('できない子','「平和にできない狩人日記&lt;br /&gt;&lt;br /&gt;１日目・×　死亡－第一&lt;br /&gt;ショニカスを護衛できる狩人とか尊敬するよね。聞いたことないけどね。できないよ。&lt;br /&gt;ショニカスが無職でありますように。&lt;br /&gt;&lt;br /&gt;２日目・しぃ　死亡－平和&lt;br /&gt;麻呂かサバンナかしぃの３択である。&lt;br /&gt;吠え的に１Ｗ減った感。占い真狼で見るので噛みはこないと予想。よって霊護衛します」')">
+             &gt;&gt;23
+            </span>
+            こんなん出えへんで良かったんやで
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            28
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            あ、はい
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="yellow">
+             <span class="name">
+              カツオ武士
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            狩人炙り出しGJ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            27
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            対抗でるのね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            26
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            これは勝ちましたわ＾ｑ＾
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            25
+            <span class="burlywood oc10 name">
+             ぞぬ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             猫又ＣＯ！
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            24
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             えー
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            23
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             平和にできない狩人日記
+             <br/>
+             <br/>
+             １日目・×　死亡－第一
+             <br/>
+             ショニカスを護衛できる狩人とか尊敬するよね。聞いたことないけどね。できないよ。
+             <br/>
+             ショニカスが無職でありますように。
+             <br/>
+             <br/>
+             ２日目・しぃ　死亡－平和
+             <br/>
+             麻呂かサバンナかしぃの３択である。
+             <br/>
+             吠え的に１Ｗ減った感。占い真狼で見るので噛みはこないと予想。よって霊護衛します
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            22
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            麻呂平和
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            21
+            <span class="burlywood oc10 name">
+             ぞぬ
+            </span>
+           </td>
+           <td class="cc">
+            やったぜ。　ワイ投票やからなんか怪しいなとは思ってたんだよね。
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            20
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             狩人ＣＯ！
+             <br/>
+             初日　　護衛：ムリ　　死体：第一
+             <br/>
+             <br/>
+             <br/>
+             ２日目　護衛：麻呂　死体：
+             <br/>
+             まあ鉄板でいいでしょ　占い真狂とか見ないです
+             <br/>
+             霊能噛まれたらごめんね
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            19
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            うーん…これどっちの平和だろう？
+            <br/>
+            霊能平和？占平和？　占平和っぽいんだよな
+            <br/>
+            狼1w吊られて焦ったんじゃないかなぁ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            18
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            ＣＯ遅い。これは人外
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【6】
+           </td>
+           <td class="ccw">
+            しぃとサバンナは正義
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            17
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            ぞぬも非狼
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            16
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             狩です
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            15
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            初日に●吊る村とか有能かよ
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【16】
+           </td>
+           <td class="ccw">
+            ギコ吊りまったなしｗ
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            ギコ●納得
+            <br/>
+            カツオ●は笑うｗ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            14
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            ギコパンダ、ＣＯあるならはよ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            13
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            初日に書いたけど張れなくなった文章を供養する
+            <br/>
+            ちょっと左にいる捨て猫が邪魔ですね。私以外にしぃとか名乗られても迷惑なんですけど・・・廃棄処分しましょう。正直ネコ枠はギコがいるのでもういらないですね。この村の圧倒的最カワの私と同じ名前を名乗るなど（ry
+            <br/>
+            投票はカツオ武士
+            <br/>
+            あの発言内容で８発言とか信じられない。それと
+            <span class="ref" onmouseout="nd()" onmouseover="refer('カツオ武士','「真狼っぽさもあるがまだわからんよなぁ」')">
+             &gt;&gt;2:44
+            </span>
+            こういうすさまじく消極的な意見を言うあたり村の様子見してるようにしか見えなかったです。なお私は占いは３日目以降の占い先と文章で真偽つけるスタイルなので占い初手釣りは反対してました
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            12
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            NICE　平和
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            11
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            じゃあギコ吊ろうか
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            10
+            <span class="burlywood oc10 name">
+             ぞぬ
+            </span>
+           </td>
+           <td class="cc">
+            おはようございます
+            <br/>
+            客観的に見て吊られそうやったから猫狩りＣＯしてしまったわけやな
+            <br/>
+            でもこれ自分で言うのもあれやけど結構ナイス判断ちゃうか？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            9
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            カツオ狼かいな
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            8
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            おはよう。
+            <br/>
+            昨日ギリギリのタイミングで猫狩について触れようとしたスカルチノフは村っぽ。
+            <br/>
+            ギコ、ふわしょぼん、できない子は占い決め打ち賛成派。擬人化しぃとかつお節で悩む。
+            <br/>
+            かつお節の方が全体的に削り節なせいか意見がひかえ目消極目なのでそこから先吊。
+            <br/>
+            ぞぬ投票とか意味わからない子としているから結果的に問題なしと判断。
+            <br/>
+            なお、擬人化しぃもかつお節に投票していることからこの両者間でラインは無い模様。
+            <br/>
+            あ、これは良い平和ですね分かります。分かりますとも。
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            7
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            吠え数が多いから新狼って理論は本当によく分からない…。
+            <br/>
+            それは置いておいて、麻呂の○のサバンナノイズ過ぎねぇか…狂人アピ？
+            <br/>
+            ぞぬに関しては猫狩ならもうちょい早くしてくれ…としか。
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            6
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             占いCO　ギコ　◯
+             <br/>
+             <span class="ref" onmouseout="nd()" onmouseover="refer('ギコ','「&amp;gt;&amp;gt;49真見れない占いは初日に吊った方が村勝利の可能性高いんやで」')">
+              &gt;&gt;2:56
+             </span>
+             <br/>
+             何やらこの発言が内訳が見えてる狼の視点に思えたので占ってみるでおじゃるよ
+             <br/>
+             結果は白だったでおじゃる
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            5
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             占いCO。ギコ●
+             <br/>
+             私を昨日から吊り上げたかったのはギコ・ふわしょぼーん・できない子
+             <br/>
+             普通に考えるなら、私の信用を落として騙りを生き残らせたい人外に見える
+             <br/>
+             狼視点、占いが真狂っていうのは確定情報で狼視点、狂人は判別が付いてない。
+             <br/>
+             もし付いてるなら、サバンナが私吊りを推してくるはずだからね
+             <br/>
+             ということは狼は私を吊って「毒男は真の可能性がある」って言って占いロラ→7人で3wってする作戦なんだろうって思う
+             <br/>
+             <br/>
+             で、注目したのはふわしょぼーんがギコ投票
+             <br/>
+             ここから、ふわしょぼーんを村で見てギコを占うよ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            4
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            おはよう
+            <br/>
+            GJ！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            3
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            おはよう
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            2
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            おはよう！昨日はグレラン・スカルチノフ投票。
+            <br/>
+            <br/>
+            49荒巻スカルチノフ
+            <span class="ref" onmouseout="nd()" onmouseover="refer('できない子','「初日の猫狩なんて大体猫だよね」')">
+             &gt;&gt;41
+            </span>
+            初日から占決めうったりロラするメリットを知りたいんだが？
+            <br/>
+            初日で占吊るとか絶望的だぞ？　勿論、両偽も０じゃないが。
+            <br/>
+            ↑毒男吊りを拒んだ位置投票。ここ吊って狼なら毒男も併せて吊っていいんでないかなと思う。
+            <br/>
+            <br/>
+            70荒巻スカルチノフ 猫出ろいる名ｒあ
+            <br/>
+            ↑猫狩見て猫炙る意味がわかりません。
+            <br/>
+            <br/>
+            吠え減ったけど１Ｗ吊れたかな？ＧＪ！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            1
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             霊能CO：カツオ武士●
+             <br/>
+             <br/>
+             いきなりの初日グレランから人狼一本吊り出ました！凄いよ、この村！後2wですよ！
+             <br/>
+             <br/>
+             平和！
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="yellow">
+             <span class="name">
+              カツオ武士
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            霊能噛むんだぁ…
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            3日目の朝になりました(04:15:37)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            平和な朝を迎えました(04:15:37)
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <div class="d12150">
+        2日目 夜
+       </div>
+       <div class="d12151 log_night">
+        <table cellspacing="0">
+         <tbody>
+          <tr>
+           <td class="ca" colspan="2">
+            <span class="fortune">
+             「
+             <span class="name">
+              毒男
+             </span>
+             」さんは「
+             <span class="name">
+              ギコ
+             </span>
+             」さんを占いました　結果：
+             <span class="oc01">
+              【人　狼】
+             </span>
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【16】
+           </td>
+           <td class="ccw">
+            ネタバレ：ぞぬ噛まれる
+           </td>
+          </tr>
+          <tr>
+           <td class="ca" colspan="2">
+            <span class="wolf">
+             「
+             <span class="name">
+              ギコ
+             </span>
+             」さんは「
+             <span class="name">
+              しぃ
+             </span>
+             」さんを噛みました
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            夜が明けようとしている。役職者は時間内に能力を実行してください。(04:14:46)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            占いCO　ギコ　◯
+            <br/>
+            &gt;&gt;2:56
+            <br/>
+            何やらこの発言が内訳が見えてる狼の狼の視点に思えたので占ってみるでおじゃるよ
+            <br/>
+            結果は白だったでおじゃる
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             ＠２０で
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             あっそ（鼻ホジ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            サバンナ狩人でぞぬ猫と予想
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            霊能CO：カツオ武士●
+            <br/>
+            <br/>
+            いきなりの初日グレランから人狼一本吊り出ました！凄いよ、この村！
+            <br/>
+            <br/>
+            投票者はサバンナ、ぞぬ、擬人化しぃの3人かあ･･･考えよう、考えよう
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             私噛みますね
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             こういう悪い流れが止まらないのが連敗中の連敗中たるゆえんなんです
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【16】
+           </td>
+           <td class="ccw">
+            サバンナ○もらいじゃなかったら殺してるわｗ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             霊能噛もうぜ！
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             面白そうだから霊行くか
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="yellow">
+             <span class="name">
+              カツオ武士
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            おつかれさまですー
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             票合わせ予定先が○もらいと霊能っていう悲しみ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             霊強襲通ったらおもろい展開やけどなあ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             霊能いっとく？
+             <br/>
+             麻呂の方が狂人ぽい
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            ギコ生き残るか
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="burlywood oc10 name">
+             ぞぬ
+            </span>
+           </td>
+           <td class="cc">
+            カツオさん狩りやったか…？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            しぃ２匹おるやんまぎらわしぃ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            うわ、人狼が吊れてる･･･え、良い事だけど何これ恐い
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="yellow">
+             <span class="name">
+              カツオ武士
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            ぞぬさん猫！ｗ
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="gm">
+             <span class="name">
+              ＧＭ（霊話）
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            <span class="gm">
+             おつかれさまでした（ﾟωﾟ）
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             うーんこの
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             奇策、失敗！
+             <br/>
+             しかも相方吊れてるううううう
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="ca" colspan="2">
+            <span class="hunter">
+             「
+             <span class="name">
+              できない子
+             </span>
+             」さんは「
+             <span class="name">
+              しぃ
+             </span>
+             」さんを護衛しました
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            は？
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="yellow">
+             <span class="name">
+              カツオ武士
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            ハゲそう
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            <span class="death">
+             「
+             <span class="name">
+              カツオ武士
+             </span>
+             」さんは村民協議の結果、処刑されました
+            </span>
+            (04:11:46)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            2日目の夜になりました(04:11:46)
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <div class="d12150">
+        2日目 昼
+       </div>
+       <div class="d12151">
+        <table cellspacing="0">
+         <tbody>
+          <tr>
+           <td class="cv" colspan="2">
+            2日目　投票結果
+            <br/>
+            <table>
+             <tbody>
+              <tr>
+               <td>
+                [狼]
+                <span class="name">
+                 ギコ
+                </span>
+               </td>
+               <td>
+                2 票
+               </td>
+               <td>
+                投票先　→　[村]
+                <span class="name">
+                 荒巻スカルチノフ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [狼]
+                <span class="name">
+                 カツオ武士
+                </span>
+               </td>
+               <td>
+                3 票
+               </td>
+               <td>
+                投票先　→　[猫]
+                <span class="name">
+                 ぞぬ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [狼]
+                <span class="name">
+                 ふわしょぼーん
+                </span>
+               </td>
+               <td>
+                1 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 ギコ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [村]
+                <span class="name">
+                 サバンナ
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 カツオ武士
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [村]
+                <span class="name">
+                 荒巻スカルチノフ
+                </span>
+               </td>
+               <td>
+                2 票
+               </td>
+               <td>
+                投票先　→　[村]
+                <span class="name">
+                 擬人化しぃ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [猫]
+                <span class="name">
+                 ぞぬ
+                </span>
+               </td>
+               <td>
+                1 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 カツオ武士
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [占]
+                <span class="name">
+                 毒男
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 ギコ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [狂]
+                <span class="name">
+                 麻呂
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[村]
+                <span class="name">
+                 擬人化しぃ
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [霊]
+                <span class="name">
+                 しぃ
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 ふわしょぼーん
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [村]
+                <span class="name">
+                 擬人化しぃ
+                </span>
+               </td>
+               <td>
+                2 票
+               </td>
+               <td>
+                投票先　→　[狼]
+                <span class="name">
+                 カツオ武士
+                </span>
+               </td>
+              </tr>
+              <tr>
+               <td>
+                [狩]
+                <span class="name">
+                 できない子
+                </span>
+               </td>
+               <td>
+                0 票
+               </td>
+               <td>
+                投票先　→　[村]
+                <span class="name">
+                 荒巻スカルチノフ
+                </span>
+               </td>
+              </tr>
+             </tbody>
+            </table>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【15】
+           </td>
+           <td class="ccw">
+            深夜テンション村すこ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            深夜テンションかよサバンナｗｗｗ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            やべぇ邪魔過ぎる…
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            この深夜テンションほんとすこ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="burlywood oc10 name">
+             ぞぬ
+            </span>
+            <span class="end">
+             の独り言
+            </span>
+           </td>
+           <td class="cc">
+            てわけでワイ投票はやめてや
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            投票時間になりました。時間内に処刑の対象を決定してください(04:10:03)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            70
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            猫出ろいる名ｒあ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            69
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ふわしょぼーん','「&amp;gt;&amp;gt;49初日で騙り狼吊り上げて翌日GJ出て大正義村とか夢見るだけでもうお腹いっぱいやん？&lt;br /&gt;やってみたくね？」')">
+             &gt;&gt;62
+            </span>
+            やってみたいけど外したら自分胃痛村じゃないですか、絶対にお断りです
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            68
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            あ？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            67
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            まぁロマンはあるが…
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            66
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            ここらで真狂即吊りためらってるとこ吊って色見るとなにかと見えてくるんですよ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            65
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ギコ','「&amp;gt;&amp;gt;49真見れない占いは初日に吊った方が村勝利の可能性高いんやで」')">
+             &gt;&gt;56
+            </span>
+            理由はわからなくもないが、もしかしたら…って可能性もある。これから占が真であることを見極めるべきだろう？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            64
+            <span class="burlywood oc10 name">
+             ぞぬ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             猫狩りＣＯやで！
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            63
+            <span class="burlywood oc10 name">
+             ぞぬ
+            </span>
+           </td>
+           <td class="cc">
+            グレランやったらあれやな
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            62
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('荒巻スカルチノフ','「&amp;gt;&amp;gt;41　初日から占決めうったりロラするメリットを知りたいんだが？&lt;br /&gt;初日で占吊るとか絶望的だぞ？　勿論、両偽も０じゃないが。」')">
+             &gt;&gt;49
+            </span>
+            初日で騙り狼吊り上げて翌日GJ出て大正義村とか夢見るだけでもうお腹いっぱいやん？
+            <br>
+             やってみたくね？
+            </br>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            61
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('荒巻スカルチノフ','「&amp;gt;&amp;gt;41　初日から占決めうったりロラするメリットを知りたいんだが？&lt;br /&gt;初日で占吊るとか絶望的だぞ？　勿論、両偽も０じゃないが。」')">
+             &gt;&gt;49
+            </span>
+            そういう進行もありかな、と･･･でも私は判断材料が欲しいから、グレランをする
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            60
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ギコ','「&amp;gt;&amp;gt;37状況が状況ですし」')">
+             &gt;&gt;40
+            </span>
+            <span class="ref" onmouseout="nd()" onmouseover="refer('できない子','「&amp;gt;&amp;gt;37　まあ決めうってみたい気がしなくもない」')">
+             &gt;&gt;43
+            </span>
+            マジか・・・イレギュラーな進行だけど、吠えから真狂言い切るならあり？
+            <br/>
+            しかしグレランか
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            59
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ふわしょぼーん','「毒男吊ったら●出るからあとは大正義村だ&lt;br /&gt;そんな夢を見ている」')">
+             &gt;&gt;39
+            </span>
+            私は○だし、そもそも私が●だったとして麻呂が偽の可能性は十分にあるけどね
+            <br/>
+            客観的に言って真狂って見られにくいし、私の信用が低いのは理解してるけど
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            58
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('しぃ','「ごめん、グレランで」')">
+             &gt;&gt;51
+            </span>
+            <br/>
+            了解でおじゃる。占いの材料も増えるからありがたいでおじゃる
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            57
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            (ﾟωﾟ)＜把握
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            56
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('荒巻スカルチノフ','「&amp;gt;&amp;gt;41　初日から占決めうったりロラするメリットを知りたいんだが？&lt;br /&gt;初日で占吊るとか絶望的だぞ？　勿論、両偽も０じゃないが。」')">
+             &gt;&gt;49
+            </span>
+            真見れない占いは初日に吊った方が村勝利の可能性高いんやで
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            55
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            てかしぃ霊能じゃねぇかｗｗ　しっかりしてくれ…。
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            54
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            占い真狂ならグレランで狼吊れるでしょ、多分、吊れなかったら明日毒男吊るまであるけど
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            53
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            グレラン把握
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            52
+            <span class="burlywood oc10 name">
+             ぞぬ
+            </span>
+           </td>
+           <td class="cc">
+            グレラン把握ー
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            51
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             ごめん、グレランで
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            50
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            しぃちゃんがんばれ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            49
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('しぃ','「これグレランで良いのかな、それとも占い真偽判定にするか」')">
+             &gt;&gt;41
+            </span>
+            初日から占決めうったりロラするメリットを知りたいんだが？
+            <br/>
+            初日で占吊るとか絶望的だぞ？　勿論、両偽も０じゃないが。
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            48
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ギコ','「&amp;gt;&amp;gt;41君が決めるんやで」')">
+             &gt;&gt;47
+            </span>
+            胃が痛い
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            47
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('しぃ','「これグレランで良いのかな、それとも占い真偽判定にするか」')">
+             &gt;&gt;41
+            </span>
+            君が決めるんやで
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            46
+            <span class="burlywood oc10 name">
+             ぞぬ
+            </span>
+           </td>
+           <td class="cc">
+            毒男視点だと麻呂狂人ってことだから偽に見られてるんだね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            45
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            グレランが常道でおじゃろうが、
+            <br/>
+            霊能よ、指示を頼むでおじゃる
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            44
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            真狼っぽさもあるがまだわからんよなぁ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            43
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('擬人化しぃ','「本日で真偽つけたい人多くないか？」')">
+             &gt;&gt;37
+            </span>
+            まあ決めうってみたい気がしなくもない
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            42
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            (ﾟωﾟ)ほっほっほっ＜グレランじゃね？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            41
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            これグレランで良いのかな、それとも占い真偽判定にするか
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            40
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('擬人化しぃ','「本日で真偽つけたい人多くないか？」')">
+             &gt;&gt;37
+            </span>
+            状況が状況ですし
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            39
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            毒男吊ったら●出るからあとは大正義村だ
+            <br/>
+            そんな夢を見ている
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            38
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            吠えが多いから真狂が分からないって意味が分からない…
+            <br/>
+            毒視点、麻呂狂人は把握
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            37
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            本日で真偽つけたい人多くないか？
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            これ毒男真だわ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            36
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            グレランでいいのかね？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            35
+            <span class="burlywood oc10 name">
+             ぞぬ
+            </span>
+           </td>
+           <td class="cc">
+            ２－１ですね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            34
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('麻呂','「&amp;gt;&amp;gt;12&lt;br /&gt;なんと！偽物が現れたでおじゃるか！&lt;br /&gt;負けないでおじゃるよ！」')">
+             &gt;&gt;29
+            </span>
+            あーごめんね。毒男のRPって知らないからこっちは普通に話すわ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            33
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('できない子','「&amp;gt;&amp;gt;25　同感ｗｗｗ」')">
+             &gt;&gt;30
+            </span>
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ふわしょぼーん','「あの吠えで全潜伏とかないやろ」')">
+             &gt;&gt;26
+            </span>
+            さんも仲間に入れてあげましょう！
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【9】
+           </td>
+           <td class="ccw">
+            毒男視点真狂ｗｗｗ
+            <br/>
+            無理があるやろwww
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            32
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            駄目？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            31
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            確かに吠え数多いのは気になる
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            30
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ギコ','「あの吠えで真狂とかないと思うんですけど」')">
+             &gt;&gt;25
+            </span>
+            同感ｗｗｗ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            29
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('毒男','「占いCO。麻呂○&lt;br /&gt;アイコンが気持ち悪い、隣の人を占おうかな&lt;br /&gt;○なら「真の○は噛まれやすいの法則」から即退場。●なら吊って即退場&lt;br /&gt;どっちになっても、悪い結果にはならないと判断して占うよ&lt;br /&gt;結果○。ふむ。噛まれてどうぞです。狂人なら尚良し」')">
+             &gt;&gt;12
+            </span>
+            <br/>
+            なんと！偽物が現れたでおじゃるか！
+            <br/>
+            負けないでおじゃるよ！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            28
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            もう毒男つりでよくね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            27
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            あれだけ吠えてて真狂になる気がしない
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            26
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            あの吠えで全潜伏とかないやろ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            25
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            あの吠えで真狂とかないと思うんですけど
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            24
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            遅い。さてグレラン
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            23
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            2-1やね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            22
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            っと、対抗狂人ですか。
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            21
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            (ﾟωﾟ)ほっほっほっ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            20
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            占い2CO、了解
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            19
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            毒男視点対抗狂人とか
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            18
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            2－1　毒男視点真狂か
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            17
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            2-1っすねー
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            16
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            すげー1－1
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            15
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            １－１か
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            14
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            1-1？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            13
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            1-1？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            12
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             占いCO。麻呂○
+             <br/>
+             アイコンが気持ち悪い、隣の人を占おうかな
+             <br/>
+             ○なら「真の○は噛まれやすいの法則」から即退場。●なら吊って即退場
+             <br/>
+             どっちになっても、悪い結果にはならないと判断して占うよ
+             <br/>
+             結果○。ふむ。噛まれてどうぞです。狂人なら尚良し
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【1】
+           </td>
+           <td class="ccw">
+            俺にはわかる！トンマさんは無様にまた連敗記録を増やす！（鬼畜）
+            <br/>
+            誰か「こいつ鬼畜過ぎ」と言ってください！なんでもしますから！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            11
+            <span class="orange oc00 name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            おはよう
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            10
+            <span class="blue oc00 name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            (ﾟωﾟ)しゃばんにゃでしゃばんにゃほっほっほっ(ﾟωﾟ)しゃばんにゃでしゃばんにゃほっほっほっ(ﾟωﾟ)
+            <br/>
+            (ﾟωﾟ)しゃばんにゃでしゃばんにゃほっほっほっ(ﾟ　ωﾟ)しゃばんにゃでしゃばんにゃほっほっほっ(ﾟ　ωﾟ)
+            <br/>
+            (ﾟωﾟ)しゃばんにゃでしゃばんにゃほっほっほっ(ﾟω　ﾟ)しゃばんにゃでしゃばんにゃほっほっほっ(ﾟω　ﾟ)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            9
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            すやぁ……。
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            8
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            おはようございます
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            7
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            おはようございます
+            <br/>
+            吠え多杉内？
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            6
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            あ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            5
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            おはようこ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            4
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            おはよう！名前で無能扱いするのやめてください･･･まあ否定はできないけど。
+            <br/>
+            めっちゃ吠えてるけど奇策あるのかな。
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            3
+            <span class="burlywood oc10 name">
+             ぞぬ
+            </span>
+           </td>
+           <td class="cc">
+            おはようございます
+            <br/>
+            ＣＯお願いします
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            2
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             霊能CO！！
+             <br/>
+             <br/>
+             挨拶抜きの朝一狙いで出るよ、●とか占い出ない可能性もあるかもしれないけど、霊能は信用が第一だからね！
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            1
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_color">
+             占いCO　サバンナ　◯
+             <br/>
+             麻呂が占い師でおじゃる。
+             <br/>
+             どんどん占ってバンバン人狼を見つけるでおじゃるよ
+             <br/>
+             あっ、アイコンメタで占ったわけではないでおじゃるよ
+             <br/>
+             麻呂の師匠であるwho先生に頼んだでおじゃる
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            2日目の朝になりました(04:05:33)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            <span class="death">
+             「
+             <span class="name">
+              第一犠牲者
+             </span>
+             」さんは無残な姿で発見されました
+            </span>
+            (04:05:33)
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <div class="d12150">
+        1日目 夜
+       </div>
+       <div class="d12151 log_night">
+        <table cellspacing="0">
+         <tbody>
+          <tr>
+           <td class="ca" colspan="2">
+            <span class="wolf">
+             「
+             <span class="name">
+              ふわしょぼーん
+             </span>
+             」さんは「
+             <span class="name">
+              第一犠牲者
+             </span>
+             」さんを噛みました
+            </span>
+            (ランダム)
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【9】
+           </td>
+           <td class="ccw">
+            いやいや無理はしてないよ
+            <br/>
+            ただあの流れで俺がやらないわけないよw
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            &gt;&gt;1981　何だろう、初心者で霊能って、この村で胃痛しそうな予感がする
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            夜が明けようとしている。役職者は時間内に能力を実行してください。(04:04:33)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             サバンナが狂人なら完璧やな
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             わおーーーーーーーーーーーーーーーーーーーーーーーーん
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            <span class="name">
+             <span class="gm">
+              ＧＭ(観戦者へ)
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             【9】猫かな。無理してお付き合いありがとうなんだぜ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【1】
+           </td>
+           <td class="ccw">
+            ここはさらに連敗を重ねるに１票
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             しぃかサバンナ把握
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            占いCO　サバンナ　◯
+            <br/>
+            麻呂が占い師でおじゃる。
+            <br/>
+            どんどん占ってバンバン人狼を見つけるでおじゃるよ
+            <br/>
+            あっ、アイコンメタで占ったわけではないでおじゃるよ
+            <br/>
+            麻呂の師匠であるwho先生に頼んだでおじゃる
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="gm">
+             <span class="name">
+              ＧＭ（霊話）
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            <span class="gm">
+             【9】猫かな。無理してお付き合いありがとうなんだぜ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             しぃ　かサバンナ、妥当
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            占いCO。麻呂○
+            <br/>
+            アイコンが気持ち悪い、隣の人を占おうかな
+            <br/>
+            ○なら「真の○は噛まれやすいの法則」から即退場。●なら吊って即退場
+            <br/>
+            どっちになっても、悪い結果にはならないと判断して占うよ
+            <br/>
+            結果○。ふむ。噛まれてどうぞです。狂人なら尚良し
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            霊能CO
+            <br/>
+            <br/>
+            挨拶抜きの朝一狙いで出るよ、●とか占い出ない可能性もあるかもしれないけど、霊能は信用が第一だからね！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             あああああああああ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            占いCO　サバンナ　◯
+            <br/>
+            麻呂が占い師でおじゃる。
+            <br/>
+            どんどん占ってバンバン人狼を見つけるでおじゃるよ
+            <br/>
+            あっ、アイコンメタで占ったわけではないでおじゃるよ
+            <br/>
+            麻呂の師匠である
+            <span class="dice">
+             【麻呂】
+            </span>
+            先生に頼んだでおじゃる
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             もしグレランで狼吊れそうだったら
+             <span class="dice">
+              【しぃ】
+             </span>
+             か
+             <span class="dice">
+              【サバンナ】
+             </span>
+             に票合わせね
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【9】
+           </td>
+           <td class="ccw">
+            トンマさんいい加減に勝たないかなｗｗｗ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             狩人
+             <span class="dice">
+              【擬人化しぃ】
+             </span>
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             猫
+             <span class="dice">
+              【麻呂】
+             </span>
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             <span class="dice">
+              【毒男】
+             </span>
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             <span class="dice">
+              【第一犠牲者】
+             </span>
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             わおん
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             わおーーーーーーーーーーん
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             あああああああああああああああああああああああああああああああああああ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             わおーーーーーーーーーーーーーーーん
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             吠え稼ぎ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【9】
+           </td>
+           <td class="ccw">
+            走ったGM乙
+            <br/>
+            んじゃ俺は寝るね
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="maroon oc05 name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            ＧＭのwhoってショニカスか狼率高いよね？(適当
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             わあい！
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             全潜伏しちゃう？
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             10連敗が言うんだから間違いない
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【6】
+           </td>
+           <td class="ccw">
+            腹減ったよな
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            でおじゃる
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             じゃあそうしよう
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             奇策は…
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            よし、サバンナ！　まずはお前に白だしを決めた！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             占い師CO
+             <span class="dice">
+              【ぞぬ】
+             </span>
+             ○
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             吠え増やしまくってから全潜伏してグレ噛みして全力で占い欠けを追わせる奇策をやろうぜ！
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             潜伏していいです？
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            <span class="dice">
+             【サバンナ】
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnd">
+            <span class="gm">
+             <span class="name">
+              ＧＭ（霊話）
+             </span>
+            </span>
+           </td>
+           <td class="ccd">
+            <span class="gm">
+             ラッキーパーソントンマさんだし今回は大丈夫やろ…
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             ギコさん勝たせてあげたいね
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             あ、こりゃ負けたな（諦観）
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="ca" colspan="2">
+            <span class="fortune">
+             「
+             <span class="name">
+              毒男
+             </span>
+             」さんは「
+             <span class="name">
+              麻呂
+             </span>
+             」さんを占いました　結果：
+             <span class="oc00">
+              【村　人】
+             </span>
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm gm_color">
+             ハハ　　 この村のラッキー役職【
+             <span class="oc06">
+              共　有
+             </span>
+             】　　ラッキーパーソン
+             <span class="dice">
+              【ギコ】
+             </span>
+             <br/>
+             (ﾟωﾟ)　　何かあったら4桁安価で初日夜のみGMが懇切丁寧にお断りします。
+             <br/>
+             ((⊂ﾉ 　ﾉつ))　2日目以降は誤爆防止のため、下界への発言は基本的に催促のみです。
+             <br/>
+             (＿⌒ヽ　　軽いトラブル発生時にGMが無言なら続行のゴーサインです。
+             <br/>
+             εﾆ≡　)ﾉ`Ｊ　　なお夜時間非固定、実行時間に制限なしですがラン実行はお断りします。
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="yellow oc01 name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             よろしうです
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="green oc01 name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             やろうか
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="silver oc04 name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            きょうじんだあああああひゃっはーーーーーーーーーーーーｗｗｗｗｗｗｗ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="hotpink oc02 name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            ふむ。
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="powderblue oc03 name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            れーいーのーうー
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="red oc00 name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            すやぁ……
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="tomato oc01 name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="wolf">
+             どうも　１０連敗です
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm gm_big">
+             お断り不在！！！！
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn">
+            <span class="burlywood oc10 name">
+             ぞぬ
+            </span>
+           </td>
+           <td class="cc">
+            よろしく
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            以下のとおり、名前をランダムに割当てました
+            <br/>
+            <table>
+             <tbody>
+              <tr>
+               <td>
+                ギコ
+               </td>
+               <td rowspan="11">
+                ←
+               </td>
+               <td>
+                kari
+               </td>
+              </tr>
+              <tr>
+               <td>
+                カツオ武士
+               </td>
+               <td>
+                kari
+               </td>
+              </tr>
+              <tr>
+               <td>
+                ふわしょぼーん
+               </td>
+               <td>
+                かり
+               </td>
+              </tr>
+              <tr>
+               <td>
+                サバンナ
+               </td>
+               <td>
+                （ﾟдﾟ）
+               </td>
+              </tr>
+              <tr>
+               <td>
+                荒巻スカルチノフ
+               </td>
+               <td>
+                kari
+               </td>
+              </tr>
+              <tr>
+               <td>
+                ぞぬ
+               </td>
+               <td>
+                kari
+               </td>
+              </tr>
+              <tr>
+               <td>
+                毒男
+               </td>
+               <td>
+                kari
+               </td>
+              </tr>
+              <tr>
+               <td>
+                麻呂
+               </td>
+               <td>
+                kari
+               </td>
+              </tr>
+              <tr>
+               <td>
+                しぃ
+               </td>
+               <td>
+                kari
+               </td>
+              </tr>
+              <tr>
+               <td>
+                擬人化しぃ
+               </td>
+               <td>
+                kari
+               </td>
+              </tr>
+              <tr>
+               <td>
+                できない子
+               </td>
+               <td>
+                kari
+               </td>
+              </tr>
+             </tbody>
+            </table>
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            この村ではランダムにCNが割当てられています。まずは名前を確認してください。(04:01:33)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            夜になった…。月の明かりがまぶしいほどに輝いている。何かが起こりそうな予感がする、そんな夜だ。村人たちが昼間に話していた人狼の噂…。本当に人狼なんて、いるのだろうか？(04:01:33)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            1日目の夜になりました(04:01:33)
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+       <div class="d12150">
+        1日目 開始前
+       </div>
+       <div class="d12151">
+        <table cellspacing="0">
+         <tbody>
+          <tr>
+           <td class="cnw">
+            観戦者【7】
+           </td>
+           <td class="ccw">
+            【6】最小値ならよかった
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             （ﾟдﾟ）
+            </span>
+            」さんが名前を「
+            <span class="name">
+             kari
+            </span>
+            」に変更しました(04:01:29)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            36
+            <span class="silver name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            おい、【6】ｗｗｗｗｗ
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             kari
+            </span>
+            」さんが名前を「
+            <span class="name">
+             （ﾟдﾟ）
+            </span>
+            」に変更しました(04:01:25)
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【1】
+           </td>
+           <td class="ccw">
+            仮説1:運が悪い
+            <br/>
+            仮説2:実はトンマさんはクソザコ
+            <br/>
+            仮説3:相性がわるかった　　　さあどれだ！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            35
+            <span class="maroon name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            ＡＡに負けた･･･
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             kari
+            </span>
+            」さんが名前を「
+            <span class="name">
+             （ﾟдﾟ）
+            </span>
+            」に変更しました(04:01:21)
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            34
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             680かいし
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            33
+            <span class="orange name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            【6】wwwwwwwwwwwwwwwwwww
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            32
+            <span class="burlywood name">
+             ぞぬ
+            </span>
+           </td>
+           <td class="cc">
+            ＡＡ
+            <span class="dice">
+             【39】
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            ランダムCNが「AAイラスト セット」に変更されました(04:01:13)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            31
+            <span class="maroon name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            ふふふ、花
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            30
+            <span class="silver name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            花畑
+            <span class="dice">
+             【20】
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            29
+            <span class="hotpink name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            AA
+            <span class="dice">
+             【88】
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            28
+            <span class="maroon name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            ＧＭにお断り
+            <span class="dice">
+             【63】
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【6】
+           </td>
+           <td class="ccw">
+            夜食
+            <span class="dice">
+             【1】
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            27
+            <span class="orange name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            (　ﾟдﾟ) ・・・
+            <br/>
+            <br/>
+            (つд⊂)ｺﾞｼｺﾞｼ
+            <br/>
+            <br/>
+            (；ﾟдﾟ) ・・・
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            26
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             オラダイス早くしないと大変なことになるぞ
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            25
+            <span class="silver name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            <span class="ref" onmouseout="nd()" onmouseover="refer('ＧＭ','「全員お断りします&lt;span class=&quot;dice&quot;&gt;【62】&lt;/span&gt;」')">
+             &gt;&gt;22
+            </span>
+            <br/>
+            ｗｗｗｗ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            24
+            <span class="powderblue name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            花畑
+            <span class="dice">
+             【48】
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            23
+            <span class="tomato name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            もう連敗中はことごとく流れが悪くなるんですよ
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            22
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm gm_big">
+             全員お断りします
+             <span class="dice">
+              【62】
+             </span>
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('8')" onmouseout="nd()">
+            21
+            <span class="powderblue name">
+             しぃ
+            </span>
+           </td>
+           <td class="cc">
+            こんばんは
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            20
+            <span class="blue name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            山田野玉屋　（回文）
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【1】
+           </td>
+           <td class="ccw">
+            それ以前になぜ10連敗したんだ(ﾟωﾟ)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             kari
+            </span>
+            」さんが、村に入りました（12人目）(04:00:13)
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            19
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             もう誰も開始前中身透けを気にしないスタイル好き
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('4')" onmouseout="nd()">
+            18
+            <span class="red name">
+             荒巻スカルチノフ
+            </span>
+           </td>
+           <td class="cc">
+            こんばんみ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            17
+            <span class="orange name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="dice">
+             【1】
+            </span>
+            トロイカ
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             kari
+            </span>
+            」さんが、村に入りました（11人目）(04:00:02)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('6')" onmouseout="nd()">
+            16
+            <span class="hotpink name">
+             毒男
+            </span>
+           </td>
+           <td class="cc">
+            こんばんは
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            15
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             トンマさん全体の勝率かなりいいのになぁ…
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             kari
+            </span>
+            」さんが、村に入りました（10人目）(03:59:45)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            14
+            <span class="tomato name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            勝って寝るから
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            13
+            <span class="green name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            あとトンマ、連敗街道突っ切ろうぜ
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('1')" onmouseout="nd()">
+            12
+            <span class="yellow name">
+             カツオ武士
+            </span>
+           </td>
+           <td class="cc">
+            花畑
+            <span class="dice">
+             【21】
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('5')" onmouseout="nd()">
+            11
+            <span class="burlywood name">
+             ぞぬ
+            </span>
+           </td>
+           <td class="cc">
+            こんばんは
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             kari
+            </span>
+            」さんが、村に入りました（9人目）(03:59:01)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             kari
+            </span>
+            」さんが、村に入りました（8人目）(03:59:00)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            10
+            <span class="green name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            山田はよ降りてこい
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('3')" onmouseout="nd()">
+            9
+            <span class="blue name">
+             サバンナ
+            </span>
+           </td>
+           <td class="cc">
+            こん
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            8
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             600までに10人集まらなかったら困る（ﾟдﾟ）
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cnw">
+            観戦者【3】
+           </td>
+           <td class="ccw">
+            前村で言うの忘れてた、村建て同村ありがとうございました
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            7
+            <span class="tomato name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            <span class="dice">
+             【67】
+            </span>
+            カテド
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             kari
+            </span>
+            」さんが、村に入りました（7人目）(03:58:42)
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('9')" onmouseout="nd()">
+            6
+            <span class="orange name">
+             擬人化しぃ
+            </span>
+           </td>
+           <td class="cc">
+            こんばんは
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('10')" onmouseout="nd()">
+            5
+            <span class="maroon name">
+             できない子
+            </span>
+           </td>
+           <td class="cc">
+            眠い
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('2')" onmouseout="nd()">
+            4
+            <span class="green name">
+             ふわしょぼーん
+            </span>
+           </td>
+           <td class="cc">
+            <span class="style_big">
+             株式市場からダイナミズムが消えている
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             kari
+            </span>
+            」さんが、村に入りました（6人目）(03:58:19)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             kari
+            </span>
+            」さんが、村に入りました（5人目）(03:58:17)
+           </td>
+          </tr>
+          <tr>
+           <td class="cng">
+            3
+            <span class="name">
+             <span class="gm">
+              ＧＭ
+             </span>
+            </span>
+           </td>
+           <td class="ccg">
+            <span class="gm">
+             <span class="template">
+              ▲▽▲ この村のルール(テンプレ) ▲▽▲
+             </span>
+             <br/>
+             ●禁止行為 【GM判断で廃村・殺害処理する場合あり】
+             <br/>
+             ･システムを利用した役職証明
+             <br/>
+             ･利敵行為(無意味な奇策、無意味な柱等)
+             <br/>
+             ･素村騙り(最終日も禁止)
+             <br/>
+             ･村役職者の人外騙り(ギドラ・スライド・結果騙りは自己責任)
+             <br/>
+             ･メタ推理の昼間公開
+             <br/>
+             ･村進行中の内訳暴露、二窓
+             <br/>
+             ･ログ破壊行為(AAは6行まで、連投はお断り)
+             <br/>
+             ･昼間の初心者CO(夜の仲間へのCOは推奨)
+             <br/>
+             ･ランダム役職実行
+             <br/>
+             ･突然死
+             <br/>
+             ･完ステ
+             <br/>
+             <br/>
+             ●非推奨行為【GM判断で警告等する場合あり】
+             <br/>
+             ･過度の暴言
+             <br/>
+             ･入村者への質問時に周りからのネタ回答
+             <br/>
+             ･推理以外のメタ発言を昼間公開(寝坊、PCトラブル、GM催促等)
+             <br/>
+             ･おはステ
+             <br/>
+             <br/>
+             ●推奨行為
+             <br/>
+             ･入村後は挨拶をする
+             <br/>
+             ･役職CO時はCOコマンド、色コマンドを使用する
+             <br/>
+             ･投票は突然死防止のために早めに済ませる
+             <br/>
+             ･初心者は狼や共有の時に夜の内に初心者COする
+             <br/>
+             <br/>
+             ●ランダムCN
+             <br/>
+             ･diceで一人一回最大値採用。GMも振る。
+             <br/>
+             ･東方、坂道、なし、ABCはお断りします
+             <br/>
+             <br/>
+             ※2日目以降は誤爆防止のため下界への発言は基本的に催促のみとさせて頂きます
+             <br/>
+             軽いトラブルが発生した時などGMが無言なら続行のゴーサインと捉えて下さい
+             <br/>
+             なお夜時間非固定、実行時間に制限なしですがラン実行はお断りします（ﾟдﾟ）
+            </span>
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('0')" onmouseout="nd()">
+            2
+            <span class="tomato name">
+             ギコ
+            </span>
+           </td>
+           <td class="cc">
+            勝ちたいんや！
+           </td>
+          </tr>
+          <tr>
+           <td class="cn" onclick="gloss('7')" onmouseout="nd()">
+            1
+            <span class="silver name">
+             麻呂
+            </span>
+           </td>
+           <td class="cc">
+            おは【
+            <span class="oc10">
+             猫　又
+            </span>
+            】
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             kari
+            </span>
+            」さんが、村に入りました（4人目）(03:58:07)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             かり
+            </span>
+            」さんが、村に入りました（3人目）(03:58:03)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             kari
+            </span>
+            」さんが、村に入りました（2人目）(03:57:59)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <a href="/gmlog.jsp?hn=palermo&amp;trip=We1mfMzbny&amp;w=new" target="_blank">
+             <span class="name">
+              （ﾟдﾟ）
+             </span>
+            </a>
+            」さんが、GMとして村に入りました [東京都] (03:57:52)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            「
+            <span class="name">
+             第一犠牲者
+            </span>
+            」さんが、村に入りました（1人目）(03:57:52)
+           </td>
+          </tr>
+          <tr>
+           <td class="cs" colspan="2">
+            TIPS: &gt;&gt;1の形式でアンカーをつけると、その発言者と内容がツールチップ表示されます(03:57:52)
+           </td>
+          </tr>
+         </tbody>
+        </table>
+       </div>
+      </div>
+      <div class="margin">
+      </div>
+     </div>
+    </div>
+    <div class="d122">
+     <span title="参加者欄を固定して会話ログのみをスクロールできます">
+      <input id="SC" onclick="resizeTextArea()" type="checkbox" value="true"/>
+      <i class="fa fa-arrows-v">
+      </i>
+     </span>
+     <span title="ログを逆順に表示します">
+      <input id="reverse" onchange="revchg()" type="checkbox" value="true"/>
+      <i class="fa fa-sort-amount-asc">
+      </i>
+     </span>
+     <div class="d1221">
+      <table cellspacing="0" class="iconsmall">
+       <tbody>
+        <tr>
+         <td class="icon dv" rowspan="2">
+          <div class="wolf_icon011as" style="background-position:-98px 0px;">
+          </div>
+         </td>
+         <td class="name dv">
+          <a class="report" href="../villagerlog.jsp?hn=tonnma&amp;trip=oiIVoa4BI-&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="dead">
+            ギコ
+           </span>
+           【tonnma
+           <wbr/>
+           ◆oiIVoa4BI-】
+          </a>
+         </td>
+         <td class="icon dv" rowspan="2">
+          <div class="wolf_icon011as" style="background-position:-1176px -75px;">
+          </div>
+         </td>
+         <td class="name dv">
+          <a class="report" href="../villagerlog.jsp?hn=Not&amp;trip=vvckSsLHhX&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="dead">
+            カツオ武士
+           </span>
+           【Not
+           <wbr/>
+           ◆vvckSsLHhX】
+          </a>
+         </td>
+        </tr>
+        <tr>
+         <td class="val dv">
+          04:30:28
+          <br/>
+          <span class="oc01">
+           人　狼
+          </span>
+          [チベット自治区]
+         </td>
+         <td class="val dv">
+          04:28:20
+          <br/>
+          <span class="oc01">
+           人　狼
+          </span>
+          [神奈川県]
+         </td>
+        </tr>
+        <tr>
+         <td class="icon dv" rowspan="2">
+          <div class="wolf_icon011as" style="background-position:-588px -75px;">
+          </div>
+         </td>
+         <td class="name dv">
+          <a class="report" href="../villagerlog.jsp?hn=DkEsLx&amp;trip=AKzKhvSrls&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="dead">
+            ふわしょぼーん
+           </span>
+           【DkEsLx
+           <wbr/>
+           ◆AKzKhvSrls】
+          </a>
+         </td>
+         <td class="icon" rowspan="2">
+          <div class="icon011as" style="background-position:-392px -75px;">
+          </div>
+         </td>
+         <td class="name">
+          <a class="report" href="../villagerlog.jsp?hn=amemuchi&amp;trip=CKZt6-DFwT&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="blue">
+            サバンナ
+           </span>
+           【amemuchi
+           <wbr/>
+           ◆CKZt6-DFwT】
+          </a>
+         </td>
+        </tr>
+        <tr>
+         <td class="val dv">
+          04:30:39
+          <br/>
+          <span class="oc01">
+           人　狼
+          </span>
+          [東京都]
+         </td>
+         <td class="val">
+          04:30:46
+          <br/>
+          <span class="oc00">
+           村　人
+          </span>
+          [やわらか銀行]
+         </td>
+        </tr>
+        <tr>
+         <td class="icon" rowspan="2">
+          <div class="icon011as" style="background-position:-980px 0px;">
+          </div>
+         </td>
+         <td class="name">
+          <a class="report" href="../villagerlog.jsp?hn=%E3%82%AF%E3%83%BC%E3%82%B2%E3%83%AB%E3%82%B7%E3%83%A5%E3%83%A9%E3%82%A4%E3%83%90%E3%83%BC&amp;trip=FTLW4.SuDs&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="red">
+            荒巻スカルチノフ
+           </span>
+           【クーゲルシュライバー
+           <wbr/>
+           ◆FTLW4.SuDs】
+          </a>
+         </td>
+         <td class="icon" rowspan="2">
+          <div class="icon011as" style="background-position:-294px 0px;">
+          </div>
+         </td>
+         <td class="name">
+          <a class="report" href="../villagerlog.jsp?hn=kari&amp;trip=kX6GizjDOO&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="burlywood">
+            ぞぬ
+           </span>
+           【kari
+           <wbr/>
+           ◆kX6GizjDOO】
+          </a>
+         </td>
+        </tr>
+        <tr>
+         <td class="val">
+          04:30:12
+          <br/>
+          <span class="oc00">
+           村　人
+          </span>
+          [やわらか銀行]
+         </td>
+         <td class="val">
+          04:29:03
+          <br/>
+          <span class="oc10">
+           猫　又
+          </span>
+          [やわらか銀行]
+         </td>
+        </tr>
+        <tr>
+         <td class="icon" rowspan="2">
+          <div class="icon011as" style="background-position:-735px 0px;">
+          </div>
+         </td>
+         <td class="name">
+          <a class="report" href="../villagerlog.jsp?hn=%E9%BB%84%E3%83%9E%E3%83%AA%E3%83%B3&amp;trip=UxPdLJxXnb&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="hotpink">
+            毒男
+           </span>
+           【黄マリン
+           <wbr/>
+           ◆UxPdLJxXnb】
+          </a>
+         </td>
+         <td class="icon" rowspan="2">
+          <div class="wolf_icon011as" style="background-position:-1078px -75px;">
+          </div>
+         </td>
+         <td class="name">
+          <a class="report" href="../villagerlog.jsp?hn=%EF%BD%BC%EF%BE%9E%EF%BD%B4%EF%BE%9D%E9%9A%8A&amp;trip=E2l1yStBwx&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="silver">
+            麻呂
+           </span>
+           【ｼﾞｴﾝ隊
+           <wbr/>
+           ◆E2l1yStBwx】
+          </a>
+         </td>
+        </tr>
+        <tr>
+         <td class="val">
+          04:31:01
+          <br/>
+          <span class="oc02">
+           占い師
+          </span>
+          [やわらか銀行]
+         </td>
+         <td class="val">
+          04:31:06
+          <br/>
+          <span class="oc04">
+           狂　人
+          </span>
+          [兵庫県]
+         </td>
+        </tr>
+        <tr>
+         <td class="icon" rowspan="2">
+          <div class="icon011as" style="background-position:-147px 0px;">
+          </div>
+         </td>
+         <td class="name">
+          <a class="report" href="../villagerlog.jsp?hn=%E7%B4%A0%E9%BA%BA&amp;trip=yBB.1Qbv-U&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="powderblue">
+            しぃ
+           </span>
+           【素麺
+           <wbr/>
+           ◆yBB.1Qbv-U】
+          </a>
+         </td>
+         <td class="icon" rowspan="2">
+          <div class="icon011as" style="background-position:-784px -75px;">
+          </div>
+         </td>
+         <td class="name">
+          <a class="report" href="../villagerlog.jsp?hn=%E3%83%AA%E3%83%B3%E3%82%AF&amp;trip=FaP86AzNjb&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="orange">
+            擬人化しぃ
+           </span>
+           【リンク
+           <wbr/>
+           ◆FaP86AzNjb】
+          </a>
+         </td>
+        </tr>
+        <tr>
+         <td class="val">
+          04:30:53
+          <br/>
+          <span class="oc03">
+           霊　能
+          </span>
+          [千葉県]
+         </td>
+         <td class="val">
+          04:31:02
+          <br/>
+          <span class="oc00">
+           村　人
+          </span>
+          [新疆ウイグル自治区]
+         </td>
+        </tr>
+        <tr>
+         <td class="icon" rowspan="2">
+          <div class="icon011as" style="background-position:-245px -75px;">
+          </div>
+         </td>
+         <td class="name">
+          <a class="report" href="../villagerlog.jsp?hn=%E3%81%AB%E3%82%83%E3%82%93%E3%81%93%E3%82%8D&amp;trip=lvSA5qhfmz&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="maroon">
+            できない子
+           </span>
+           【にゃんころ
+           <wbr/>
+           ◆lvSA5qhfmz】
+          </a>
+         </td>
+         <td class="icon dv" rowspan="2">
+          <div class="dead_icon011as" style="background-position:-392px 0px;">
+           <img src="../images/kami.png"/>
+          </div>
+         </td>
+         <td class="name dv">
+          <a class="report" href="../villagerlog.jsp?hn=%E7%AC%AC%E4%B8%80%E7%8A%A0%E7%89%B2%E8%80%85&amp;trip=hogehogeho&amp;st=1&amp;sort=VILLAGE_NUMBER" target="_blank">
+           <span class="dead">
+            第一犠牲者
+           </span>
+           【第一犠牲者
+           <wbr/>
+           ◆hogehogeho】
+          </a>
+         </td>
+        </tr>
+        <tr>
+         <td class="val">
+          04:30:04
+          <br/>
+          <span class="oc05">
+           狩　人
+          </span>
+          [静岡県]
+         </td>
+         <td class="val dv">
+          <span class="timeover1">
+           03:57:52
+          </span>
+          <br/>
+          <span class="oc00">
+           村　人
+          </span>
+          [第一国]
+         </td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+     <br/>
+     <br/>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>
+

@@ -1,4 +1,5 @@
 #APIkey
+openAIAPIkey.txt
 */openAIAPIkey.txt
 aiwolfk2b/GPT_end_to_end/openAIAPIkey.txt
 
@@ -7,6 +8,7 @@ log_sending_to_gpt.txt
 log.txt
 
 tmp/
+build/
 gamelog/
 jp2protocol_corpus/
 
@@ -25,3 +27,4 @@ jp2protocol_corpus/
 
 #環境は各自で作成するので、gitでは管理しない
 env_k2b/
+k2b_env/
