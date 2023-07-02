@@ -1,3 +1,4 @@
+import os,random
 from configparser import ConfigParser
 from typing import List,Tuple,Dict,Any,Union, Optional
 from enum import Enum
@@ -7,11 +8,8 @@ from aiwolf.utterance import Talk
 from aiwolf.agent import Agent,Role, Species
 
 from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractRoleEstimationModel,AbstractStrategyModule,AbstractRoleInferenceModule,RoleInferenceResult,OneStepPlan, ActionType
-from aiwolfk2b.utils.helper import load_default_config,get_openai_api_key,load_default_GameInfo,load_default_GameSetting
-import os,random
-import openai,Levenshtein
-import numpy as np
-import pathlib
+from aiwolfk2b.AttentionReasoningAgent.Modules.GPTProxy import GPTAPI,ChatGPTAPI
+from aiwolfk2b.utils.helper import load_default_config,load_default_GameInfo,load_default_GameSetting,calc_closest_str
 
 class GameLog:
     """ゲームのログを保存するクラス"""
@@ -63,49 +61,6 @@ class GameLog:
         self._talk_list_updated = True
 
 
-class GPT3API:
-    """
-    GPT3とのやりとりを行うためのクラス
-    """
-    def __init__(self):
-        parent_dir = os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
-        with open(parent_dir + '/openAIAPIkey.txt', "r") as f:
-            openai.api_key = f.read().strip()
-
-    def complete(self, input:str)->str:
-        """GPT3でCompletionを行う"""
-        print("sending to GPT3")
-        response = openai.Completion.create(engine="text-davinci-003",
-            prompt=input,
-            max_tokens=100,
-            temperature=0)
-        print("received from GPT3")
-        return response['choices'][0]['text']
-
-    
-class GPT4API:
-    """
-    GPT4とのやりとりを行うためのクラス
-    """
-    def __init__(self):
-        parent_dir = os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
-        with open(parent_dir + '/openAIAPIkey.txt', "r") as f:
-            openai.api_key = f.read().strip()
-
-    def complete(self, messages)->str:
-        """GPT4でCompletionを行う"""
-        print("sending to GPT4")
-        response = openai.ChatCompletion.create(model="gpt-4-0613",
-            messages=messages, 
-            max_tokens=200,
-            temperature=0.5)
-        print("received from GPT4")
-        parent_dir = os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
-        with open(parent_dir+"/log.txt", "a") as f:
-            f.write(f"{messages}\n{response['choices'][0]['message']['content']}")
-        return response['choices'][0]['message']['content']
-    
-
 class TalkTopic(Enum):
     """会話のトピック"""
     ROLEACTION_RESULT = "ROLEACTION_RESULT"
@@ -121,7 +76,7 @@ class ComingOutStatus:
     def __init__(self, game_info:GameInfo, game_setting:GameSetting) -> None:
         for agent in game_info.agent_list:
             self.all_comingout_status[agent] = Role.UNC
-            self.gpt3_api  =GPT3API()
+            self.gpt3_api =GPTAPI()
 
     def update(self, game_info:GameInfo, game_setting:GameSetting)->None:
         if not self.is_all_comingout():
@@ -133,7 +88,7 @@ class ComingOutStatus:
 「みなさんよろしくお願いします」:無し
 「{talk.text}」 :"""
                 response = self.gpt3_api.complete(prompt)
-                CO_role = self._closest_str(["無し","人狼","狂人","占い師","村人"], response)
+                CO_role = calc_closest_str(["無し","人狼","狂人","占い師","村人"], response)
                 if CO_role == "無し":
                     if self.all_comingout_status[talk.agent] == Role.UNC:
                         self.all_comingout_status[talk.agent] = Role.VILLAGER
@@ -153,18 +108,6 @@ class ComingOutStatus:
             if role == Role.UNC:
                 return False
         return True
-    
-    def _closest_str(self, str_list:List[str], target_str:str)->str:
-        """str_listの中からtarget_strに最も近い文字列を返す"""
-        min_distance = 100000
-        min_str = ""
-        for str in str_list:
-            distance = Levenshtein.distance(str, target_str)
-            if distance < min_distance:
-                min_distance = distance
-                min_str = str
-        return min_str
-
 
 class StrategyModule(AbstractStrategyModule):
     """戦略立案モジュール"""
@@ -181,7 +124,7 @@ class StrategyModule(AbstractStrategyModule):
         self.today_talked_topic:Dict[TalkTopic, bool] = {TalkTopic.ROLEACTION_RESULT:False, TalkTopic.ROLEACTION_REACTION:False, TalkTopic.WHO_TO_VOTE:False}
         self.comingout_status = ComingOutStatus(game_info, game_setting)
         self.game_log = GameLog(game_info, game_setting)
-        self.gpt4_api = GPT4API()
+        self.chatgpt_api = ChatGPTAPI()
 
     def talk(self,game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         if game_info.day == 0:
@@ -431,14 +374,14 @@ class StrategyModule(AbstractStrategyModule):
             # GPT4にやらせる
             messages = [{"role": "system", "content":f"あなたは今人狼ゲームをしています。あなたは{game_info.me}です。対戦ログと指示が送られてきますので、対戦ログの結果と発言するべきことが送られてきますので、適切に返答してください。"}, 
                         {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。誰が占い師カミングアウトしているかなどの状況を整理して会話を発展させてください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
-            response = self.gpt4_api.complete(messages)
+            response = self.chatgpt_api.complete(messages)
             return response
         else:
             # 2日目は占い理由を聞く
             # GPT4にやらせる
             messages = [{"role": "system", "content":"あなたは今人狼ゲームをしています。あなたは{game_info.me}です。対戦ログと指示が送られてきますので、対戦ログの結果と発言するべきことが送られてきますので、適切に返答してください。"}, 
                         {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。占い師COした人に、なぜその人を占ったか聞くなどしてください。ただし他の人が既に聞いてた場合は、もう言う必要は無いので、SKIPと発言してください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
-            response = self.gpt4_api.complete(messages)
+            response = self.chatgpt_api.complete(messages)
             return response
 
     def talk_who_to_vote(self, game_info:GameInfo, game_setting:GameSetting)->Optional[str]:
