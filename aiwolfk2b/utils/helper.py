@@ -8,7 +8,7 @@ from aiwolf.agent import Agent, Role, Status, Species,Winner
 from aiwolf.judge import Judge, _Judge
 from aiwolf.utterance import Talk, Whisper, _Utterance
 from aiwolf.vote import Vote, _Vote
-import re,math,os,errno
+import re,math,os,errno,Levenshtein,numpy as np
 import pathlib
 from pathlib import Path
 
@@ -156,3 +156,30 @@ def get_openai_api_key()->str:
             key = f.read().strip()
             
     return key
+
+def calc_closest_str(str_list:List[str], target_str:str)->str:
+    """
+    str_listの中からtarget_strに最も近い文字列を返す
+
+    Parameters
+    ----------
+    str_list : List[str]
+        最も一致している文字列を返す
+    target_str : str
+        比較対象の文字列
+    Returns
+    -------
+    str
+        最も一致している文字列
+    """    
+    
+    
+    """str_listの中からtarget_strに最も近い文字列を返す"""
+    min_distance = np.inf
+    min_str = ""
+    for str in str_list:
+        distance = Levenshtein.distance(str, target_str)
+        if distance < min_distance:
+            min_distance = distance
+            min_str = str
+    return min_str
