@@ -2,6 +2,7 @@ import os,random
 from configparser import ConfigParser
 from typing import List,Tuple,Dict,Any,Union, Optional
 from enum import Enum
+import numpy as np
 
 from aiwolf import GameInfo, GameSetting
 from aiwolf.utterance import Talk
@@ -177,32 +178,58 @@ class StrategyModule(AbstractStrategyModule):
     
     def vote(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """投票"""
+        # 投票先が既に要求処理モジュールで決定していた場合
+        for one_plan in self.future_plan:
+            if one_plan.action_type == ActionType.VOTE:
+                plan = one_plan
+                self.future_plan.remove(one_plan)
+                return plan
+
+        # 自前で決める場合
+        evaluation = self.vote_evalutation(game_info, game_setting)
+        return evaluation[np.argmax([eval_val for _, eval_val in evaluation])][0]
+    
+    def vote_evalutation(self, game_info: GameInfo, game_setting: GameSetting) -> List[Tuple[OneStepPlan, float]]:
+        """
+        投票先の評価
+        評価値(float)が高いほど投票おすすめ度が高い
+        """
+
         #各エージェントの役職を推定する
         inf_results:List[RoleInferenceResult] = []
         for a in game_info.alive_agent_list:
             inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))
 
-        #エージェントの中から最も占い師の確率が高いエージェントを選ぶ
-        #エージェントの中から最も狂人の確率が低いエージェントを選ぶ
-        #エージェントの中から最も人狼の確率が高いエージェントを選ぶ
-        max_seer_agent = self.max_agent(inf_results, Role.SEER)
-        min_poss_agent = self.min_agent(inf_results, Role.POSSESSED)
-        max_wolf_agent = self.max_agent(inf_results, Role.WEREWOLF)
-
+        evaluation = []
         #人狼側の場合、誰に投票するか決める
         if game_info.my_role == Role.WEREWOLF or game_info.my_role == Role.POSSESSED:
+            print("DEBUG ", inf_results)
             #占い師が生きている確率が高い場合
             if self.check_survive_seer(inf_results):
                 #最も占い師の確率が高いエージェントに投票する
-                vote_plan = OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,max_seer_agent)
+                for inf_result in inf_results:
+                    # ここ、Agentの__eq__がオーバーロードされてなくてクラスとしての比較になってるから、ヒットするか心配で無理やりインデックスで検索してる
+                    for alive_agent in game_info.alive_agent_list:
+                        if inf_result.agent.agent_idx == alive_agent.agent_idx:
+                            evaluation.append((OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,inf_result.agent), inf_result.probs[Role.SEER]))
             else:
                 #最も狂人の確率が低いエージェントに投票する
-                vote_plan = OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,min_poss_agent)
+                for inf_result in inf_results:
+                    for alive_agent in game_info.alive_agent_list:
+                        if inf_result.agent.agent_idx == alive_agent.agent_idx:
+                            evaluation.append((OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,inf_result.agent), 1- inf_result.probs[Role.POSSESSED]))
+        
         #村人側の場合、誰に投票するか決める
         else:
             #最も人狼の確率が高いエージェントに投票する
-            vote_plan = OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,max_wolf_agent)
-        return vote_plan
+            for inf_result in inf_results:
+                for alive_agent in game_info.alive_agent_list:
+                    if inf_result.agent.agent_idx == alive_agent.agent_idx:
+                # 人狼と狂人の重み付けをハードコーディングしてる、ごめん、許して
+                        eval_val = inf_result.probs[Role.WEREWOLF] + 0.5 * inf_result.probs[Role.POSSESSED]
+                        evaluation.append((OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,inf_result.agent), eval_val))
+        
+        return evaluation
     
     def attack(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """襲撃"""
@@ -387,8 +414,11 @@ class StrategyModule(AbstractStrategyModule):
     def talk_who_to_vote(self, game_info:GameInfo, game_setting:GameSetting)->Optional[str]:
         """誰に投票するかの話題を振る(他の人に聞かれて答えるのは要求処理モジュールの役割なのでやらない)"""
         self.today_talked_topic[TalkTopic.WHO_TO_VOTE] = True
-        vote_target = self.vote(game_info, game_setting)
-        return f"{vote_target}が人狼だと思うので投票したいと思うのですが、皆さんはどう思いますか？"
+        vote_target = self.vote(game_info, game_setting).action
+        # future_planに投票を入れる
+        self.add_vote_future_plan(OneStepPlan("最も人狼ぽかったから", ActionType.VOTE, vote_target))
+        # 自己対戦で要求処理モジュールが起動するように、要求型の言い方にした
+        return f"{vote_target}が人狼だと思うので投票したいと思います、皆さん{vote_target}に投票しましょう！"
     
     def talk_no_topic(self, game_info:GameInfo, game_setting:GameSetting)->Optional[str]:
         """話題がないときに話す"""
@@ -400,6 +430,12 @@ class StrategyModule(AbstractStrategyModule):
         
         #トークン数の関係で、常にOverを返すようにする
         return "Over"
+    
+    def add_vote_future_plan(self, one_step_plan:OneStepPlan)->None:
+        for plan in self.future_plan:
+            if plan.action_type == ActionType.VOTE:
+                self.future_plan.remove(plan)
+        self.future_plan.append(one_step_plan)
 
 
 if __name__=="__main__":

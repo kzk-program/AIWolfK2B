@@ -7,23 +7,8 @@ from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractRoleEstima
 import os
 import openai
 import Levenshtein
+from GPTProxy import GPTAPI, ChatGPTAPI
 
-class GPT3API:
-    """
-    GPT3とのやりとりを行うためのクラス
-    """
-    def __init__(self):
-        parent_dir = os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
-        with open(parent_dir + '/openAIAPIkey.txt', "r") as f:
-            openai.api_key = f.read().strip()
-
-    def complete(self, input:str)->str:
-        """GPT3でCompletionを行う"""
-        response = openai.Completion.create(engine="text-davinci-003",
-            prompt=input,
-            max_tokens=100,
-            temperature=0)
-        return response['choices'][0]['text']
     
 def closest_str(str_list:List[str], target_str:str)->str:
     """str_listの中からtarget_strに最も近い文字列を返す"""
@@ -45,6 +30,8 @@ class RequestProcessingModule(AbstractRequestProcessingModule):
     """
     def __init__(self,config:ConfigParser,role_estimation_model: AbstractRoleEstimationModel, strategy_module:AbstractStrategyModule) -> None:
         super().__init__(config,role_estimation_model,strategy_module)
+        self.chatgpt_api = ChatGPTAPI()
+        self.gpt3_api = GPTAPI()
         
     def process_request(self, request:str, requester:Agent, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         request_actiontype = self.classify_request_actiontype(request)
@@ -104,6 +91,27 @@ class RequestProcessingModule(AbstractRequestProcessingModule):
 「{request}」"""
         target_agent = closest_str(["Agent[" + "{:02}".format(x) + "]" for x in range(1, 6)],self.gpt3_api.complete(prompt).strip())
         return Agent(int(target_agent[6:8]))
+    
+    def discuss_who_to_vote(self, game_info:GameInfo, game_setting:GameSetting) -> str:
+        """
+        誰に投票するかを議論する
+        """
+        evaluation = self.strategy_module.evaluate_vote(game_info,game_setting)
+        evaluation_message = ""
+        for one_step_plan, eval in evaluation:
+            evaluation_message += f"{one_step_plan.action}に投票するべき度合い（確率）は{eval}です。なぜなら、{one_step_plan.reason}です。\n"
+        messages = [{"system": f"あなたは人狼ゲームをしています。あなたは{game_info.me}です。あなたは今、投票先を決める議論をしています。投票先がバラけることはあまり良いことではありませんから、過半数の票が一人に集まるように合意を形成してください。"},
+                    {"user": f"今の人狼ゲームのログは以下です。\n===========\n{self.strategy_module.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。\n{evaluation_message}\nより投票するべき度合いが高い方に誘導・説得しながら、多少妥協もしながら合意を形成してください。最後に会話内容とは別に、「結論：」に続いて投票することにするエージェントをAgent[01]~Agent[{game_setting.player_num:02d}]で答えてください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
+        response = self.chatgpt_api.complete(messages)
+        if len(response.split("結論："))==2:
+            vote_agent = closest_str([f"{agent}" for agent in game_info.alive_agent_list], response.split("結論：")[1].strip())
+            for one_step_plan, eval in evaluation:
+                if str(one_step_plan.action) == vote_agent:
+                    self.strategy_module.add_vote_future_plan(one_step_plan)
+            return response.split("結論：")[0].strip()
+        else:
+            # 正しいフォーマットで帰ってこなかった
+            return response.split("結論")[0].strip()
 
 if __name__ == "__main__":
     pass
