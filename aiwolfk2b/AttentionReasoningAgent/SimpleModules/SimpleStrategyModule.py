@@ -3,7 +3,7 @@ from typing import List,Tuple,Dict,Any,Union
 
 from aiwolf import GameInfo, GameSetting
 from aiwolf.agent import Agent,Role
-from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractRoleEstimationModel,AbstractStrategyModule,AbstractRoleInferenceModule,RoleInferenceResult,OneStepPlan
+from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractRoleEstimationModel,AbstractStrategyModule,AbstractRoleInferenceModule,RoleInferenceResult,OneStepPlan,ActionType
 
 import random
 
@@ -16,10 +16,11 @@ class SimpleStrategyModule(AbstractStrategyModule):
         self.future_plan = []
         self.next_plan = None
 
-    def talk(self,game_info: GameInfo, game_setting: GameSetting) -> str:
-        return "何も言うことはない(from strategy module)"
+    def talk(self,game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
+        talk_plan = OneStepPlan("サンプルだから",ActionType.TALK,"何も言うことはない(from strategy module)")
+        return talk_plan
     
-    def vote(self, game_info: GameInfo, game_setting: GameSetting) -> Agent:
+    def vote(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """最も人狼の確率が高いエージェントに投票する"""
         #各エージェントの役職を推定する
         inf_results:List[RoleInferenceResult] = []
@@ -34,22 +35,29 @@ class SimpleStrategyModule(AbstractStrategyModule):
                 max_wolf_agent = inf_result.agent
                 
         #最も人狼の確率が高いエージェントに投票する
-        return max_wolf_agent
+        vote_plan = OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,max_wolf_agent)
+        
+        return vote_plan
     
-    def attack(self, game_info: GameInfo, game_setting: GameSetting) -> Agent:
+    def attack(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """ランダムに襲撃する"""
-        return random.choice(game_info.agent_list)
+        attack_plan = OneStepPlan("なんとなく決めたから",ActionType.ATTACK,random.choice(game_info.agent_list))
+        return attack_plan
     
-    def divine(self, game_info: GameInfo, game_setting: GameSetting) -> Agent:
+    def divine(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """ランダムに占う"""
-        return random.choice(game_info.agent_list)
+        divine_plan = OneStepPlan("なんとなく決めたから",ActionType.DIVINE,random.choice(game_info.agent_list))
+        return divine_plan
     
-    def guard(self, game_info: GameInfo, game_setting: GameSetting) -> Agent:
+    def guard(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """ランダムに護衛する"""
-        return random.choice(game_info.agent_list)
+        guard_plan = OneStepPlan("なんとなく決めたから",ActionType.GUARD,random.choice(game_info.agent_list))
+        return guard_plan
     
-    def whisper(self, game_info: GameInfo, game_setting: GameSetting) -> str:
-        return "何も言うことはない"
+    def whisper(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
+        whisper_plan = OneStepPlan("サンプルだから",ActionType.WHISPER,"何も言うことはない(from strategy module)")
+        
+        return whisper_plan
         
     def plan(self, game_info: GameInfo, game_setting: GameSetting) -> None:
         pass
