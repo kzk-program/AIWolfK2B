@@ -68,7 +68,7 @@ class AttentionReasoningAgent(AbstractPlayer):
         self.strategy_module:AbstractStrategyModule = StrategyModule(self.config,self.role_estimation_model,self.role_inference_module)
         self.request_processing_module:AbstractRequestProcessingModule = SimpleRequestProcessingModule(self.config,self.role_estimation_model,self.strategy_module)
         self.question_processing_module:AbstractQuestionProcessingModule = QuestionProcessingModule(self.config,self.role_inference_module,self.strategy_module)
-        self.influence_consideration_module:AbstractInfluenceConsiderationModule = SimpleInfluenceConsiderationModule(self.config,self.request_processing_module,self.question_processing_module)
+        self.influence_consideration_module:AbstractInfluenceConsiderationModule = InfluenceConsiderationModule(self.config,self.request_processing_module,self.question_processing_module)
         self.speaker_module:AbstractSpeakerModule = SimpleSpeakerModule(self.config)
 
     def is_alive(self, agent: Agent) -> bool:
@@ -169,11 +169,11 @@ class AttentionReasoningAgent(AbstractPlayer):
 
     def talk(self) -> str:
         strategy_plan = self.strategy_module.talk(self.game_info,self.game_setting)
-        influenced = self.influence_consideration_module.check_influence(self.game_info,self.game_setting)
+        influenced,influenced_plan = self.influence_consideration_module.check_influence(self.game_info,self.game_setting)
         executed_plan:OneStepPlan = None
-        if influenced[0]:
+        if influenced:
             #他者影響モジュールのplanを採用
-            executed_plan = influenced[1]
+            executed_plan = influenced_plan
         else:
             #戦略立案モジュールのplanを採用
             executed_plan = strategy_plan
