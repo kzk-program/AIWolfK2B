@@ -423,7 +423,7 @@ class StrategyModule(AbstractStrategyModule):
                     # 自分以外の最も人狼の確率が低い人を指名して、黒出しする
                     inf_results:List[RoleInferenceResult] = []
                     for a in game_info.alive_agent_list:
-                        if a != game_info.me:
+                        if a.agent_idx != game_info.me.agent_idx:
                             inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))           
                     min_wolf_inference = min(inf_results, key=lambda x: x.probs[Role.WEREWOLF] if x.agent != game_info.me else 1.0)
                     divine_result = Species.WEREWOLF
@@ -470,7 +470,9 @@ class StrategyModule(AbstractStrategyModule):
                 mention += f">>{agent} "
             
         # GPT4にやらせる
-        explain_text = f"""以下の理由から{vote_plan.action}に投票すべきだと考えられる。そこで、前述の理由を踏まえて他のエージェントが{vote_plan.action}に投票するように説得する文を簡潔に述べよ。また、理由に自信がなくても可能な限り説得しなさい
+        explain_text = f"""以下の理由から{vote_plan.action}に投票すべきだと考えられる。
+そこで、前述の理由を踏まえて他のエージェントが{vote_plan.action}に投票するように説得する文を簡潔に述べよ。
+また、理由に自信がなくても可能な限り説得しなさい。そして、必ず{vote_plan.action}に投票するように説得する文にしなさい
 -----
 理由:{vote_plan.reason}
 -----   
@@ -478,7 +480,8 @@ class StrategyModule(AbstractStrategyModule):
         #print(f"explain_text:{explain_text}")
         
         explain_message = [{"role":"user","content":explain_text}]
-        convince_text = self.chatgpt_api.complete(explain_message).strip("\n'「」").strip('"')
+        #説得文は眺めに400トークンまでとする
+        convince_text = self.chatgpt_api.complete(explain_message,max_tokens=400).strip("\n'「」").strip('"')
         return convince_text
         #return f"{vote_plan.target}が人狼だと思うので投票したいと思います、皆さん{vote_plan.target}に投票しましょう！"
     
