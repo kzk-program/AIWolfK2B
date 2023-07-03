@@ -126,12 +126,20 @@ class StrategyModule(AbstractStrategyModule):
         self.comingout_status = ComingOutStatus(game_info, game_setting)
         self.game_log = GameLog(game_info, game_setting)
         self.chatgpt_api = ChatGPTAPI()
+        self.has_greeted = False
 
     def talk(self,game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
+        #初日の処理
         if game_info.day == 0:
-            talk_plan = OneStepPlan("挨拶をする必要があるから",ActionType.TALK,"よろしくお願いします！")
+            talk_plan:OneStepPlan = None
+            if not self.has_greeted: 
+                talk_plan = OneStepPlan("挨拶をする必要があるから",ActionType.TALK,"よろしくお願いします！")
+                self.has_greeted = True
+            else:
+                talk_plan = OneStepPlan("挨拶はしたから",ActionType.TALK,"Over")
             return talk_plan
         
+        #日にちが変わったらtopicをリセット
         if game_info.day != self.today:
             self.today = game_info.day
             self.reset_talked_topic()
@@ -378,7 +386,7 @@ class StrategyModule(AbstractStrategyModule):
                     inf_results:List[RoleInferenceResult] = []
                     for a in game_info.alive_agent_list:
                         if a != game_info.me:
-                            inf_results.append(self.role_inference_module.infer(a, game_info, game_setting))
+                            inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))
                     
                     divine_target = self.min_agent(inf_results, Role.WEREWOLF)
                     divine_result = Species.WEREWOLF
@@ -414,17 +422,27 @@ class StrategyModule(AbstractStrategyModule):
     def talk_who_to_vote(self, game_info:GameInfo, game_setting:GameSetting)->Optional[str]:
         """誰に投票するかの話題を振る(他の人に聞かれて答えるのは要求処理モジュールの役割なのでやらない)"""
         self.today_talked_topic[TalkTopic.WHO_TO_VOTE] = True
-        vote_target = self.vote(game_info, game_setting).action
+        vote_plan = self.vote(game_info, game_setting)
         # future_planに投票を入れる
-        self.add_vote_future_plan(OneStepPlan("最も人狼ぽかったから", ActionType.VOTE, vote_target))
+        self.add_vote_future_plan(OneStepPlan(vote_plan.reason, ActionType.VOTE, vote_plan.action))
         # 自己対戦で要求処理モジュールが起動するように、要求型の言い方にした
         mention = ""
         for agent in game_info.alive_agent_list:
             if agent != game_info.me:
                 mention += f">>{agent} "
             
-        # return f"{mention}{vote_target}が人狼だと思うので投票したいと思います、皆さん{vote_target}に投票しましょう！"
-        return f"{vote_target}が人狼だと思うので投票したいと思います、皆さん{vote_target}に投票しましょう！"
+        # GPT4にやらせる
+        explain_text = f"""以下の理由から{vote_plan.action}に投票すべきだと考えられる。そこで、前述の理由を踏まえて他のエージェントが{vote_plan.action}に投票するように説得する文を簡潔に述べよ。
+-----
+理由:{vote_plan.reason}
+-----   
+"""
+        #print(f"explain_text:{explain_text}")
+        
+        explain_message = [{"role":"user","content":explain_text}]
+        convince_text = self.chatgpt_api.complete(explain_message).strip("\n'「」").strip('"')
+        return convince_text
+        #return f"{vote_plan.target}が人狼だと思うので投票したいと思います、皆さん{vote_plan.target}に投票しましょう！"
     
     def talk_no_topic(self, game_info:GameInfo, game_setting:GameSetting)->Optional[str]:
         """話題がないときに話す"""

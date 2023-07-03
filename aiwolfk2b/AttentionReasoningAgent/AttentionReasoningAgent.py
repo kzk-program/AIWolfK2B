@@ -169,14 +169,19 @@ class AttentionReasoningAgent(AbstractPlayer):
 
     def talk(self) -> str:
         strategy_plan = self.strategy_module.talk(self.game_info,self.game_setting)
-        influenced,influenced_plan = self.influence_consideration_module.check_influence(self.game_info,self.game_setting)
-        executed_plan:OneStepPlan = None
-        if influenced:
-            #他者影響モジュールのplanを採用
-            executed_plan = influenced_plan
+        if self.game_info.day > 0: #初日以外
+            influenced,influenced_plan = self.influence_consideration_module.check_influence(self.game_info,self.game_setting)
+            executed_plan:OneStepPlan = None
+            if influenced:
+                #他者影響モジュールのplanを採用
+                executed_plan = influenced_plan
+            else:
+                #戦略立案モジュールのplanを採用
+                executed_plan = strategy_plan
         else:
-            #戦略立案モジュールのplanを採用
+            #初日は戦略立案モジュールのplanを採用
             executed_plan = strategy_plan
+                
         text = executed_plan.action
         rich_text = self.speaker_module.enhance_speech(text)
         self.strategy_module.update_history(self.game_info,self.game_setting,executed_plan)
@@ -227,5 +232,5 @@ if __name__ == '__main__':
 
     agent: AbstractPlayer = AttentionReasoningAgent(config_ini)
     
-    client = TcpipClient(agent, input_args.name, input_args.hostname, input_args.port, input_args.role, socket_timeout=1200)
+    client = TcpipClient(agent, input_args.name, input_args.hostname, input_args.port, input_args.role,total_games=1, socket_timeout=1200)
     client.connect()
