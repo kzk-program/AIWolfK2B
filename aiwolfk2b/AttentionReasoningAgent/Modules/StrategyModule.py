@@ -466,6 +466,7 @@ class StrategyModule(AbstractStrategyModule):
                         if a.agent_idx != game_info.me.agent_idx:
                             inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))           
                     min_wolf_inference = min(inf_results, key=lambda x: x.probs[Role.WEREWOLF] if x.agent != game_info.me else 1.0)
+                    divine_target = min_wolf_inference.agent
                     divine_result = Species.WEREWOLF
                     #人狼側で占った理由を偽造しておく
                     self.history.append(OneStepPlan(min_wolf_inference.reason, ActionType.DIVINE, divine_result))
