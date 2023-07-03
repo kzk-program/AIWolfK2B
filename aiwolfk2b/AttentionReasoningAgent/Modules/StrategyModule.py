@@ -259,7 +259,7 @@ class StrategyModule(AbstractStrategyModule):
             #最も人狼の確率が高いエージェントに投票する
             for inf_result in inf_results:
                 #自分は対象外
-                if inf_result.agent_idx == game_info.me.agent_idx:
+                if inf_result.agent.agent_idx == game_info.me.agent_idx:
                     continue
                 if inf_result.agent.agent_idx in alive_agent_idx_list: #生存中のエージェントのみを対象に
                 # 人狼と狂人の重み付けをハードコーディングしてる、ごめん、許して
@@ -470,7 +470,7 @@ class StrategyModule(AbstractStrategyModule):
                 mention += f">>{agent} "
             
         # GPT4にやらせる
-        explain_text = f"""以下の理由から{vote_plan.action}に投票すべきだと考えられる。そこで、前述の理由を踏まえて他のエージェントが{vote_plan.action}に投票するように説得する文を簡潔に述べよ。
+        explain_text = f"""以下の理由から{vote_plan.action}に投票すべきだと考えられる。そこで、前述の理由を踏まえて他のエージェントが{vote_plan.action}に投票するように説得する文を簡潔に述べよ。また、理由に自信がなくても可能な限り説得しなさい
 -----
 理由:{vote_plan.reason}
 -----   
