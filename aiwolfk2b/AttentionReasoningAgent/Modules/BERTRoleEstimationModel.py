@@ -78,12 +78,14 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
         text = self.preprocessor.create_estimation_text(estimated_agent,game_info_list,game_setting,compress_text)
         #推定
         results = self.estimate_from_text([text],game_setting)
-        
-        return results[0]
+        result = results[0]
+        result.agent = estimated_agent
+        return result
     
     def estimate_from_text(self,text_list:List[str],game_setting: GameSetting)-> List[RoleEstimationResult]:
         """
         与えられたテキストからAgent[01]の役職を推定し、その結果を返す関数
+        RoleEstimationResultのagentがNoneになるので注意!
 
         Parameters
         ----------
