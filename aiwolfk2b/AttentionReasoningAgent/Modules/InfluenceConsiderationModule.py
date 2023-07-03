@@ -13,9 +13,11 @@ from aiwolfk2b.AttentionReasoningAgent.Modules.GPTProxy import GPTAPI,ChatGPTAPI
 
 
 class InfluenceType(Enum):
-    OTHER = 0
+    NO_CALL = 0
     QUESTION = 1
     REQUEST = 2
+    OHTER_CALL = 3
+    
 
 class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
     """他者から自分への投げかけがあるかをChatGPT(or GPT3)を使って判定して、他者質問・他者要求処理モジュールを使って返答を行うモジュール"""
@@ -52,63 +54,42 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
                 continue
             
             #正規表現を使って>> Agent[自分のid]があるかを判定
-            mentioned = re.match(r'\s*>>\s*' + re.escape(str(game_info.me)), talk.text)
-            mentioned = True if mentioned is not None else False
-
-            prompt = f"以下のテキストは、{game_info.me}への投げかけを 0.含まない 1.含む に分類されます。\n"
-
-            dics={
-                f"{game_info.me}が人狼だと思う":0,
-                "頑張ってほしい":0,
-                "今日はAgent[01]を占うよ":0,
-                "占い師です。占った結果Agent[01]が人狼でした":0,
-                f"なぜ{game_info.me}はAgent[01]を占ったのですか":1,
-                "皆さんは誰に投票しますか":1,
-                "皆さんは誰が人狼だと思いますか":1,
-                "みんなは誰つり予定？":1,
-                f"{game_info.me}はAgent[04]を占ってほしい":1,
-                "みんな元気？":1,
-                "皆さん頑張りましょう":1,
-                "みんな頑張ろう！":1,
-                "俺は村人だ、信じてくれ":1,
-                "俺に投票しないでほしい":1,
-            }
+            positively_mentioned = re.match(r'\s*>>\s*' + re.escape(str(game_info.me)), talk.text)
+            positively_mentioned = True if positively_mentioned is not None else False
             
-            for q,a in dics.items():
-                prompt += "Q: {question}\nA: {answer}\n".format(question=q, answer=a)
-            prompt += f"Q: {talk.text}\nA: "
-            
-            #GPTによって分類
-            completion = self.gpt.complete(prompt,max_tokens=200,temperature=1).strip()
-            print("classify question or request with GPT:",completion)
-            idx = int(calc_closest_str(["0","1"],completion))
-            if idx==1:
-                mentioned = True
-            
-            if mentioned: #自分の投げかけがある場合
-                #print(f"{game_info.me}への投げかけ:{talk.text}}")
-                #要求か質問かをGPTによって判定
-                #先頭の言及部分を削除
+            text_removed = talk.text
+            if positively_mentioned: #自分の投げかけがある場合,先頭の言及部分を削除
                 text_removed = re.sub(r'\s*>>\s*' + re.escape(str(game_info.me)), '', talk.text)
-                #GPTによって要求か質問かを判定
-                influence_type = self.classify_question_or_request(text_removed)
+            
+            #自分に対する要求,質問,その他の投げかけ,or 投げかけではないかをGPTによって判定
+            influence_type = self.classify_question_or_request(text_removed,game_info,game_setting,positively_mentioned)
+            if influence_type == InfluenceType.NO_CALL and not positively_mentioned:
+                # 陽に自分への投げかけがなく、かつGPTが自分への投げかけと判定しなかった場合は、自分への投げかけがないと判定
+                # print(f"{game_info.me}への投げかけではない:{talk.text}")
+                return False,None
+            else:
+                #print(f"{game_info.me}への投げかけ:{talk.text}}")
                 if influence_type == InfluenceType.REQUEST:
                     plan = self.request_processing_module.process_request(text_removed, talk.agent ,game_info, game_setting)
                 elif influence_type == InfluenceType.QUESTION:
                     plan = self.question_processing_module.process_question(text_removed, talk.agent, game_info, game_setting)
-                else: # influence_type == InfluenceType.OTHER:
+                else: # influence_type == InfluenceType.OTHER or positively_mentioned:
                     #要求か質問でない何らかの投げかけがあった場合は、chatGPTを使って返答を作成
-                    prompt = f"{talk.agent}から以下の投げかけがありました。\n{text_removed}\n\nこれに対して、「今その話をする必要はないので人狼に関する話をしよう」という意図の返答を簡潔に述べなさい。ただし、話題が人狼に関するものであれば、その話題についてそれっぽく答えなさい\n"
+                    prompt = f"""{talk.agent}から以下の投げかけがありました。
+---------------------
+{text_removed}
+---------------------
+これに対して、「今その話をする必要はないので人狼に関する話をしよう」という意図の返答を簡潔に述べなさい。
+ただし、話題が人狼に関するものであれば、その内容に触れて、疑問を投げかけるようにしてください"""
                     messages = [{"role":"user","content":prompt}]
-                    completion_text = self.chatgpt.complete(messages)
+                    completion_text = self.chatgpt.complete(messages).strip('\n"」「').strip("'") #両端にある改行や引用符を削除
                     plan = OneStepPlan(reason="今その話をしている場合ではないから",action_type=ActionType.TALK,action=completion_text)
-                return mentioned,plan
-            else:
-                return mentioned,None
+                return True,plan
+
         #自分への投げかけがない場合
         return False,None
             
-    def classify_question_or_request(self, text:str) -> InfluenceType:
+    def classify_question_or_request(self, text:str, game_info: GameInfo, game_setting: GameSetting,positively_mentioned:bool) -> InfluenceType:
         """
         与えられたテキストが要求か質問かをGPTによって判定する
 
@@ -116,35 +97,86 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
         ----------
         text : str
             判定したいテキスト
+        game_info : GameInfo
+            ゲームの情報
+        game_setting : GameSetting
+            ゲームの設定
+        positively_mentioned : bool
+            陽に自分への投げかけがあるか
         Returns
         -------
         InfluenceType
             要求か質問・その他を表す列挙型
         """
+        #テキストの前処理として、自分以外のAgent[数字]をAgentに置き換える
+        text = re.sub(r"Agent\[(\d+)\]",lambda m: f"Agent" if int(m.group(1)) != game_info.me.agent_idx else f"{game_info.me}" ,text)
         
-        prompt = "以下のテキストは、0.その他 1.質問 2.要求 に分類されます。\n"
+        if positively_mentioned:
+            prompt = f"""以下のテキストは、
+1.{game_info.me}への質問
+2.{game_info.me}への要求
+3.{game_info.me}へのその他の投げかけ
+に分類されます。ただし、全体への投げかけ（みんな、皆など）も{game_info.me}への言及と考えます。以下で与える文章を分類して数字で答えなさい\n"""
+        else:
+            prompt = f"""以下のテキストは、
+0.{game_info.me}への投げかけではない
+1.{game_info.me}への質問
+2.{game_info.me}への要求
+3.{game_info.me}へのその他の投げかけ
+に分類されます。ただし、全体への投げかけ（みんな、皆など）も{game_info.me}への言及と考えます。以下で与える文章を分類して数字で答えなさい\n"""
 
         dics={
-            "なぜあなたはAgent[01]を占ったのですか":1,
-            "あなたは誰に投票しますか":1,
-            "あなたは誰が人狼だと思いますか":1,
-            "Agent[01]に投票してほしい":2,
-            "Agent[04]を占ってほしい":2,
+            f"{game_info.me}が人狼だと思う":0,
+            "俺は村人だ、信じてくれ":2,
+            f"なぜ{game_info.me}はAgentを占ったのですか":1,
+            f"今日は{game_info.me}を占うよ":0,
+            "俺に投票しないでほしい":2,
             "頑張ってほしい":0,
-            "Agent[01]は人狼だと思います":0,
-            "頑張りたいと思います":0
+            "みんなは誰つり予定？":1,
+            "Agentは人狼だと思います":0,
+            "みんな元気？":3,
+            "頑張りたいと思います":0,
+            "占い師です。占った結果Agentが人狼でした":0,
+            "お前ら頑張るぞ":3,
+            "皆さんは誰に投票しますか":1,
+            "Agentに投票してほしい":2,
+            "誰に投票しますか":1,
+            "みんな頑張ろう！":3,
+            "皆さんは誰が人狼だと思いますか":1,
+            "誰が人狼だと思いますか":1,
+            f"{game_info.me}はAgentを占ってほしい":2,
+            "俺は占い師だ、信じてほしい":2,
+            "Agentを占ってほしい":2,
+            "私に投票しないでくれ":2,
+            "皆さん頑張りましょう":3,
+            "お前ら調子はどうよ？":3,
         }
         
-        for q,a in dics.items():
-            prompt += "Q: {question}\nA: {answer}\n".format(question=q, answer=a)
-        prompt += "Q: {text}\nA:".format(text=text)
-        
         #GPTによって分類
-        completion = self.gpt.complete(prompt,max_tokens=150).strip()
-        #print("classify question or request:",completion)
-        idx = int(calc_closest_str(["0","1","2"],completion))
+        for q,a in dics.items():
+            if positively_mentioned and a==0: #陽に自分への投げかけがある場合は、投げかけを含まない例文は除外
+                continue
+            prompt += "Q: {question}\nA:{answer}\n".format(question=q, answer=a)
+        prompt += "Q: {text}\nA:".format(text=text)
+        completion = self.gpt.complete(prompt,max_tokens=300).strip()
         
-        return InfluenceType(idx)
+        
+        #CHATGPTによって分類
+        # messages = [{"role":"system","content":prompt}]
+        # for q,a in dics.items():
+        #     messages.append({"role":"user","content":q})
+        #     messages.append({"role":"assistant","content":str(a)})
+        # completion = self.chatgpt.complete(messages).strip('\n"」「').strip("'") #両端にある改行や引用符を削除
+    
+        #print(f"text:{text},\t classify question or request:{completion}")
+        options = ["1","2","3"]
+        if not positively_mentioned:
+            options.append("0")
+        idx = int(calc_closest_str(options,completion))
+        
+        influence_type =InfluenceType(idx)
+        #print("influence_type:",influence_type)
+        return influence_type
 
 # TODO:なぜかファイル内でテストをしようとするとエラーが発生するので、一旦コメントアウト。外部のファイル(test_influence)でテストした
 # def test_influence_module(influence_module: InfluenceConsiderationModule,talk_list:List[Talk],me:Agent)->None:
