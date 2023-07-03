@@ -12,12 +12,12 @@ class RoleInferenceResult:
     """役職推論結果を保持するクラス"""
     agent: Agent
     """推論対象のエージェント"""
-    reason: str
+    reason: Dict[Role, str]
     """推論結果に至った理由"""
     probs: Dict[Role,float]
     """推論結果(キー：役職、値：その役職の確率)の辞書"""
     
-    def __init__(self,agent: Agent,reason:str, result: Dict[Role,float]):
+    def __init__(self,agent: Agent,reason:Dict[Role, str], result: Dict[Role,float]):
         """
         コンストラクタ
 

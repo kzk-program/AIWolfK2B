@@ -127,15 +127,18 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         
         # chatgptを用いて推論理由を生成
         #最大確率を持つラベルを予測結果とする
-        pred_role = max(result.probs.items(), key=lambda x: x[1])[0]
-        explain_text = f"人狼ゲームにて、以下の箇条書きの内容から{agent}が{pred_role.name}であると推定される。以下の情報を元に{agent}の役職が{pred_role.name}と呼べる理由を論理的に簡潔に50字内で述べなさい。だだし、文末は「から」で終わらせなさい\n{reason_text}"
-        #print(f"explain_text:{explain_text}")
+        # pred_role = max(result.probs.items(), key=lambda x: x[1])[0]
+        explained_reasons:Dict[Role, str] = {}
+        for pred_role in result.probs.keys():
+            explain_text = f"人狼ゲームにて、以下の箇条書きの内容から{agent}が{pred_role.name}であると推定される。以下の情報を元に{agent}の役職が{pred_role.name}と呼べる理由を論理的に簡潔に50字内で述べなさい。だだし、文末は「から」で終わらせなさい\n{reason_text}"
+            #print(f"explain_text:{explain_text}")
         
-        explain_message = [{"role":"user","content":explain_text}]
-        explained_reason = self.send_message_to_api(explain_message)
-        #print(f"log_text:{estimate_text}")
+            explain_message = [{"role":"user","content":explain_text}]
+            explained_reason = self.send_message_to_api(explain_message)
+            #print(f"log_text:{estimate_text}")
+            explained_reasons[pred_role] = explained_reason
         
-        inference = RoleInferenceResult(agent,explained_reason,result.probs)
+        inference = RoleInferenceResult(agent,explained_reasons,result.probs)
         
         return inference
 
