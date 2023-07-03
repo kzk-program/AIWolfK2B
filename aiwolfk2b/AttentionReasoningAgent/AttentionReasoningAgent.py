@@ -232,5 +232,5 @@ if __name__ == '__main__':
 
     agent: AbstractPlayer = AttentionReasoningAgent(config_ini)
     
-    client = TcpipClient(agent, input_args.name, input_args.hostname, input_args.port, input_args.role,total_games=1, socket_timeout=1200)
+    client = TcpipClient(agent, input_args.name, input_args.hostname, input_args.port, input_args.role, total_games=1,socket_timeout=1200)
     client.connect()
