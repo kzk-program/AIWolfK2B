@@ -1,5 +1,5 @@
 from configparser import ConfigParser
-from typing import List,Tuple,Dict
+from typing import List,Tuple,Dict,Any
 
 from aiwolf.gameinfo import GameInfo,_GameInfo
 from aiwolf.gamesetting import GameSetting,_GameSetting
@@ -183,3 +183,28 @@ def calc_closest_str(str_list:List[str], target_str:str)->str:
             min_distance = distance
             min_str = str
     return min_str
+
+def make_gpt_qa_prompt(explanation:str,examples:Dict[str,Any],question:str)-> str:
+        """
+        GPT3のQ&Aのpromptを作成する
+
+        Parameters
+        ----------
+        explanation : str
+            説明文 : str
+        examples : Dict[str,Any]
+            例文の辞書
+        question : str
+            質問文
+
+        Returns
+        -------
+        str
+            例文を含めたプロンプト
+        """
+        prompt = explanation + "\n"
+        for q,a in examples.items():
+            prompt += "Q:{question}\tA:{answer}\n".format(question=q, answer=a)
+        prompt += "Q:{text}\tA:".format(text=question)
+        
+        return prompt
