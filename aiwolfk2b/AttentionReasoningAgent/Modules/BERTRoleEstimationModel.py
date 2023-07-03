@@ -107,6 +107,14 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
         #attentionを計算するように設定
         inputs["output_attentions"] = True
         
+        #重み付きで推論
+        weight=[] #人数の逆比を重みとして設定
+        for role in self.preprocessor.role_label_list:
+            if game_setting.role_num_map[role] > 0:
+                weight.append(1/game_setting.role_num_map[role])
+            else:
+                weight.append(1) #生存しない役職は重み1として以降でscoreを-infにする
+                
         with torch.no_grad():
             outputs = self.bert_sc.forward(**inputs)
             #推論結果をソフトマックス関数で正規化
@@ -116,6 +124,10 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
             for idx,role in enumerate(self.preprocessor.role_label_list):
                 if game_setting.role_num_map[role] == 0:
                     scores[:,idx] = -torch.inf
+            #重みをつける
+            for idx in range(len(weight)):
+                scores[:,idx] *= weight[idx]
+                
             probs = torch.nn.functional.softmax(scores,dim=1)
             
             #各バッチに対して推論結果を取得
@@ -339,7 +351,7 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
 
         all_attens = np.average(attention_weight[:,0,:], axis=0)
         # #そのままだと大きすぎる値のせいで潰れてしまうので2乗根をとる
-        all_attens = np.power(all_attens,1/2)
+        #all_attens = np.power(all_attens,1/2)
         
         #最大値を1,最小値を0として正規化
         min_val = all_attens.min()
