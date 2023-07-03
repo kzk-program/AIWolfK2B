@@ -267,8 +267,8 @@ class StrategyModule(AbstractStrategyModule):
         for a in game_info.alive_agent_list:
             inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))
 
-        #人狼側である確率が最も高い結果を選ぶ
-        max_wolf_inference = max(inf_results, key=lambda x: x.probs[Role.WEREWOLF])
+        #人狼側である確率が最も高い結果を選ぶ(ただし、自分は除く)
+        max_wolf_inference = max(inf_results, key=lambda x: x.probs[Role.WEREWOLF] if x.agent != game_info.me else -1.0)
         
         reason = max_wolf_inference.reason.strip("から")
         divine_plan = OneStepPlan(f"{reason}ので人狼側である可能性が最も高いから",ActionType.DIVINE,max_wolf_inference.agent)
