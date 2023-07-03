@@ -87,16 +87,13 @@ if __name__ == '__main__':
     talk_list = [Talk(agent=Agent(4),text="お前らは誰に投票する？",turn=1,idx=1)]
     test_influence_module(influence_module,talk_list,me)
     talk_list = [Talk(agent=Agent(4),text="お前ら元気か？",turn=1,idx=1)]
-    test_influence_module(influence_modut="お前らを襲撃する！",turn=1,idx=1)]
     test_influence_module(influence_module,talk_list,me)
-    talk_list = [Talk(agent=Agent(4),text=">>Agent[02] 私は人狼だと思います",turn=1,idx=1)]
+    talk_list = [Talk(agent=Agent(4),text="お前ら、Agent[03]を釣ってくれ！",turn=1,idx=1)]
     test_influence_module(influence_module,talk_list,me)
-    talk_list = [Talk(agent=Agent(4),text="占い師です。占った結果>>Agent[01]が人狼でした",turn=1,idx=1)]
+    talk_list = [Talk(agent=Agent(4),text="俺は占い師だ、信じてほしい",turn=1,idx=1)]
     test_influence_module(influence_module,talk_list,me)
-    talk_list = [Talk(agent=Agent(4),text="僕は彼が怪しいと思うんだよね",turn=1,idx=1)]
+    talk_list = [Talk(agent=Agent(4),text="俺に投票しないでくれ",turn=1,idx=1)]
     test_influence_module(influence_module,talk_list,me)
-    talk_list = [Talk(agent=Agent(4),text="私が皆さんに勝利をもたらします！",turn=1,idx=1)]
-    test_influence_module(influence_module,talk_list,me)le,talk_list,me)
     
     ### 自分への投げかけがない場合
     talk_list = [Talk(agent=Agent(4),text="俺は人狼だ！お前らを襲撃する！",turn=1,idx=1)]
@@ -111,3 +108,7 @@ if __name__ == '__main__':
     test_influence_module(influence_module,talk_list,me)
     talk_list = [Talk(agent=Agent(4),text="私が皆さんに勝利をもたらします！",turn=1,idx=1)]
     test_influence_module(influence_module,talk_list,me)
+    
+        
+        
+        
