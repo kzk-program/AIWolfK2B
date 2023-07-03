@@ -291,9 +291,9 @@ Agent[04]
         max_prob = max([x.probs[questioned_role] for x in role_inference_results])
         high_prob_results = [x for x in role_inference_results if x.probs[questioned_role] > max_prob-0.1]
         if len(high_prob_results) == 1:
-            return OneStepPlan(high_prob_results[0].reason[questioned_role], ActionType.TALK, f">>{questioner} {high_prob_results[0].agent}が{questioned_role_str}ではないかと思っています。")
+            return OneStepPlan(high_prob_results[0].reason, ActionType.TALK, f">>{questioner} {high_prob_results[0].agent}が{questioned_role_str}ではないかと思っています。")
         elif len(high_prob_results) == 2:
-            return OneStepPlan(f"{high_prob_results[0].agent}に関しては{high_prob_results[0].reason[questioned_role]}、{high_prob_results[1].agent}に関しては{high_prob_results[1].reason[questioned_role]}", ActionType.TALK, f">>{questioner} {high_prob_results[0].agent}と{high_prob_results[1].agent}が{questioned_role_str}の可能性が高いと思います。")
+            return OneStepPlan(f"{high_prob_results[0].agent}に関しては{high_prob_results[0].reason}、{high_prob_results[1].agent}に関しては{high_prob_results[1].reason}", ActionType.TALK, f">>{questioner} {high_prob_results[0].agent}と{high_prob_results[1].agent}が{questioned_role_str}の可能性が高いと思います。")
         else:
             return OneStepPlan(f"まだ決定的な情報が無いので", ActionType.TALK, f">>{questioner} 誰が{questioned_role_str}か分かっていません。")
 

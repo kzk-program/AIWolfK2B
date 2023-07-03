@@ -13,7 +13,4 @@ class SimpleRoleInferenceModule(AbstractRoleInferenceModule):
     def infer(self,agent:Agent, game_info_list: List[GameInfo], game_setting: GameSetting) -> RoleInferenceResult:
         """推論モデルを鵜呑みにする役職推論"""
         result = self.role_estimation_model.estimate(agent, game_info_list, game_setting)
-        reason = {}
-        for role in game_setting.role_num_map,keys():
-            reason[role] = "推論モデルがそう言っていたから"
-        return RoleInferenceResult(agent=agent,reason=reason,result=result.probs)
+        return RoleInferenceResult(agent=agent,reason="推論モデルがそう言っていたから",result=result.probs)

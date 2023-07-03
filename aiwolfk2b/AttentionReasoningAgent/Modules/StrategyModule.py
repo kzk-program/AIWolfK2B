@@ -219,13 +219,13 @@ class StrategyModule(AbstractStrategyModule):
                     # ここ、Agentの__eq__がオーバーロードされてなくてクラスとしての比較になってるから、ヒットするか心配で無理やりインデックスで検索してる
                     for alive_agent in game_info.alive_agent_list:
                         if inf_result.agent.agent_idx == alive_agent.agent_idx:
-                            evaluation.append((OneStepPlan(f"{inf_result.reason[Role.WEREWOLF]}、最も人狼っぽかったから",ActionType.VOTE,inf_result.agent), inf_result.probs[Role.SEER]))
+                            evaluation.append((OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,inf_result.agent), inf_result.probs[Role.SEER]))
             else:
                 #最も狂人の確率が低いエージェントに投票する
                 for inf_result in inf_results:
                     for alive_agent in game_info.alive_agent_list:
                         if inf_result.agent.agent_idx == alive_agent.agent_idx:
-                            evaluation.append((OneStepPlan(f"{inf_result.reason[Role.WEREWOLF]}、最も人狼っぽかったから",ActionType.VOTE,inf_result.agent), 1- inf_result.probs[Role.POSSESSED]))
+                            evaluation.append((OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,inf_result.agent), 1- inf_result.probs[Role.POSSESSED]))
         
         #村人側の場合、誰に投票するか決める
         else:
@@ -235,10 +235,7 @@ class StrategyModule(AbstractStrategyModule):
                     if inf_result.agent.agent_idx == alive_agent.agent_idx:
                 # 人狼と狂人の重み付けをハードコーディングしてる、ごめん、許して
                         eval_val = inf_result.probs[Role.WEREWOLF] + 0.5 * inf_result.probs[Role.POSSESSED]
-                        if inf_result.probs[Role.WEREWOLF] > 0.5 * inf_result.probs[Role.POSSESSED]:
-                            evaluation.append((OneStepPlan(f"{inf_result.reason[Role.WEREWOLF]}、人狼の可能性が高いから",ActionType.VOTE,inf_result.agent), eval_val))
-                        else:
-                            evaluation.append((OneStepPlan(f"{inf_result.reason[Role.POSSESSED]}、狂人の可能性が高いから",ActionType.VOTE,inf_result.agent), eval_val))
+                        evaluation.append((OneStepPlan(inf_result.reason,ActionType.VOTE,inf_result.agent), eval_val))
         
         return evaluation
     
@@ -273,7 +270,7 @@ class StrategyModule(AbstractStrategyModule):
         #人狼側である確率が最も高い結果を選ぶ(ただし、自分は除く)
         max_wolf_inference = max(inf_results, key=lambda x: x.probs[Role.WEREWOLF] if x.agent != game_info.me else -1.0)
         
-        reason = max_wolf_inference.reason[Role.WEREWOLF].strip("から")
+        reason = max_wolf_inference.reason.strip("から")
         divine_plan = OneStepPlan(f"{reason}ので人狼側である可能性が最も高いから",ActionType.DIVINE,max_wolf_inference.agent)
         return divine_plan
     
