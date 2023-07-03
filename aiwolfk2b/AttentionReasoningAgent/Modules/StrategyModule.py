@@ -276,11 +276,11 @@ class StrategyModule(AbstractStrategyModule):
         #占い師が生きている確率が高い場合
         if self.check_survive_seer(est_results):
             #最も占い師の確率が高いエージェントに襲撃する
-            max_seer_agent = max(est_results, key=lambda x: x.probs[Role.SEER]).agent
+            max_seer_agent = max(est_results, key=lambda x: self.calc_weighted_role_likelihood(x,Role.SEER)).agent
             attack_plan = OneStepPlan("最も占い師の確率が高いから",ActionType.ATTACK,max_seer_agent)
         else:
             #最も狂人の確率が低いエージェントに襲撃する
-            min_poss_agent = min(est_results, key=lambda x: x.probs[Role.POSSESSED]).agent
+            min_poss_agent = min(est_results, key=lambda  x: self.calc_weighted_role_likelihood(x,Role.POSSESSED)).agent
             attack_plan = OneStepPlan("最も狂人の確率が低いから",ActionType.ATTACK,min_poss_agent)
         return attack_plan
     
@@ -321,16 +321,55 @@ class StrategyModule(AbstractStrategyModule):
         """未来の行動履歴の更新"""
         return super().update_future_plan(game_info, game_setting, executed_plan)
     
-    def weight(self, role: Role) -> List[float]:
-        """重みつき：[村人,占い師,狂人,人狼]"""
+    def calc_weighted_role_likelihood(self,est_result: RoleEstimationResult,role: Role) ->float:
+        """
+        それぞれの推定結果からエージェントごとの重みを加味した役職の尤度を計算する
+
+        Parameters
+        ----------
+        est_result : RoleEstimationResult
+            推定結果
+        role : Role
+            尤度を計算したい役職
+
+        Returns
+        -------
+        List[float]
+            重みを加味した役職の尤度
+        """
+        weights = self.get_role_weight_dict(role)
+        likelihood = 0.0
+
+        #尤度を計算            
+        for role in weights:
+            likelihood += est_result.probs[role] * weights[role]
+        return likelihood
+        
+    
+    def get_role_weight_dict(self, role: Role) -> Dict[Role,float]:
+        """各役職を計算するときの重みを返す"""
         if role == Role.VILLAGER:
-            return [1,0,0,0]
+            return {Role.VILLAGER:1.0, 
+                    Role.SEER:0.0,
+                    Role.POSSESSED:0.0,
+                    Role.WEREWOLF:0.5}
         elif role == Role.SEER:
-            return [0,1,0,0]
+            return {Role.VILLAGER:0.0,
+                    Role.SEER:1.0,
+                    Role.POSSESSED:0.0,
+                    Role.WEREWOLF:0.5}
         elif role == Role.POSSESSED:
-            return [0,0,1,0]
+            return {Role.VILLAGER:0.0,
+                    Role.SEER:0.0,
+                    Role.POSSESSED:1.0,
+                    Role.WEREWOLF:0.0}
+        elif role == Role.WEREWOLF:
+            return {Role.VILLAGER:0.0,
+                    Role.SEER:0.0,
+                    Role.POSSESSED:0.5,
+                    Role.WEREWOLF:1.0}
         else:
-            return [0,0,0.5,1]
+            raise NotImplementedError("未実装の重みが指定されました")
         
     def check_survive_seer(self, result_list: List[RoleEstimationResult]) -> bool:
         """占い師が生きているかinf_listどうか判定する"""
@@ -365,7 +404,8 @@ class StrategyModule(AbstractStrategyModule):
         inf_results:List[RoleInferenceResult] = []
         for agent in game_info.alive_agent_list:
             inf_results.append(self.role_inference_module.infer(agent, [game_info], game_setting, inferred_role))
-        return inf_results    
+        return inf_results
+    
         
     def get_survive_agent_estimation_results(self, game_info: GameInfo, game_setting: GameSetting)-> List[RoleEstimationResult]:
         """
