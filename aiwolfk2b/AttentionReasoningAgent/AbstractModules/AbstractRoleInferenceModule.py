@@ -71,7 +71,7 @@ class AbstractRoleInferenceModule(AbstractModule):
         super().initialize(game_info, game_setting)
   
     @abstractmethod
-    def infer(self,agent:Agent, game_info_list: List[GameInfo], game_setting: GameSetting) -> RoleInferenceResult:
+    def infer(self,agent:Agent, game_info_list: List[GameInfo], game_setting: GameSetting, inferred_role:Role=None) -> RoleInferenceResult:
         """
         指定された情報から、指定されたエージェントの役職を推論する
 
@@ -83,6 +83,8 @@ class AbstractRoleInferenceModule(AbstractModule):
             ゲームの情報のリスト
         game_setting : GameSetting
             ゲームの設定
+        inferred_role : Role, optional
+            推論された役職(推論対象のエージェントがこの役職であると推論したい場合に指定。Noneの場合はModuleが役職も推論), by default None
 
         Returns
         -------
