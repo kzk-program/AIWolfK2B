@@ -186,10 +186,10 @@ class StrategyModule(AbstractStrategyModule):
                 return plan
 
         # 自前で決める場合
-        evaluation = self.vote_evalutation(game_info, game_setting)
+        evaluation = self.vote_evaluation(game_info, game_setting)
         return evaluation[np.argmax([eval_val for _, eval_val in evaluation])][0]
     
-    def vote_evalutation(self, game_info: GameInfo, game_setting: GameSetting) -> List[Tuple[OneStepPlan, float]]:
+    def vote_evaluation(self, game_info: GameInfo, game_setting: GameSetting) -> List[Tuple[OneStepPlan, float]]:
         """
         投票先の評価
         評価値(float)が高いほど投票おすすめ度が高い
@@ -227,7 +227,7 @@ class StrategyModule(AbstractStrategyModule):
                     if inf_result.agent.agent_idx == alive_agent.agent_idx:
                 # 人狼と狂人の重み付けをハードコーディングしてる、ごめん、許して
                         eval_val = inf_result.probs[Role.WEREWOLF] + 0.5 * inf_result.probs[Role.POSSESSED]
-                        evaluation.append((OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,inf_result.agent), eval_val))
+                        evaluation.append((OneStepPlan(inf_result.reason,ActionType.VOTE,inf_result.agent), eval_val))
         
         return evaluation
     
