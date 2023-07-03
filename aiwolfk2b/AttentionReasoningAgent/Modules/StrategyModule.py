@@ -472,7 +472,7 @@ class StrategyModule(AbstractStrategyModule):
         # GPT4にやらせる
         explain_text = f"""以下の理由から{vote_plan.action}に投票すべきだと考えられる。
 そこで、前述の理由を踏まえて他のエージェントが{vote_plan.action}に投票するように説得する文を簡潔に述べよ。
-また、理由に自信がなくても可能な限り説得しなさい。そして、必ず{vote_plan.action}に投票するように説得する文にしなさい
+また、理由に自信がなくても可能な限り、かつ簡潔に説得しなさい。そして、必ず{vote_plan.action}に投票するように説得する文にしなさい
 -----
 理由:{vote_plan.reason}
 -----   

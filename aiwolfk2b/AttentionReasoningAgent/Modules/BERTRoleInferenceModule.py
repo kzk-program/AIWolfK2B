@@ -132,7 +132,7 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         max_like_role = max(result.probs.items(), key=lambda x: x[1])[0]
         inferred_role = inferred_role if inferred_role is not None else max_like_role
         
-        explain_text = f"人狼ゲームにて、以下の箇条書きの内容から{agent}が{inferred_role.name}であると推定される。以下の情報を元に{agent}の役職が{inferred_role.name}と呼べる理由を論理的に簡潔に50字内で述べなさい。だだし、理由に自信がなくても可能な限り理由を述べ、さらに文末は「から」で終わらせなさい\n{reason_text}"
+        explain_text = f"人狼ゲームにて、以下の箇条書きの内容から{agent}が{inferred_role.name}であると推定される。以下の情報を元に{agent}の役職が{inferred_role.name}と呼べる理由を論理的に簡潔に50字内で述べなさい。だだし、理由に自信がなくても可能な限り、かつ簡潔に理由を述べ、さらに文末は「から」で終わらせなさい\n{reason_text}"
         #explain_text = f"人狼ゲームにて、以下の箇条書きの情報を元に{agent}の役職がなんであるかを理由を述べた上で論理的に簡潔に50字内で述べなさい。だだし、文末は「から」で終わらせなさい\n{reason_text}"
 
         #print(f"explain_text:{explain_text}")
