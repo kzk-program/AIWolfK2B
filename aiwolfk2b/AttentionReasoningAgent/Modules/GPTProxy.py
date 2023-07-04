@@ -101,7 +101,7 @@ class GPTAPI:
                     print(f"received from {model}")
                     #会話のログを保存(学習・デバッグ用)
                     with open(current_dir / "log_gpt.txt", "a+") as f:
-                        f.write(f"input:{input}\nresponse:{api_result['response']}")
+                        f.write(f"input:{input}\nresponse:{api_result['response']}\n")
                     return api_result['response']
 
         print("Reached maximum retries. Aborting.")
@@ -127,8 +127,8 @@ class GPTAPI:
         """
         prompt = explanation + "\n"
         for q,a in examples.items():
-            prompt += "Q:{question}\tA:{answer}\n".format(question=q, answer=a)
-        prompt += "Q:{text}\tA:".format(text=question)
+            prompt += "Q:{question}\nA:{answer}\n".format(question=q, answer=a)
+        prompt += "Q:{text}\nA:".format(text=question)
         
         return prompt
 
@@ -227,7 +227,7 @@ class ChatGPTAPI:
                     print(f"received from {model}")
                     #会話のログを保存(学習・デバッグ用)
                     with open(current_dir / "log_chatgpt.txt", "a+") as f:
-                        f.write(f"messages:{messages}\nresponse:{api_result['response']}")
+                        f.write(f"messages:{messages}\nresponse:{api_result['response']}\n")
                     return api_result['response']
 
         print("Reached maximum retries. Aborting.")
