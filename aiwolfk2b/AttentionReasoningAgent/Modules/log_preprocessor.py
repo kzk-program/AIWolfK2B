@@ -119,7 +119,32 @@ if __name__ == "__main__":
         return x_text,y_text
     extract_log(data_pattern,q_a_preprocessor,log_mid_path,current_dir,"log_gpt_preprocessed_qa")
     
+    #旧式版の q and aかつ投げかけ分類のログを抽出する
+    data_pattern = re.compile(r"input:以下のテキストは、\n1.Agent\[(\d+)\]への質問\n2.Agent\[\1\]への要求\n3.Agent\[\1\]へのその他の投げかけ(\n.*)*\n(.*\n)*Q:\s*(.*\n)*?A:\s?\nresponse:\s*(.*)")
+    def q_a_old_preprocessor(pattern:Tuple[Any])-> Tuple[str,str]:
+        #自分を表す表現としてAgent[\0]-> MYSELFとする置き換える
+        x_text:str = pattern[3]
+        my_agent_idx = int(pattern[0])
+        x_text = x_text.replace(f"Agent[{my_agent_idx:02d}]","MYSELF")
+        y_text:str = pattern[4]
+        return x_text,y_text
+    extract_log(data_pattern,q_a_old_preprocessor,log_mid_path,current_dir,"log_gpt_preprocessed_qa_old")
     
+    # q and aかつカミングアウト分類のログを抽出する
+    data_pattern = re.compile(r"input:以下の発言に対し、カミングアウト\(役職の公開\)かどうかとその役職を判定してください。カミングアウトが無ければ無しとこたえてください。役職は、人狼・狂人・占い師・村人の4種類で答えてください。\n(Q:.*\tA:.*\n)*Q:(.*)\tA:\nresponse:(.*)")
+    def q_a_commingout_preprocessor(pattern:Tuple[Any])-> Tuple[str,str]:
+        x_text:str = pattern[1]
+        y_text:str = pattern[2]
+        return x_text,y_text
+    extract_log(data_pattern,q_a_commingout_preprocessor,log_mid_path,current_dir,"log_gpt_preprocessed_qa_commingout")
+    
+    #旧式のカミングアウト分類のログを抽出する
+    data_pattern = re.compile(r"input:以下の発言に対し、カミングアウト\(役職の公開\)かどうかとその役職を判定してください。カミングアウトが無ければ無しとこたえてください。役職は、人狼・狂人・占い師・村人の4種類で答えてください。\n(「.*」\s*:.*\n)*「(.*)」\s*:.*\nresponse:(.*)")
+    def old_commingout_preprocessor(pattern:Tuple[Any])-> Tuple[str,str]:
+        x_text:str = pattern[1]
+        y_text:str = pattern[2]
+        return x_text,y_text
+    extract_log(data_pattern,old_commingout_preprocessor,log_mid_path,current_dir,"log_gpt_preprocessed_old_commingout")
     
     # with open(log_path,"r") as f:
     #     text = f.read()
