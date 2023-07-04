@@ -10,8 +10,8 @@ from aiwolf.judge import Judge
 from aiwolf.vote import Vote
 from aiwolfk2b.AttentionReasoningAgent.Modules.RoleEstimationModelPreprocessor import RoleEstimationModelPreprocessor
 from aiwolfk2b.AttentionReasoningAgent.Modules.BERTRoleEstimationModel import BERTRoleEstimationModel
+from aiwolfk2b.AttentionReasoningAgent.Modules.GPTProxy import ChatGPTAPI
 from aiwolfk2b.AttentionReasoningAgent.AbstractModules import RoleEstimationResult,RoleInferenceResult,AbstractRoleEstimationModel,AbstractRoleInferenceModule
-from aiwolfk2b.utils.helper import get_openai_api_key
 
 import torch,re,openai,threading
 import numpy as np
@@ -33,8 +33,8 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         self.gpt_model= self.config.get("BERTRoleInferenceModule","gpt_model")
         self.gpt_max_tokens = self.config.getint("BERTRoleInferenceModule","gpt_max_tokens")
         self.gpt_temperature = self.config.getfloat("BERTRoleInferenceModule","gpt_temperature")
-        #openAIのAPIキーを読み込む
-        openai.api_key = get_openai_api_key()
+        #openAIのAPIを読み込む
+        self.chat_gpt_api = ChatGPTAPI(self.gpt_model,self.gpt_max_tokens,self.gpt_temperature)
         
         #BERTのモデルを読み込むことを前提にする
         if not isinstance(self.role_estimation_model,BERTRoleEstimationModel):
@@ -96,7 +96,7 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         
         return reason_text
     
-    def infer(self,agent:Agent, game_info_list:List[GameInfo], game_setting: GameSetting) -> RoleInferenceResult:
+    def infer(self,agent:Agent, game_info_list:List[GameInfo], game_setting: GameSetting,inferred_role:Role=None) -> RoleInferenceResult:
         """
         指定された情報から、BERTを使って指定されたエージェントの役職を推論する
 
@@ -108,6 +108,8 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
             ゲームの情報のリスト
         game_setting : GameSetting
             ゲームの設定
+        inferred_role : Role, optional
+            推論された役職(推論対象のエージェントがこの役職であると推論したい場合に指定。Noneの場合はModuleが役職も推論), by default None
 
         Returns
         -------
@@ -126,76 +128,24 @@ class BERTRoleInferenceModule(AbstractRoleInferenceModule):
         reason_text = self.format_reason_text(sentence_attens)
         
         # chatgptを用いて推論理由を生成
-        #最大確率を持つラベルを予測結果とする
-        pred_role = max(result.probs.items(), key=lambda x: x[1])[0]
-        explain_text = f"人狼ゲームにて、以下の箇条書きの内容から{agent}が{pred_role.name}であると推定される。以下の情報を元に{agent}の役職が{pred_role.name}と呼べる理由を論理的に簡潔に50字内で述べなさい。だだし、文末は「から」で終わらせなさい\n{reason_text}"
+        #推論役職結果が指定されていなければ最大確率を持つラベルを予測結果とする
+        max_like_role = max(result.probs.items(), key=lambda x: x[1])[0]
+        inferred_role = inferred_role if inferred_role is not None else max_like_role
+        
+        explain_text = f"人狼ゲームにて、以下の箇条書きの内容から{agent}が{inferred_role.name}であると推定される。以下の情報を元に{agent}の役職が{inferred_role.name}と呼べる理由を論理的に簡潔に50字内で述べなさい。だだし、理由に自信がなくても可能な限り、かつ簡潔に理由を述べ、さらに文末は「から」で終わらせなさい\n{reason_text}"
+        #explain_text = f"人狼ゲームにて、以下の箇条書きの情報を元に{agent}の役職がなんであるかを理由を述べた上で論理的に簡潔に50字内で述べなさい。だだし、文末は「から」で終わらせなさい\n{reason_text}"
+
         #print(f"explain_text:{explain_text}")
         
         explain_message = [{"role":"user","content":explain_text}]
-        explained_reason = self.send_message_to_api(explain_message)
+        explained_reason = self.chat_gpt_api.complete(explain_message)
         #print(f"log_text:{estimate_text}")
         
         inference = RoleInferenceResult(agent,explained_reason,result.probs)
         
         return inference
 
-    def send_message_to_api(self,messages:List[Dict[str,str]], max_retries:int=5, timeout:int=10)-> str:
-        """
-        OpenAI APIにメッセージを送信し、返信を受け取る
-
-        Parameters
-        ----------
-        messages : List[Dict[str,str]]
-            送信するメッセージ
-        max_retries : int, optional
-            最大の再送処理回数, by default 5
-        timeout : int, optional
-            タイムアウトの時間[s], by default 10
-
-        Returns
-        -------
-        str
-            OpenAI APIからの返信(assistantの内容)
-        """
-
-        def api_call(api_result, event):
-            try:
-                # print("calling api")
-                completion = openai.ChatCompletion.create(
-                    model=self.gpt_model,
-                    messages=messages,
-                    max_tokens=self.gpt_max_tokens,
-                    temperature=self.gpt_temperature
-                )
-                api_result["response"] = completion.choices[0].message.content
-            except Exception as e:
-                api_result["error"] = e
-            finally:
-                event.set()
-
-        for attempt in range(max_retries):
-            api_result = {"response": None, "error": None}
-            event = threading.Event()
-            api_thread = threading.Thread(target=api_call, args=(api_result, event))
-
-            api_thread.start()
-            finished = event.wait(timeout)
-
-            if not finished:
-                print(
-                    f"Timeout exceeded: {timeout}s. Attempt {attempt + 1} of {max_retries}. Retrying..."
-                )
-            else:
-                if api_result["error"] is not None:
-                    print(api_result["error"])
-                    print(
-                        f"API error: {api_result['error']}. Attempt {attempt + 1} of {max_retries}. Retrying..."
-                    )
-                else:
-                    return api_result["response"]
-
-        print("Reached maximum retries. Aborting.")
-        return ""
+ 
 
 def unit_test_infer(estimate_idx:int):
     from aiwolfk2b.utils.helper import load_default_GameInfo,load_default_GameSetting,load_config
@@ -219,6 +169,7 @@ def unit_test_infer(estimate_idx:int):
     
     pred_role = max(result.probs.items(), key=lambda x: x[1])[0]
     print(f"{result.agent} is {pred_role.name} bacause {result.reason}")
+    print("probs:",result.probs)
     
 
 if __name__ == "__main__":

@@ -1,15 +1,16 @@
-import os,random
+import os,random,re
 from configparser import ConfigParser
 from typing import List,Tuple,Dict,Any,Union, Optional
 from enum import Enum
+import numpy as np
 
 from aiwolf import GameInfo, GameSetting
 from aiwolf.utterance import Talk
 from aiwolf.agent import Agent,Role, Species
 
-from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractRoleEstimationModel,AbstractStrategyModule,AbstractRoleInferenceModule,RoleInferenceResult,OneStepPlan, ActionType
+from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractRoleEstimationModel,RoleEstimationResult,AbstractStrategyModule,AbstractRoleInferenceModule,RoleInferenceResult,OneStepPlan, ActionType
 from aiwolfk2b.AttentionReasoningAgent.Modules.GPTProxy import GPTAPI,ChatGPTAPI
-from aiwolfk2b.utils.helper import load_default_config,load_default_GameInfo,load_default_GameSetting,calc_closest_str
+from aiwolfk2b.utils.helper import load_default_config,load_default_GameInfo,load_default_GameSetting,calc_closest_str,make_gpt_qa_prompt
 
 class GameLog:
     """ゲームのログを保存するクラス"""
@@ -81,12 +82,27 @@ class ComingOutStatus:
     def update(self, game_info:GameInfo, game_setting:GameSetting)->None:
         if not self.is_all_comingout():
             for talk in game_info.talk_list:
-                prompt = f"""以下の発言に対し、カミングアウト(役職の公開)かどうかとその役職を判定してください。カミングアウトが無ければ無しとこたえてください。役職は、人狼・狂人・占い師・村人の4種類で答えてください。
-「占いCOします。Agent[01]は白でした。」 :占い師
-「ガオー、人狼だぞー」:人狼
-「俺は村人です。仲良くやりましょう！」:村人
-「みなさんよろしくお願いします」:無し
-「{talk.text}」 :"""
+                explanation = "以下の発言に対し、カミングアウト(役職の公開)かどうかとその役職を判定してください。カミングアウトが無ければ無しとこたえてください。役職は、人狼・狂人・占い師・村人の4種類で答えてください。"
+                examples = {
+                    "占いCOします。Agentは白でした。": "占い師",
+                    "占い師だ。Agentは人狼だった": "占い師",
+                    "占い師をやってみるかな、ってことでCOするぜ。": "占い師",
+                    "ガオー、人狼だぞー": "人狼",
+                    "人狼として頑張るぞ": "人狼",
+                    "俺は村人です。仲良くやりましょう！": "村人",
+                    "僕は村人、よろしく": "村人",
+                    "あら、村人なのね。一緒に頑張りましょうわ、ね？": "村人",
+                    "わたし、村っ子だよ！がんばるぞー！": "村人",
+                    "わたしは狂人です。人狼をサポートします。": "狂人",
+                    "みなさんよろしくお願いします": "無し",
+                    "よろー": "無し",
+                    "お元気ですか？": "無し",
+                    "こんにちは": "無し",
+                }
+                #テキストの前処理として、自分以外のAgent[数字]をAgentに置き換えたうえで質問とする
+                question = re.sub(r"Agent\[(\d+)\]",lambda m: f"Agent" if int(m.group(1)) != game_info.me.agent_idx else f"{game_info.me}" ,talk.text)
+                prompt = self.gpt3_api.make_gpt_qa_prompt(explanation, examples,question)
+                
                 response = self.gpt3_api.complete(prompt)
                 CO_role = calc_closest_str(["無し","人狼","狂人","占い師","村人"], response)
                 if CO_role == "無し":
@@ -125,12 +141,22 @@ class StrategyModule(AbstractStrategyModule):
         self.comingout_status = ComingOutStatus(game_info, game_setting)
         self.game_log = GameLog(game_info, game_setting)
         self.chatgpt_api = ChatGPTAPI()
+        self.has_greeted = False
+        self.game_info = game_info
+        self.game_setting = game_setting
 
     def talk(self,game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
+        #初日の処理
         if game_info.day == 0:
-            talk_plan = OneStepPlan("挨拶をする必要があるから",ActionType.TALK,"よろしくお願いします！")
+            talk_plan:OneStepPlan = None
+            if not self.has_greeted: 
+                talk_plan = OneStepPlan("挨拶をする必要があるから",ActionType.TALK,"よろしくお願いします！")
+                self.has_greeted = True
+            else:
+                talk_plan = OneStepPlan("挨拶はしたから",ActionType.TALK,"Over")
             return talk_plan
         
+        #日にちが変わったらtopicをリセット
         if game_info.day != self.today:
             self.today = game_info.day
             self.reset_talked_topic()
@@ -177,64 +203,99 @@ class StrategyModule(AbstractStrategyModule):
     
     def vote(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """投票"""
-        #各エージェントの役職を推定する
-        inf_results:List[RoleInferenceResult] = []
-        for a in game_info.alive_agent_list:
-            inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))
+        # 投票先が既に要求処理モジュールで決定していた場合
+        for one_plan in self.future_plan:
+            if one_plan.action_type == ActionType.VOTE:
+                plan = one_plan
+                self.future_plan.remove(one_plan)
+                return plan
 
-        #エージェントの中から最も占い師の確率が高いエージェントを選ぶ
-        #エージェントの中から最も狂人の確率が低いエージェントを選ぶ
-        #エージェントの中から最も人狼の確率が高いエージェントを選ぶ
-        max_seer_agent = self.max_agent(inf_results, Role.SEER)
-        min_poss_agent = self.min_agent(inf_results, Role.POSSESSED)
-        max_wolf_agent = self.max_agent(inf_results, Role.WEREWOLF)
+        # 自前で決める場合
+        evaluation = self.vote_evaluation(game_info, game_setting)
+        #最大の評価値を持つプランを選択
+        max_eval_vote = evaluation[np.argmax([eval_val for _, eval_val in evaluation])][0]
+        #もし人狼側ならwerewolfの理由をこじつける
+        if game_info.my_role == Role.WEREWOLF or game_info.my_role == Role.POSSESSED:
+            inf_result = self.role_inference_module.infer(max_eval_vote.action,[game_info], game_setting,Role.WEREWOLF)
+            max_eval_vote.reason = inf_result.reason
 
+        return max_eval_vote
+    
+    def vote_evaluation(self, game_info: GameInfo, game_setting: GameSetting) -> List[Tuple[OneStepPlan, float]]:
+        """
+        投票先の評価
+        評価値(float)が高いほど投票おすすめ度が高い
+        """
+
+        evaluation = []
+        #注意：同一のagent_idxに対してagentのインスタンスが一意でないためわざわざidxで判定している
+        alive_agent_idx_list = [agent.agent_idx for agent in game_info.alive_agent_list]
         #人狼側の場合、誰に投票するか決める
         if game_info.my_role == Role.WEREWOLF or game_info.my_role == Role.POSSESSED:
-            #占い師が生きている確率が高い場合
-            if self.check_survive_seer(inf_results):
+            #推定結果を取得
+            estimate_results = self.get_survive_agent_estimation_results(game_info, game_setting)
+            # print("DEBUG ", estimate_results)
+            # print("self.game_info.me", self.game_info.me)
+            #占い師が生きている確率が高い場合、占い師の確率が高いエージェントをおすすめ度とし、死んでたら狂人の確率が低いエージェントをおすすめ度とする
+            if self.check_survive_seer(estimate_results):
                 #最も占い師の確率が高いエージェントに投票する
-                vote_plan = OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,max_seer_agent)
+                for est_result in estimate_results:
+                    #自分は対象外
+                    if est_result.agent.agent_idx == game_info.me.agent_idx:
+                        continue
+                    if est_result.agent.agent_idx in alive_agent_idx_list: #生存中のエージェントのみを対象に
+                        evaluation.append((OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,est_result.agent), est_result.probs[Role.SEER]))
             else:
                 #最も狂人の確率が低いエージェントに投票する
-                vote_plan = OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,min_poss_agent)
+                for est_result in estimate_results:
+                    #自分は対象外
+                    if est_result.agent.agent_idx == game_info.me.agent_idx:
+                        continue
+                    if est_result.agent.agent_idx in alive_agent_idx_list: #生存中のエージェントのみを対象に
+                        evaluation.append((OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,est_result.agent), 1- est_result.probs[Role.POSSESSED]))        
         #村人側の場合、誰に投票するか決める
         else:
+            inf_results = self.get_survive_agent_inference_results(game_info, game_setting)
             #最も人狼の確率が高いエージェントに投票する
-            vote_plan = OneStepPlan("最も人狼っぽかったから",ActionType.VOTE,max_wolf_agent)
-        return vote_plan
+            for inf_result in inf_results:
+                #自分は対象外
+                if inf_result.agent.agent_idx == game_info.me.agent_idx:
+                    continue
+                if inf_result.agent.agent_idx in alive_agent_idx_list: #生存中のエージェントのみを対象に
+                # 人狼と狂人の重み付けをハードコーディングしてる、ごめん、許して
+                    eval_val = inf_result.probs[Role.WEREWOLF] + 0.5 * inf_result.probs[Role.POSSESSED]
+                    evaluation.append((OneStepPlan(inf_result.reason,ActionType.VOTE,inf_result.agent), eval_val))
+        
+        return evaluation
     
     def attack(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """襲撃"""
         #各エージェントの役職を推定する
-        inf_results:List[RoleInferenceResult] = []
-        for a in game_info.alive_agent_list:
-            inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))
-
-        #エージェントの中から最も占い師の確率が高いエージェントを選ぶ
-        #エージェントの中から最も狂人の確率が低いエージェントを選ぶ
-        max_seer_agent = self.max_agent(inf_results, Role.SEER)
-        min_poss_agent = self.min_agent(inf_results, Role.POSSESSED)
+        est_results:List[RoleEstimationResult] = self.get_survive_agent_estimation_results(game_info, game_setting)
 
         #占い師が生きている確率が高い場合
-        if self.check_survive_seer(inf_results):
+        if self.check_survive_seer(est_results):
             #最も占い師の確率が高いエージェントに襲撃する
+            max_seer_agent = max(est_results, key=lambda x: self.calc_weighted_role_likelihood(x,Role.SEER)).agent
             attack_plan = OneStepPlan("最も占い師の確率が高いから",ActionType.ATTACK,max_seer_agent)
         else:
             #最も狂人の確率が低いエージェントに襲撃する
+            min_poss_agent = min(est_results, key=lambda  x: self.calc_weighted_role_likelihood(x,Role.POSSESSED)).agent
             attack_plan = OneStepPlan("最も狂人の確率が低いから",ActionType.ATTACK,min_poss_agent)
         return attack_plan
     
     def divine(self, game_info: GameInfo, game_setting: GameSetting) -> OneStepPlan:
         """占い"""
         #各エージェントの役職を推定する
-        inf_results:List[RoleInferenceResult] = []
-        for a in game_info.alive_agent_list:
-            inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))
+        est_results:List[RoleEstimationResult] = self.get_survive_agent_estimation_results(game_info, game_setting)
+        
+        #人狼である確率が最も高い結果を選ぶ(ただし、自分は除く)
+        max_wolf_agent = max(est_results, key=lambda x: x.probs[Role.WEREWOLF] if x.agent.agent_idx != game_info.me.agent_idx else -1.0).agent
 
-        #人狼側である確率が最も低いエージェントを選ぶ
-        min_wolf_agent = self.min_agent(inf_results, Role.WEREWOLF)
-        divine_plan = OneStepPlan("人狼側である確率が低いものを確定させたいから",ActionType.DIVINE,min_wolf_agent)
+        #最も人狼である確率が高いエージェントの役職の根拠を取得
+        inf_result = self.role_inference_module.infer(max_wolf_agent,[game_info],game_setting,Role.WEREWOLF)
+        
+        divine_plan = OneStepPlan(inf_result.reason,ActionType.DIVINE,max_wolf_agent)
         return divine_plan
     
     
@@ -260,55 +321,61 @@ class StrategyModule(AbstractStrategyModule):
         """未来の行動履歴の更新"""
         return super().update_future_plan(game_info, game_setting, executed_plan)
     
-    #以下、新規に追加した関数
-    def max_agent(self, inf_list: List[RoleInferenceResult], role: Role) -> Agent:
-        """推定結果から最も役職の確率の高いエージェントを選ぶ"""
-        w = self.weight(role)
+    def calc_weighted_role_likelihood(self,est_result: RoleEstimationResult,role: Role) ->float:
+        """
+        それぞれの推定結果からエージェントごとの重みを加味した役職の尤度を計算する
 
-        max_prob = -1
-        max_agent = None
-        for inf in inf_list:
-            p = [inf.probs[Role.VILLAGER],inf.probs[Role.SEER],inf.probs[Role.POSSESSED],inf.probs[Role.WEREWOLF]]
-            f = 0
-            for x, y in zip(p, w):
-                f += x * y
-            if f > max_prob:
-                max_prob = f
-                max_agent = inf.agent
-        return max_agent
+        Parameters
+        ----------
+        est_result : RoleEstimationResult
+            推定結果
+        role : Role
+            尤度を計算したい役職
 
-    def min_agent(self, inf_list: List[RoleInferenceResult], role: Role) -> Agent:
-        """推定結果から最も役職の確率の高いエージェントを選ぶ"""
-        w = self.weight(role)
+        Returns
+        -------
+        List[float]
+            重みを加味した役職の尤度
+        """
+        weights = self.get_role_weight_dict(role)
+        likelihood = 0.0
 
-        min_prob = 2
-        min_agent = None
-        for inf in inf_list:
-            p = [inf.probs[Role.VILLAGER],inf.probs[Role.SEER],inf.probs[Role.POSSESSED],inf.probs[Role.WEREWOLF]]
-            f = 0
-            for x, y in zip(p, w):
-                f += x * y
-            if f < min_prob:
-                min_prob = f
-                min_agent = inf.agent
-        return min_agent
-    
-    def weight(self, role: Role) -> List[float]:
-        """重みつき：[村人,占い師,狂人,人狼]"""
-        if role == Role.VILLAGER:
-            return [1,0,0,0]
-        elif role == Role.SEER:
-            return [0,1,0,0]
-        elif role == Role.POSSESSED:
-            return [0,0,1,0]
-        else:
-            return [0,0,0.5,1]
+        #尤度を計算            
+        for role in weights:
+            likelihood += est_result.probs[role] * weights[role]
+        return likelihood
         
-    def check_survive_seer(self, inf_list: List[RoleInferenceResult]) -> bool:
-        """占い師が生きているかどうか判定する"""
+    
+    def get_role_weight_dict(self, role: Role) -> Dict[Role,float]:
+        """各役職を計算するときの重みを返す"""
+        if role == Role.VILLAGER:
+            return {Role.VILLAGER:1.0, 
+                    Role.SEER:0.0,
+                    Role.POSSESSED:0.0,
+                    Role.WEREWOLF:0.5}
+        elif role == Role.SEER:
+            return {Role.VILLAGER:0.0,
+                    Role.SEER:1.0,
+                    Role.POSSESSED:0.0,
+                    Role.WEREWOLF:0.5}
+        elif role == Role.POSSESSED:
+            return {Role.VILLAGER:0.0,
+                    Role.SEER:0.0,
+                    Role.POSSESSED:1.0,
+                    Role.WEREWOLF:0.0}
+        elif role == Role.WEREWOLF:
+            return {Role.VILLAGER:0.0,
+                    Role.SEER:0.0,
+                    Role.POSSESSED:0.5,
+                    Role.WEREWOLF:1.0}
+        else:
+            raise NotImplementedError("未実装の重みが指定されました")
+        
+    def check_survive_seer(self, result_list: List[RoleEstimationResult]) -> bool:
+        """占い師が生きているかinf_listどうか判定する"""
         #占い師である確率の合計値
         sum_seer = 0
-        for inf in inf_list:
+        for inf in result_list:
             sum_seer += inf.probs[Role.SEER]
         #占い師がいる可能性が高いかどうかの閾値
         th_seer = 0.7
@@ -316,6 +383,50 @@ class StrategyModule(AbstractStrategyModule):
             return True
         else:
             return False
+        
+    def get_survive_agent_inference_results(self, game_info: GameInfo, game_setting: GameSetting,inferred_role:Role=None)-> List[RoleInferenceResult]:
+        """
+        生存しているエージェントの推論結果を取得する
+        Parameters
+        ----------
+        game_info : GameInfo
+            ゲームの情報
+        game_setting : GameSetting
+            ゲームの設定
+        inferred_role : Role, optional
+            推論された役職(推論対象のエージェントがこの役職であると推論したい場合に指定。Noneの場合はInferenceModuleが役職も推論), by default None
+
+        Returns
+        -------
+        List[RoleInferenceResult]
+            推論結果のリスト
+        """
+        inf_results:List[RoleInferenceResult] = []
+        for agent in game_info.alive_agent_list:
+            inf_results.append(self.role_inference_module.infer(agent, [game_info], game_setting, inferred_role))
+        return inf_results
+    
+        
+    def get_survive_agent_estimation_results(self, game_info: GameInfo, game_setting: GameSetting)-> List[RoleEstimationResult]:
+        """
+        生存しているエージェントの推定結果を取得する
+        
+        Parameters
+        ----------
+        game_info : GameInfo
+            ゲームの情報
+        game_setting : GameSetting
+            ゲームの設定
+            
+        Returns
+        -------
+        List[RoleEstimationResult]
+            推定結果のリスト
+        """
+        estimate_results:List[RoleEstimationResult] = []
+        for agent in game_info.alive_agent_list:
+            estimate_results.append(self.role_estimation_model.estimate(agent,[game_info], game_setting))
+        return estimate_results
     
     def species_to_japanese(self, species: Species) -> str:
         """種族を日本語に変換する"""
@@ -344,18 +455,21 @@ class StrategyModule(AbstractStrategyModule):
             else:
                 #狂人のとき
                 if game_info.day == 1:
-                    divine_target = random.choice(game_info.alive_agent_list)
+                    # 1日目は自分以外の生存者からランダムにエージェントを選んで、人間と占う
+                    alive_list_wo_me = [a for a in game_info.alive_agent_list if a != game_info.me]
+                    divine_target = random.choice(alive_list_wo_me)
                     divine_result = Species.HUMAN
                 else:
-                    # 最も人狼の確率が低い人を指名して、黒出しする
+                    # 自分以外の最も人狼の確率が低い人を指名して、黒出しする
                     inf_results:List[RoleInferenceResult] = []
                     for a in game_info.alive_agent_list:
-                        if a != game_info.me:
-                            inf_results.append(self.role_inference_module.infer(a, game_info, game_setting))
-                    
-                    divine_target = self.min_agent(inf_results, Role.WEREWOLF)
+                        if a.agent_idx != game_info.me.agent_idx:
+                            inf_results.append(self.role_inference_module.infer(a, [game_info], game_setting))           
+                    min_wolf_inference = min(inf_results, key=lambda x: x.probs[Role.WEREWOLF] if x.agent != game_info.me else 1.0)
+                    divine_target = min_wolf_inference.agent
                     divine_result = Species.WEREWOLF
-                    self.history.append(OneStepPlan("一番怪しいと思ったから", ActionType.DIVINE, divine_target))
+                    #人狼側で占った理由を偽造しておく
+                    self.history.append(OneStepPlan(min_wolf_inference.reason, ActionType.DIVINE, divine_result))
             
             if game_info.day == 1:
                 return f"占い師COします。{divine_target}は{self.species_to_japanese(divine_result)}でした。"
@@ -373,33 +487,61 @@ class StrategyModule(AbstractStrategyModule):
             # 1日目はCOの状況に反応する(状況を整理する)
             # GPT4にやらせる
             messages = [{"role": "system", "content":f"あなたは今人狼ゲームをしています。あなたは{game_info.me}です。対戦ログと指示が送られてきますので、対戦ログの結果と発言するべきことが送られてきますので、適切に返答してください。"}, 
-                        {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。誰が占い師カミングアウトしているかなどの状況を整理して会話を発展させてください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
+                        {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。誰が占い師カミングアウトしているかなどの状況を整理して会話を発展させてください。誰かに向けて発言するときは、「>>Agent[01] 」などと文頭につけてください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
             response = self.chatgpt_api.complete(messages)
             return response
         else:
             # 2日目は占い理由を聞く
             # GPT4にやらせる
             messages = [{"role": "system", "content":"あなたは今人狼ゲームをしています。あなたは{game_info.me}です。対戦ログと指示が送られてきますので、対戦ログの結果と発言するべきことが送られてきますので、適切に返答してください。"}, 
-                        {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。占い師COした人に、なぜその人を占ったか聞くなどしてください。ただし他の人が既に聞いてた場合は、もう言う必要は無いので、SKIPと発言してください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
+                        {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。占い師COした人に、なぜその人を占ったか聞くなどしてください。誰かに向けて発言するときは、「>>Agent[01] 」などと文頭につけてください。ただし他の人が既に聞いてた場合は、もう言う必要は無いので、SKIPと発言してください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
             response = self.chatgpt_api.complete(messages)
             return response
 
     def talk_who_to_vote(self, game_info:GameInfo, game_setting:GameSetting)->Optional[str]:
         """誰に投票するかの話題を振る(他の人に聞かれて答えるのは要求処理モジュールの役割なのでやらない)"""
         self.today_talked_topic[TalkTopic.WHO_TO_VOTE] = True
-        vote_target = self.vote(game_info, game_setting)
-        return f"{vote_target}が人狼だと思うので投票したいと思うのですが、皆さんはどう思いますか？"
+        vote_plan = self.vote(game_info, game_setting)
+        # future_planに投票を入れる
+        self.add_vote_future_plan(OneStepPlan(vote_plan.reason, ActionType.VOTE, vote_plan.action))
+        # 自己対戦で要求処理モジュールが起動するように、要求型の言い方にした
+        mention = ""
+        for agent in game_info.alive_agent_list:
+            if agent != game_info.me:
+                mention += f">>{agent} "
+            
+        # GPT4にやらせる
+        explain_text = f"""以下の理由から{vote_plan.action}に投票すべきだと考えられる。
+そこで、前述の理由を踏まえて他のエージェントが{vote_plan.action}に投票するように説得する文を簡潔に述べよ。
+また、理由に自信がなくても可能な限り、かつ簡潔に説得しなさい。そして、必ず{vote_plan.action}に投票するように説得する文にしなさい
+-----
+理由:{vote_plan.reason}
+-----   
+"""
+        #print(f"explain_text:{explain_text}")
+        
+        explain_message = [{"role":"user","content":explain_text}]
+        #説得文は眺めに400トークンまでとする
+        convince_text = self.chatgpt_api.complete(explain_message,max_tokens=400).strip("\n'「」").strip('"')
+        return convince_text
+        #return f"{vote_plan.target}が人狼だと思うので投票したいと思います、皆さん{vote_plan.target}に投票しましょう！"
     
     def talk_no_topic(self, game_info:GameInfo, game_setting:GameSetting)->Optional[str]:
         """話題がないときに話す"""
-        # GPT4にやらせる
+        # #GPT4にやらせる
         # messages = [{"role": "system", "content":f"あなたは今人狼ゲームをしています。あなたは{game_info.me}です。対戦ログと指示が送られてきますので、対戦ログの結果と発言するべきことが送られてきますので、適切に返答してください。"}, 
         #                 {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。まだ何か人狼ゲーム上重要なことで言うべきことがあれば言ってください(弁明、他者への質問など)。言うことが無ければ「Over」と返してください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
-        # response = self.gpt4_api.complete(messages)
+        # response = self.chatgpt_api.complete(messages)
         # return response
         
         #トークン数の関係で、常にOverを返すようにする
         return "Over"
+    
+    def add_vote_future_plan(self, one_step_plan:OneStepPlan)->None:
+        for plan in self.future_plan:
+            if plan.action_type == ActionType.VOTE:
+                self.future_plan.remove(plan)
+        self.future_plan.append(one_step_plan)
 
 
 if __name__=="__main__":

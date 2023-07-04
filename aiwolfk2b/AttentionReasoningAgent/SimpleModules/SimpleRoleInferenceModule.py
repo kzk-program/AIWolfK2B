@@ -10,7 +10,7 @@ class SimpleRoleInferenceModule(AbstractRoleInferenceModule):
     def __init__(self,config:ConfigParser,role_estimation_model:AbstractRoleEstimationModel) -> None:
         super().__init__(config,role_estimation_model)
     
-    def infer(self,agent:Agent, game_info_list: List[GameInfo], game_setting: GameSetting) -> RoleInferenceResult:
+    def infer(self,agent:Agent, game_info_list: List[GameInfo], game_setting: GameSetting,inferred_role:Role=None) -> RoleInferenceResult:
         """推論モデルを鵜呑みにする役職推論"""
         result = self.role_estimation_model.estimate(agent, game_info_list, game_setting)
         return RoleInferenceResult(agent=agent,reason="推論モデルがそう言っていたから",result=result.probs)

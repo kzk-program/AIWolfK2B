@@ -66,10 +66,10 @@ class AttentionReasoningAgent(AbstractPlayer):
         self.role_estimation_model:AbstractRoleEstimationModel = BERTRoleEstimationModel(self.config)
         self.role_inference_module:AbstractRoleInferenceModule = BERTRoleInferenceModule(self.config,self.role_estimation_model)
         self.strategy_module:AbstractStrategyModule = StrategyModule(self.config,self.role_estimation_model,self.role_inference_module)
-        self.request_processing_module:AbstractRequestProcessingModule = SimpleRequestProcessingModule(self.config,self.role_estimation_model,self.strategy_module)
+        self.request_processing_module:AbstractRequestProcessingModule = RequestProcessingModule(self.config,self.role_estimation_model,self.strategy_module)
         self.question_processing_module:AbstractQuestionProcessingModule = QuestionProcessingModule(self.config,self.role_inference_module,self.strategy_module)
         self.influence_consideration_module:AbstractInfluenceConsiderationModule = InfluenceConsiderationModule(self.config,self.request_processing_module,self.question_processing_module)
-        self.speaker_module:AbstractSpeakerModule = SimpleSpeakerModule(self.config)
+        self.speaker_module:AbstractSpeakerModule = SpeakerModule(self.config)
 
     def is_alive(self, agent: Agent) -> bool:
         """Return whether the agent is alive.
@@ -169,14 +169,19 @@ class AttentionReasoningAgent(AbstractPlayer):
 
     def talk(self) -> str:
         strategy_plan = self.strategy_module.talk(self.game_info,self.game_setting)
-        influenced,influenced_plan = self.influence_consideration_module.check_influence(self.game_info,self.game_setting)
-        executed_plan:OneStepPlan = None
-        if influenced:
-            #他者影響モジュールのplanを採用
-            executed_plan = influenced_plan
+        if self.game_info.day > 0: #初日以外
+            influenced,influenced_plan = self.influence_consideration_module.check_influence(self.game_info,self.game_setting)
+            executed_plan:OneStepPlan = None
+            if influenced:
+                #他者影響モジュールのplanを採用
+                executed_plan = influenced_plan
+            else:
+                #戦略立案モジュールのplanを採用
+                executed_plan = strategy_plan
         else:
-            #戦略立案モジュールのplanを採用
+            #初日は戦略立案モジュールのplanを採用
             executed_plan = strategy_plan
+                
         text = executed_plan.action
         rich_text = self.speaker_module.enhance_speech(text)
         self.strategy_module.update_history(self.game_info,self.game_setting,executed_plan)
@@ -227,5 +232,5 @@ if __name__ == '__main__':
 
     agent: AbstractPlayer = AttentionReasoningAgent(config_ini)
     
-    client = TcpipClient(agent, input_args.name, input_args.hostname, input_args.port, input_args.role, socket_timeout=1200)
+    client = TcpipClient(agent, input_args.name, input_args.hostname, input_args.port, input_args.role, total_games=1,socket_timeout=1200)
     client.connect()

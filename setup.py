@@ -7,9 +7,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="aiwolfk2b",
-    version="0.0.2",
+    version="1.0.0",
     install_requires=pathlib.Path('requirements.txt').read_text(encoding="utf-8").splitlines(),
-    author="Takuya Okubo",
+    author="Takuya Okubo and Kazuki Takashima",
     description="python agents that can play Werewolf, following the specifications of the AIWolf Project",
     long_description=long_description,
     long_description_content_type="text/markdown",
