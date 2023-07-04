@@ -130,6 +130,18 @@ if __name__ == "__main__":
         return x_text,y_text
     extract_log(data_pattern,q_a_old_preprocessor,log_mid_path,current_dir,"log_gpt_preprocessed_qa_old")
     
+    #旧旧式版の q and aかつ投げかけ分類のログを抽出する
+    data_pattern = re.compile(r"input:以下のテキストは、0.その他 1.質問 2.要求 に分類されます。(\n.*)*\n(.*\n)*Q:\s*(.*\n)*?A:\s?\nresponse:\s*(.*)")
+    def q_a_oldold_preprocessor(pattern:Tuple[Any])-> Tuple[str,str]:
+        x_text:str = pattern[2]
+        #言及文が邪魔なので削除
+        x_text = re.sub(r">>\s*?Agent\[\d+\]\s*","",x_text) 
+        y_text:str = pattern[3]
+        #周りとのインデックスを揃えるために、インデックスをずらす
+        y_text = str((int(y_text) -1) %3)
+        return x_text,y_text
+    extract_log(data_pattern,q_a_oldold_preprocessor,log_mid_path,current_dir,"log_gpt_preprocessed_qa_oldold")
+    
     # q and aかつカミングアウト分類のログを抽出する
     data_pattern = re.compile(r"input:以下の発言に対し、カミングアウト\(役職の公開\)かどうかとその役職を判定してください。カミングアウトが無ければ無しとこたえてください。役職は、人狼・狂人・占い師・村人の4種類で答えてください。\n(Q:.*\tA:.*\n)*Q:(.*)\tA:\nresponse:(.*)")
     def q_a_commingout_preprocessor(pattern:Tuple[Any])-> Tuple[str,str]:
