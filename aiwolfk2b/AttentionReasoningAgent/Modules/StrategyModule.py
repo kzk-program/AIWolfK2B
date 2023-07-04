@@ -528,10 +528,10 @@ class StrategyModule(AbstractStrategyModule):
     
     def talk_no_topic(self, game_info:GameInfo, game_setting:GameSetting)->Optional[str]:
         """話題がないときに話す"""
-        # GPT4にやらせる
+        # #GPT4にやらせる
         # messages = [{"role": "system", "content":f"あなたは今人狼ゲームをしています。あなたは{game_info.me}です。対戦ログと指示が送られてきますので、対戦ログの結果と発言するべきことが送られてきますので、適切に返答してください。"}, 
         #                 {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。まだ何か人狼ゲーム上重要なことで言うべきことがあれば言ってください(弁明、他者への質問など)。言うことが無ければ「Over」と返してください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
-        # response = self.gpt4_api.complete(messages)
+        # response = self.chatgpt_api.complete(messages)
         # return response
         
         #トークン数の関係で、常にOverを返すようにする
