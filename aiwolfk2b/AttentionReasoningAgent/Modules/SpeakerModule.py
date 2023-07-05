@@ -22,13 +22,19 @@ class SpeakerModule(AbstractSpeakerModule):
             return "Skip"
         if "Over" in speech:
             return "Over"
-        messages = [{"role":"system", "content": f"入力される文章を{self.character}のキャラ付けに変換してください。Agentという表現は変えないでください。"},
+        messages = [{"role":"system", "content": f"入力される文章を{self.character}のキャラ付けに変換してください。Agent[数字]という表現は変えないでください。"},
                     {"role": "user", "content":speech}]
         response = self.chatgpt_api.complete(messages)
         return response
     
 if __name__=="__main__":
-    from aiwolfk2b.utils.helper import load_default_config
+    from aiwolfk2b.utils.helper import load_default_config,load_default_GameInfo,load_default_GameSetting
     config =  load_default_config()
+    game_info = load_default_GameInfo()
+    game_setting = load_default_GameSetting()
+    
     speaker_module = SpeakerModule(config)
+    speaker_module.initialize(game_info,game_setting)
+    
+    
     print(speaker_module.enhance_speech("Agent[01]が人狼だと思います。皆さん、Agent[01]に投票しましょう。"))
