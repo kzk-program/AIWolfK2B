@@ -6,6 +6,8 @@ from aiwolf import GameInfo,GameSetting
 from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractSpeakerModule
 from aiwolfk2b.AttentionReasoningAgent.Modules.GPTProxy import ChatGPTAPI
 
+import random
+
 class SpeakerModule(AbstractSpeakerModule):
     """発話を豊かにするモジュール。まだ簡易的。"""
     def __init__(self, config: ConfigParser) -> None:
@@ -15,7 +17,9 @@ class SpeakerModule(AbstractSpeakerModule):
     def initialize(self, game_info: GameInfo, game_setting:GameSetting) -> None:
         super().initialize(game_info, game_setting)
         self.chatgpt_api = ChatGPTAPI()
-        self.character:str = self.config.get("SpeakerModule",f"character{game_info.me.agent_idx}")
+        #エージェントのキャラクターをランダムに決定
+        self.chara_idx = random.randint(1,game_setting.player_num)
+        self.character:str = self.config.get("SpeakerModule",f"character{self.chara_idx}")
 
     def enhance_speech(self,speech:str) -> str:
         if "Skip" in speech:

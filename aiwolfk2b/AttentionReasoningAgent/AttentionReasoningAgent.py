@@ -70,6 +70,7 @@ class AttentionReasoningAgent(AbstractPlayer):
         self.question_processing_module:AbstractQuestionProcessingModule = QuestionProcessingModule(self.config,self.role_inference_module,self.strategy_module)
         self.influence_consideration_module:AbstractInfluenceConsiderationModule = InfluenceConsiderationModule(self.config,self.request_processing_module,self.question_processing_module)
         self.speaker_module:AbstractSpeakerModule = SpeakerModule(self.config)
+        self.talk_summarize_module:TalkSummarizeModule = TalkSummarizeModule(self.config)
 
     def is_alive(self, agent: Agent) -> bool:
         """Return whether the agent is alive.
@@ -144,7 +145,7 @@ class AttentionReasoningAgent(AbstractPlayer):
         self.question_processing_module.initialize(game_info,game_setting)
         self.influence_consideration_module.initialize(game_info,game_setting)
         self.speaker_module.initialize(game_info,game_setting)
-        
+        self.talk_summarize_module.initialize(game_info,game_setting)
         
 
     def day_start(self) -> None:
@@ -152,6 +153,9 @@ class AttentionReasoningAgent(AbstractPlayer):
         self.vote_candidate = AGENT_NONE
 
     def update(self, game_info: GameInfo) -> None:
+        #gameinfoを圧縮
+        game_info = self.talk_summarize_module.summarize_game_info(game_info)
+        
         self.game_info = game_info  # Update game information.
         for i in range(self.talk_list_head, len(game_info.talk_list)):  # Analyze talks that have not been analyzed yet.
             tk: Talk = game_info.talk_list[i]  # The talk to be analyzed.
@@ -232,5 +236,5 @@ if __name__ == '__main__':
 
     agent: AbstractPlayer = AttentionReasoningAgent(config_ini)
     
-    client = TcpipClient(agent, input_args.name, input_args.hostname, input_args.port, input_args.role, total_games=1,socket_timeout=1200)
+    client = TcpipClient(agent, input_args.name, input_args.hostname, input_args.port, input_args.role, total_games=1,socket_timeout=2400)
     client.connect()

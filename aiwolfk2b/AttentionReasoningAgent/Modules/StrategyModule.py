@@ -534,8 +534,10 @@ class StrategyModule(AbstractStrategyModule):
         # response = self.chatgpt_api.complete(messages)
         # return response
         
-        #トークン数の関係で、常にOverを返すようにする
-        return "Over"
+        # #トークン数の関係で、常にOverを返すようにする
+        # return "Over"
+        #トークン数の関係で、常にSkipを返すようにする
+        return "Skip"
     
     def add_vote_future_plan(self, one_step_plan:OneStepPlan)->None:
         for plan in self.future_plan:

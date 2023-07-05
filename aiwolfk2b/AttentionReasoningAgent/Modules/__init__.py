@@ -11,3 +11,4 @@ from .GPTProxy import GPTAPI,ChatGPTAPI
 from .RequestProcessingModule import RequestProcessingModule
 from .InfluenceConsiderationModule import InfluenceConsiderationModule
 from .SpeakerModule import SpeakerModule
+from .TalkSummarlizeModule import TalkSummarizeModule
