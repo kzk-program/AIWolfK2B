@@ -43,15 +43,26 @@ class TalkSummarizeModule(AbstractModule):
         return game_info
 
     def summarize_text(self,text:str) -> str:
-        if "Skip" == text:
+        if text == "Skip":
             return "Skip"
-        if "Over" == text:
+        if text == "Over":
             return "Over"
+        if text == "":
+            return ""
         # messages = [{"role":"system", "content": f"以下の文章は人狼ゲームに関する会話の一部です。以下の文章を意味が変わらないように要点をまとめて可能な限り要約してください。\nただし、役職名(人狼・村人・占い師・狂人など)、Agent[数字]という表現を変えず、呼びかける表現（みんな・皆）がある場合はそれを含めてください。"},
         #             {"role": "user", "content":text}]
         messages = [{"role":"system", "content": f"以下の文章は人狼ゲームに関する会話の一部です。以下の文章を要点をまとめて文章が短くなるように可能な限り要約してください。\nただし、役職名(人狼・村人・占い師・狂人など)、Agent[数字]という表現や>>Agent[数字]という表現を変えず、呼びかける表現（みんな・皆）がある場合はそれを必ず含めてください。"},
                     {"role": "user", "content":text}]
         response = self.chatgpt_api.complete(messages)
+        print(f"text:{text},\nresponse:{response}")
+        calcel_responses = ["原文が提供されていませんので、","要約するべき文章が","文章が提供されていませんので、","要約を作成することができません。","文章を提供していただければ","要約を行うことができません。","この文章は要約する内容がありません"]
+        #もし、うまく要約できなかった場合は、元の文章を返す
+        for cancel in calcel_responses:
+            if cancel in response:
+                print("要約失敗")
+                return text
+        "先頭に含まれる'要約: 'を除く"
+        response = response.replace("要約:","").strip()
         return response
     
 if __name__=="__main__":
