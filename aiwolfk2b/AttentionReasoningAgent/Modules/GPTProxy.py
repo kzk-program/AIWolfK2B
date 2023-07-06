@@ -127,8 +127,8 @@ class GPTAPI:
         """
         prompt = explanation + "\n"
         for q,a in examples.items():
-            prompt += "Q:{question}\tA:{answer}\n".format(question=q, answer=a)
-        prompt += "Q:{text}\tA:".format(text=question)
+            prompt += "Q:{question}\nA:{answer}\n".format(question=q, answer=a)
+        prompt += "Q:{text}\nA:".format(text=question)
         
         return prompt
 

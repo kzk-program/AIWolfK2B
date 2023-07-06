@@ -91,22 +91,22 @@ class ComingOutStatus:
             self.processed_text_idx:Set[Tuple[int,int]] = set()
 
     def update(self, game_info:GameInfo, game_setting:GameSetting)->None:
-        explanation = "以下の発言に対し、カミングアウト(役職の公開)かどうかとその役職を判定してください。カミングアウトが無ければ無しとこたえてください。役職は、人狼・狂人・占い師・村人の4種類で答えてください。"
+        explanation = "以下の発言に対し、カミングアウト(役職の公開)かどうかとその役職を判定してください。カミングアウトが無ければ無し:0とこたえてください。役職は、人狼:1・狂人:2・占い師:3・村人:4の4種類あります。"
         examples = {
-            "占いCOします。Agentは白でした。": "占い師",
-            "占い師だ。Agentは人狼だった": "占い師",
-            "占い師をやってみるかな、ってことでCOするぜ。": "占い師",
-            "ガオー、人狼だぞー": "人狼",
-            "人狼として頑張るぞ": "人狼",
-            "俺は村人です。仲良くやりましょう！": "村人",
-            "僕は村人、よろしく": "村人",
-            "あら、村人なのね。一緒に頑張りましょうわ、ね？": "村人",
-            "わたし、村っ子だよ！がんばるぞー！": "村人",
-            "わたしは狂人です。人狼をサポートします。": "狂人",
-            "みなさんよろしくお願いします": "無し",
-            "よろー": "無し",
-            "お元気ですか？": "無し",
-            "こんにちは": "無し",
+            "占いCOします。Agentは白でした。": "3",
+            "こんにちは": "0",
+            "人狼として頑張るぞ": "1",
+            "俺は村人です。仲良くやりましょう！": "4",
+            "あら、村人なのね。一緒に頑張りましょうわ、ね？": "4",
+            "わたし、村っ子だよ！がんばるぞー！": "4",
+            "わたしは狂人です。人狼をサポートします。": "2",
+            "みなさんよろしくお願いします": "0",
+            "占い師だ。Agentは人狼だった": "3",
+            "よろー": "0",
+            "占い師をやってみるかな、ってことでCOするぜ。": "3",
+            "ガオー、人狼だぞー": "1",
+            "僕は村人、よろしく": "4",
+            "お元気ですか？": "0",
         }
         if not self.is_all_comingout():
             for talk in game_info.talk_list:
@@ -116,23 +116,23 @@ class ComingOutStatus:
                     continue
                 #一度処理したTalkの内容は保存しておく
                 self.processed_text_idx.add((talk_day,talk_idx))
-                
+                #print("comingout_status", self.all_comingout_status)
                 #テキストの前処理として、自分以外のAgent[数字]をAgentに置き換えたうえで質問とする
                 question = re.sub(r"Agent\[(\d+)\]",lambda m: f"Agent" if int(m.group(1)) != game_info.me.agent_idx else f"{game_info.me}" ,talk.text)
                 prompt = self.gpt3_api.make_gpt_qa_prompt(explanation, examples,question)
                 
                 response = self.gpt3_api.complete(prompt)
-                CO_role = calc_closest_str(["無し","人狼","狂人","占い師","村人"], response)
-                if CO_role == "無し":
-                    if self.all_comingout_status[talk.agent] == Role.UNC:
+                CO_role = calc_closest_str(["0","1","2","3","4"], response)
+                if CO_role == "0":
+                    if self.all_comingout_status[talk.agent] == Role.UNC and talk.turn > 1: #初日のturn２回までは言及なしは無視
                         self.all_comingout_status[talk.agent] = Role.VILLAGER
-                elif CO_role == "人狼":
+                elif CO_role == "1":
                     self.all_comingout_status[talk.agent] = Role.WEREWOLF
-                elif CO_role == "狂人":
+                elif CO_role == "2":
                     self.all_comingout_status[talk.agent] = Role.POSSESSED
-                elif CO_role == "占い師":
+                elif CO_role == "3":
                     self.all_comingout_status[talk.agent] = Role.SEER
-                elif CO_role == "村人":
+                elif CO_role == "4":
                     self.all_comingout_status[talk.agent] = Role.VILLAGER
                 else:
                     raise ValueError
@@ -510,8 +510,10 @@ class StrategyModule(AbstractStrategyModule):
     def talk_roleaction_reaction(self, game_info:GameInfo, game_setting:GameSetting)->Optional[str]:
         """COや占い結果に反応したり、占い理由を聞いたりする。"""
         if not self.comingout_status.is_all_comingout():
+            print("DEBUG: is_all_comingout is False")
             has_seer,agents = self.comingout_status.has_seer()
             if has_seer:
+                print ("DEBUG: has_seer is True")
                 text = f"{agents[0]}さん"
                 for a in agents[1:]:
                     text += f"、{a}さん"

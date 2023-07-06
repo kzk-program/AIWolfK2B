@@ -102,6 +102,8 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
                     plan = self.question_processing_module.process_question(text_removed, talk.agent, game_info, game_setting)
                 else: # influence_type == InfluenceType.OTHER or positively_mentioned:
                     #要求か質問でない何らかの投げかけがあった場合は、chatGPTを使って返答を作成
+                    #無視
+                    return False,None
                     prompt = f"""{talk.agent}から以下の投げかけがありました。
 ---------------------
 {text_removed}
@@ -154,28 +156,28 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
 
         dics={
             f"{game_info.me}が人狼だと思う":0,
-            "頑張ってほしい":0,
-            f"今日は{game_info.me}を占うよ":0,
+            "Agentを占ってほしい":2,
+            "皆さん頑張りましょう":3,
+            "私に投票しないでくれ":2,
+            "俺は占い師だ、信じてほしい":2,
+            "誰が人狼だと思いますか":1,
+            "みんな頑張ろう！":3,
+            "俺に投票しないでほしい":2,
             "Agentは人狼だと思います":0,
+            "みんな元気？":3,
             "頑張りたいと思います":0,
             "占い師です。占った結果Agentが人狼でした":0,
+            "お前ら頑張るぞ":3,
             f"なぜ{game_info.me}はAgentを占ったのですか":1,
             "みんなは誰つり予定？":1,
             "皆さんは誰に投票しますか":1,
             "誰に投票しますか":1,
             "皆さんは誰が人狼だと思いますか":1,
-            "誰が人狼だと思いますか":1,
-            "俺に投票しないでほしい":2,
+            "頑張ってほしい":0,
             "俺は村人だ、信じてくれ":2,
-            "俺は占い師だ、信じてほしい":2,
             "Agentに投票してほしい":2,
             f"{game_info.me}はAgentを占ってほしい":2,
-            "Agentを占ってほしい":2,
-            "私に投票しないでくれ":2,
-            "みんな元気？":3,
-            "お前ら頑張るぞ":3,
-            "みんな頑張ろう！":3,
-            "皆さん頑張りましょう":3,
+            f"今日は{game_info.me}を占うよ":0,
             "お前ら調子はどうよ？":3,
         }
         
