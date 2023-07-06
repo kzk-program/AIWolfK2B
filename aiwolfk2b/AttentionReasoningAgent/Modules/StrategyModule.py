@@ -1,6 +1,6 @@
 import os,random,re
 from configparser import ConfigParser
-from typing import List,Tuple,Dict,Any,Union, Optional
+from typing import List,Tuple,Dict,Any,Union, Optional,Set
 from enum import Enum
 import numpy as np
 
@@ -11,7 +11,7 @@ from aiwolf.agent import Agent,Role, Species
 from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractRoleEstimationModel,RoleEstimationResult,AbstractStrategyModule,AbstractRoleInferenceModule,RoleInferenceResult,OneStepPlan, ActionType
 from aiwolfk2b.AttentionReasoningAgent.Modules.GPTProxy import GPTAPI,ChatGPTAPI
 from aiwolfk2b.utils.helper import load_default_config,load_default_GameInfo,load_default_GameSetting,calc_closest_str,make_gpt_qa_prompt
-
+from collections import defaultdict
 class GameLog:
     """ゲームのログを保存するクラス"""
     
@@ -38,7 +38,7 @@ class GameLog:
         else:
             return self._log #ログが短いときはそのまま返す
     
-    def __init__(self, game_info:GameInfo, game_setting:GameSetting,truncate_words = 2000) -> None:
+    def __init__(self, game_info:GameInfo, game_setting:GameSetting,truncate_words = 3000) -> None:
         """
         コンストラクタ
 
@@ -56,10 +56,19 @@ class GameLog:
         self._log_talk_numbers = 0
         self._talk_list_updated = True
         self.truncate_words = truncate_words
+        #一度記録したTalkの内容は保存しておく
+        self.saved_text_idx:Set[Tuple[int,int]] = set()
     
     def update(self, game_info:GameInfo, game_setting:GameSetting)->None:
-        self._talk_list.extend(game_info.talk_list)
-        self._talk_list_updated = True
+        #更新されるものがあるときだけ更新
+        for talk in game_info.talk_list:
+            talk_day,talk_idx = talk.day,talk.idx
+            if  (talk_day,talk_idx)  in self.saved_text_idx:
+                self._talk_list.append(talk)
+                self.saved_text_idx.add((talk_day,talk_idx))
+                self._talk_list_updated = True
+            else:
+                print("already saved")
 
 
 class TalkTopic(Enum):
@@ -78,27 +87,36 @@ class ComingOutStatus:
         for agent in game_info.agent_list:
             self.all_comingout_status[agent] = Role.UNC
             self.gpt3_api =GPTAPI()
+            #一度処理したTalkの内容は保存しておく
+            self.processed_text_idx:Set[Tuple[int,int]] = set()
 
     def update(self, game_info:GameInfo, game_setting:GameSetting)->None:
+        explanation = "以下の発言に対し、カミングアウト(役職の公開)かどうかとその役職を判定してください。カミングアウトが無ければ無しとこたえてください。役職は、人狼・狂人・占い師・村人の4種類で答えてください。"
+        examples = {
+            "占いCOします。Agentは白でした。": "占い師",
+            "占い師だ。Agentは人狼だった": "占い師",
+            "占い師をやってみるかな、ってことでCOするぜ。": "占い師",
+            "ガオー、人狼だぞー": "人狼",
+            "人狼として頑張るぞ": "人狼",
+            "俺は村人です。仲良くやりましょう！": "村人",
+            "僕は村人、よろしく": "村人",
+            "あら、村人なのね。一緒に頑張りましょうわ、ね？": "村人",
+            "わたし、村っ子だよ！がんばるぞー！": "村人",
+            "わたしは狂人です。人狼をサポートします。": "狂人",
+            "みなさんよろしくお願いします": "無し",
+            "よろー": "無し",
+            "お元気ですか？": "無し",
+            "こんにちは": "無し",
+        }
         if not self.is_all_comingout():
             for talk in game_info.talk_list:
-                explanation = "以下の発言に対し、カミングアウト(役職の公開)かどうかとその役職を判定してください。カミングアウトが無ければ無しとこたえてください。役職は、人狼・狂人・占い師・村人の4種類で答えてください。"
-                examples = {
-                    "占いCOします。Agentは白でした。": "占い師",
-                    "占い師だ。Agentは人狼だった": "占い師",
-                    "占い師をやってみるかな、ってことでCOするぜ。": "占い師",
-                    "ガオー、人狼だぞー": "人狼",
-                    "人狼として頑張るぞ": "人狼",
-                    "俺は村人です。仲良くやりましょう！": "村人",
-                    "僕は村人、よろしく": "村人",
-                    "あら、村人なのね。一緒に頑張りましょうわ、ね？": "村人",
-                    "わたし、村っ子だよ！がんばるぞー！": "村人",
-                    "わたしは狂人です。人狼をサポートします。": "狂人",
-                    "みなさんよろしくお願いします": "無し",
-                    "よろー": "無し",
-                    "お元気ですか？": "無し",
-                    "こんにちは": "無し",
-                }
+                talk_day,talk_idx = talk.day,talk.idx
+                #一度処理したTalkはスキップ
+                if (talk_day,talk_idx)  in self.processed_text_idx:
+                    continue
+                #一度処理したTalkの内容は保存しておく
+                self.processed_text_idx.add((talk_day,talk_idx))
+                
                 #テキストの前処理として、自分以外のAgent[数字]をAgentに置き換えたうえで質問とする
                 question = re.sub(r"Agent\[(\d+)\]",lambda m: f"Agent" if int(m.group(1)) != game_info.me.agent_idx else f"{game_info.me}" ,talk.text)
                 prompt = self.gpt3_api.make_gpt_qa_prompt(explanation, examples,question)
@@ -124,6 +142,17 @@ class ComingOutStatus:
             if role == Role.UNC:
                 return False
         return True
+    
+    def has_seer(self)->Tuple[bool,List[Agent]]:
+        seers = []
+        for agent, role in self.all_comingout_status.items():
+            if role == Role.SEER:
+                seers.append(agent)
+        
+        if len(seers) == 0:
+            return False, []
+        else:
+            return True, seers
 
 class StrategyModule(AbstractStrategyModule):
     """戦略立案モジュール"""
@@ -480,21 +509,28 @@ class StrategyModule(AbstractStrategyModule):
         
     def talk_roleaction_reaction(self, game_info:GameInfo, game_setting:GameSetting)->Optional[str]:
         """COや占い結果に反応したり、占い理由を聞いたりする。"""
-        if not self.comingout_status.is_all_comingout:
-            return "占い師の人がいたらCOしてください"
+        if not self.comingout_status.is_all_comingout():
+            has_seer,agents = self.comingout_status.has_seer()
+            if has_seer:
+                text = f"{agents[0]}さん"
+                for a in agents[1:]:
+                    text += f"、{a}さん"
+                return text + "が占い師だそうですが、他にも占い師がいたらCOしてください"
+            else:
+                return "占い師の人がいたらCOしてください"
         self.today_talked_topic[TalkTopic.ROLEACTION_REACTION] = True
         if self.today == 1:
             # 1日目はCOの状況に反応する(状況を整理する)
             # GPT4にやらせる
             messages = [{"role": "system", "content":f"あなたは今人狼ゲームをしています。あなたは{game_info.me}です。対戦ログと指示が送られてきますので、対戦ログの結果と発言するべきことが送られてきますので、適切に返答してください。"}, 
-                        {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。誰が占い師カミングアウトしているかなどの状況を整理して会話を発展させてください。誰かに向けて発言するときは、「>>Agent[01] 」などと文頭につけてください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
+                        {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。誰が占い師カミングアウトしているかなどの状況を整理して会話を発展させてください。Agent[01]に向けて発言するときは、「>>Agent[01] 」、Agent[02]に向けて発言するときは、「>>Agent[02] 」、Agent[03]に向けて発言するときは、「>>Agent[03] 」、Agent[04]に向けて発言するときは、「>>Agent[04] 」、Agent[03]に向けて発言するときは、「>>Agent[05] 」と文頭につけてください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
             response = self.chatgpt_api.complete(messages)
             return response
         else:
             # 2日目は占い理由を聞く
             # GPT4にやらせる
             messages = [{"role": "system", "content":"あなたは今人狼ゲームをしています。あなたは{game_info.me}です。対戦ログと指示が送られてきますので、対戦ログの結果と発言するべきことが送られてきますので、適切に返答してください。"}, 
-                        {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。占い師COした人に、なぜその人を占ったか聞くなどしてください。誰かに向けて発言するときは、「>>Agent[01] 」などと文頭につけてください。ただし他の人が既に聞いてた場合は、もう言う必要は無いので、SKIPと発言してください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
+                        {"role": "user", "content":f"今の人狼ゲームのログは以下です。\n===========\n{self.game_log.log}\n==========\nここで、あなた({game_info.me})の発言のターンです。占い師COした人に、なぜその人を占ったか聞くなどしてください。Agent[01]に向けて発言するときは、「>>Agent[01] 」、Agent[02]に向けて発言するときは、「>>Agent[02] 」、Agent[03]に向けて発言するときは、「>>Agent[03] 」、Agent[04]に向けて発言するときは、「>>Agent[04] 」、Agent[03]に向けて発言するときは、「>>Agent[05] 」と文頭につけてください。ただし他の人が既に聞いてた場合は、もう言う必要は無いので、SKIPと発言してください。\n{game_info.day}日目 {game_info.me}の発言 :"}]
             response = self.chatgpt_api.complete(messages)
             return response
 
@@ -534,8 +570,8 @@ class StrategyModule(AbstractStrategyModule):
         # response = self.chatgpt_api.complete(messages)
         # return response
         
-        # #トークン数の関係で、常にOverを返すようにする
-        # return "Over"
+        #トークン数の関係で、常にOverを返すようにする
+        return "Over"
         #トークン数の関係で、常にSkipを返すようにする
         return "Skip"
     

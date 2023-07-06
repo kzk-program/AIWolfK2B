@@ -7,6 +7,7 @@ from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractModule
 from aiwolfk2b.AttentionReasoningAgent.Modules.GPTProxy import ChatGPTAPI
 
 import random
+from collections import defaultdict
 
 class TalkSummarizeModule(AbstractModule):
     """GameInfoの会話部分のうち、不要な語尾などを削除して短くするモジュール。まだ簡易的。"""
@@ -22,6 +23,8 @@ class TalkSummarizeModule(AbstractModule):
         self.gpt_temperature = self.config.getfloat("TalkSummarizeModule","gpt_temperature")
         #openAIのAPIを読み込む
         self.chatgpt_api = ChatGPTAPI(self.gpt_model,self.gpt_max_tokens,self.gpt_temperature)
+        #一度翻訳した内容の再翻訳は避ける
+        self.translated_text_dict:Dict[Tuple[int,int],str] = defaultdict(str)
 
     def summarize_game_info(self,game_info: GameInfo) -> GameInfo:
         """
@@ -38,7 +41,14 @@ class TalkSummarizeModule(AbstractModule):
             圧縮されたGameInfo
         """
         for idx, talk in enumerate(game_info.talk_list):
-            game_info.talk_list[idx].text = self.summarize_text(talk.text)
+            talk_day = talk.day
+            talk_idx = talk.idx
+            if self.translated_text_dict[(talk_day,talk_idx)] != "":
+                game_info.talk_list[idx].text = self.translated_text_dict[(talk_day,talk_idx)]
+                print("reuse translated text")
+            else:
+                game_info.talk_list[idx].text = self.summarize_text(talk.text)
+                self.translated_text_dict[(talk_day,talk_idx)] = game_info.talk_list[idx].text
             
         return game_info
 
@@ -63,6 +73,10 @@ class TalkSummarizeModule(AbstractModule):
                 return text
         "先頭に含まれる'要約: 'を除く"
         response = response.replace("要約:","").strip()
+        
+        #要約して長くなるようなら、元の文章を返す
+        if len(text) < len(response):
+            response = text
         return response
     
 if __name__=="__main__":
