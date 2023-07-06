@@ -33,7 +33,7 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
         """自エージェントの名前"""
         
     #判定させるときはこれを動かす
-    def check_influence(self, game_info: GameInfo, game_setting: GameSetting, debugging: bool) -> Tuple[bool, OneStepPlan]:
+    def check_influence(self, game_info: GameInfo, game_setting: GameSetting, debugging: bool = False) -> Tuple[bool, OneStepPlan]:
         """ 
         入力：推論を行うために使用する自然言語の対話・ゲーム情報
         出力：投げかけかどうかを表すbool値と、投げかけであった場合、他者影響を考慮した行動の根拠と行動のペア（投げかけ出ない場合はNone）
@@ -54,6 +54,17 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
         if debugging:
             print("結果：")
             print(result)
+        
+        #TODO: result[0] = 発言番号（0が最新のものとして新しい順）を使って他モジュールへ接続
+        if result[1] == InfluenceConsiderationModule.QUESTION:
+            #TODO: 質問処理モジュール呼び出し
+            pass
+        elif result[1] == InfluenceConsiderationModule.REQUEST:
+            #TODO: 要求処理モジュール呼び出し
+            pass
+        else:
+            #言及がなかった場合の処理
+            pass
         
     def get_speeches(self) -> List[Tuple[str, str, int]]:
         """
