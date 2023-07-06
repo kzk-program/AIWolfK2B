@@ -1,5 +1,6 @@
 import re
 from configparser import ConfigParser
+from collections import defaultdict
 from typing import List,Tuple,Dict,Any,Union
 from enum import Enum
 
@@ -10,7 +11,6 @@ from aiwolfk2b.AttentionReasoningAgent.AbstractModules import AbstractInfluenceC
 from aiwolfk2b.AttentionReasoningAgent.AbstractModules.AbstractStrategyModule import ActionType
 from aiwolfk2b.utils.helper import calc_closest_str,load_default_config,load_default_GameInfo,load_default_GameSetting
 from aiwolfk2b.AttentionReasoningAgent.Modules.GPTProxy import GPTAPI,ChatGPTAPI
-
 
 class InfluenceType(Enum):
     NO_CALL = 0
@@ -23,11 +23,24 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
     """他者から自分への投げかけがあるかをChatGPT(or GPT3)を使って判定して、他者質問・他者要求処理モジュールを使って返答を行うモジュール"""
     def __init__(self, config: ConfigParser,request_processing_module:AbstractRequestProcessingModule, question_processing_module:AbstractQuestionProcessingModule) -> None:
         super().__init__(config,request_processing_module,question_processing_module)
-        self.chatgpt = ChatGPTAPI()
-        self.gpt = GPTAPI()
+        #gptまわりの設定 
+        self.chatgpt_model= self.config.get("InfluenceConsiderationModule","chatgpt_model")
+        self.chatgpt_max_tokens = self.config.getint("InfluenceConsiderationModule","chatgpt_max_tokens")
+        self.chatgpt_temperature = self.config.getfloat("InfluenceConsiderationModule","chatgpt_temperature")
+        self.gpt_model= self.config.get("InfluenceConsiderationModule","gpt_model")
+        self.gpt_max_tokens = self.config.getint("InfluenceConsiderationModule","gpt_max_tokens")
+        self.gpt_temperature = self.config.getfloat("InfluenceConsiderationModule","gpt_temperature")
+        #openAIのAPIを読み込む
+        self.chatgpt = ChatGPTAPI(self.chatgpt_model,self.chatgpt_max_tokens,self.chatgpt_temperature)
+        self.gpt = GPTAPI(self.gpt_model,self.gpt_max_tokens,self.gpt_temperature)
     
     def initialize(self, game_info: GameInfo, game_setting: GameSetting) -> None:
         super().initialize(game_info, game_setting)
+        #一度分類した投げかけを再利用するための辞書
+        #一度返答した内容を繰り返し返答することは避ける
+        self.considered_talk_dict:Dict[Tuple[int,int],InfluenceType] = defaultdict(lambda:None)
+
+
         
     def check_influence(self, game_info: GameInfo, game_setting: GameSetting) -> Tuple[bool,OneStepPlan]:
         """
@@ -53,6 +66,15 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
             if talk.agent == game_info.me:
                 continue
             
+            #OverやSkipは無視
+            if talk.text == "Over" or talk.text == "Skip":
+                continue
+            
+            #一度返答した投げかけは無視
+            if self.considered_talk_dict[(talk.day,talk.idx)] is not None:
+                print("already considered talk")
+                continue
+            
             #正規表現を使って>> Agent[自分のid]があるかを判定
             positively_mentioned = re.match(r'\s*>>\s*' + re.escape(str(game_info.me)), talk.text)
             positively_mentioned = True if positively_mentioned is not None else False
@@ -63,6 +85,11 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
             
             #自分に対する要求,質問,その他の投げかけ,or 投げかけではないかをGPTによって判定
             influence_type = self.classify_question_or_request(text_removed,game_info,game_setting,positively_mentioned)
+            
+            #投げかけを処理したことを保存
+            self.considered_talk_dict[(talk.day,talk.idx)] = influence_type
+            
+            
             if influence_type == InfluenceType.NO_CALL and not positively_mentioned:
                 # 陽に自分への投げかけがなく、かつGPTが自分への投げかけと判定しなかった場合は、自分への投げかけがないと判定
                 # print(f"{game_info.me}への投げかけではない:{talk.text}")
@@ -127,27 +154,27 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
 
         dics={
             f"{game_info.me}が人狼だと思う":0,
-            "俺は村人だ、信じてくれ":2,
-            f"なぜ{game_info.me}はAgentを占ったのですか":1,
-            f"今日は{game_info.me}を占うよ":0,
-            "俺に投票しないでほしい":2,
             "頑張ってほしい":0,
-            "みんなは誰つり予定？":1,
+            f"今日は{game_info.me}を占うよ":0,
             "Agentは人狼だと思います":0,
-            "みんな元気？":3,
             "頑張りたいと思います":0,
             "占い師です。占った結果Agentが人狼でした":0,
-            "お前ら頑張るぞ":3,
+            f"なぜ{game_info.me}はAgentを占ったのですか":1,
+            "みんなは誰つり予定？":1,
             "皆さんは誰に投票しますか":1,
-            "Agentに投票してほしい":2,
             "誰に投票しますか":1,
-            "みんな頑張ろう！":3,
             "皆さんは誰が人狼だと思いますか":1,
             "誰が人狼だと思いますか":1,
-            f"{game_info.me}はAgentを占ってほしい":2,
+            "俺に投票しないでほしい":2,
+            "俺は村人だ、信じてくれ":2,
             "俺は占い師だ、信じてほしい":2,
+            "Agentに投票してほしい":2,
+            f"{game_info.me}はAgentを占ってほしい":2,
             "Agentを占ってほしい":2,
             "私に投票しないでくれ":2,
+            "みんな元気？":3,
+            "お前ら頑張るぞ":3,
+            "みんな頑張ろう！":3,
             "皆さん頑張りましょう":3,
             "お前ら調子はどうよ？":3,
         }
