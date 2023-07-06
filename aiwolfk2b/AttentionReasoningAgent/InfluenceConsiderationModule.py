@@ -46,7 +46,7 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
         self.game_info = game_info
         
         #発話リストを取得
-        speeches = self.get_speeches(game_info)
+        speeches = self.get_speeches()
         
         #言及があるか確認
         result = self.analyze(speeches, debugging)
@@ -113,6 +113,11 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
         while(True):
             debug_cnt += 1
             
+            #使いすぎ防止
+            if debug_cnt > 4:
+                print("存在確認中断")
+                return [-1, -1]
+            
             if debugging:
                 print(f"存在確認{str(debug_cnt)}回目")
                 print("聞くログ：")
@@ -178,7 +183,11 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
                 while True:  
                     debug_cnt += 1
                 
-            
+                    #使いすぎ防止
+                    if debug_cnt > 4:
+                        target_speech = who_speeches
+                        print("複数確認中断")
+                        break
                     
                     #複数あった->質問する
                     question = f"下記の発言のうち{'質問' if _type == InfluenceConsiderationModule.QUESTION else '要求'}であるのはどれですか。番号を答えてください\n"
