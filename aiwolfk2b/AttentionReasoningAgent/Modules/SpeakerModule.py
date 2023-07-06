@@ -26,9 +26,12 @@ class SpeakerModule(AbstractSpeakerModule):
             return "Skip"
         if "Over" in speech:
             return "Over"
-        messages = [{"role":"system", "content": f"入力される文章を{self.character}のキャラ付けに変換してください。ただし、Agent[数字]という表現(Agent[01]、Agent[03]など)は変えず、固有名詞として扱ってください。"},
+        messages = [{"role":"system", "content": f"入力される文章を{self.character}のキャラ付けに変換してください。ただし、Agent[数字]という表現(Agent[01]、Agent[02]、Agent[03]、Agent[04]、Agent[05]など)は変えず、固有名詞として扱ってください。"},
                     {"role": "user", "content":speech}]
         response = self.chatgpt_api.complete(messages)
+        
+        #Agent[数字]を削除
+        response = response.replace("Agent[数字]", "")
         return response
     
 if __name__=="__main__":
