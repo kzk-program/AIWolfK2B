@@ -1,4 +1,3 @@
-from abc import override
 from configparser import ConfigParser
 import openai
 from typing import Tuple, List
@@ -33,8 +32,8 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
         self.my_name: str
         """自エージェントの名前"""
         
-    @override
-    def check_influence(self, game_info: GameInfo, game_setting: GameSetting) -> Tuple[bool, OneStepPlan]:
+    #判定させるときはこれを動かす
+    def check_influence(self, game_info: GameInfo, game_setting: GameSetting, debugging: bool) -> Tuple[bool, OneStepPlan]:
         """ 
         入力：推論を行うために使用する自然言語の対話・ゲーム情報
         出力：投げかけかどうかを表すbool値と、投げかけであった場合、他者影響を考慮した行動の根拠と行動のペア（投げかけ出ない場合はNone）
@@ -49,8 +48,8 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
         #発話リストを取得
         speeches = self.get_speeches(game_info)
         
-        #言及の存在を確認
-        exists = self.check_existence(speeches)
+        #言及があるか確認
+        result = self.analyze(speeches, debugging)
         
     def get_speeches(self) -> List[Tuple[str, str, int]]:
         """
@@ -83,7 +82,7 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
         #Agent型に定義されている__str__()を使用 
         return str(agent)
     
-    def check_existence(self, speeches: List[Tuple[str, str, int]]) -> List[int, int]:
+    def analyze(self, speeches: List[Tuple[str, str, int]], debugging: bool = False) -> Tuple[int, int]:
         """
         GPTに自分に向けて内容があるかを確認させる
         入力：get_speeches()で得た発話内容リスト
@@ -110,6 +109,11 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
         while(True):
             debug_cnt += 1
             
+            if debugging:
+                print(f"存在確認{str(debug_cnt)}回目")
+                print("聞くログ：")
+                print(log)
+            
             response = openai.ChatCompletion.create(
                 model = "gpt-3.5-turbo",
                 messages = [
@@ -120,6 +124,10 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
             
             response_text = response['choices'][0]['message']['content']
             
+            if debugging:
+                print("回答文：")
+                print(response_text)
+            
             #回答文を解析
             
             #言及があるか
@@ -128,7 +136,7 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
             if not has_reference:
                 #言及がなかった
                 #早期return
-                return [-1, -1]
+                return (-1, -1)
             
             #言及があったとき
             
@@ -162,11 +170,21 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
             who_speeches = [speech for speech in speeches if speech[0] == who]  #whoの発言
             target_speech = []  #該当する発言
             if len(who_speeches) > 1:
+                debug_cnt = 0   #デバッグ用カウンター
                 while True:  
+                    debug_cnt += 1
+                
+            
+                    
                     #複数あった->質問する
                     question = f"下記の発言のうち{'質問' if _type == InfluenceConsiderationModule.QUESTION else '要求'}であるのはどれですか。番号を答えてください\n"
                     for cnt in range(len(who_speeches)):
                         question += f"{str(cnt)} : {who_speeches[cnt]}\n"                 
+                    
+                    if debugging:
+                        print(f"複数確認{str(debug_cnt)}回目")
+                        print("聞く内容：")
+                        print(question)
                     
                     #送信
                     question_response = openai.ChatCompletion.create(
@@ -176,9 +194,15 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
                         ]
                     )
                     
+                    question_response_text = question_response['choices'][0]['message']['content']
+                    
+                    if debugging:
+                        print("回答文：")
+                        print(question_response_text)
+                    
                     #回答文を解析
                     for cnt in range(len(who_speeches)):
-                        if str(cnt) in question_response['choices'][0]['message']['content']:
+                        if str(cnt) in question_response_text:
                             #該当番号が確定
                             target_speech = who_speeches[cnt]
                             break
@@ -203,6 +227,9 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
                 target_idx += 1
                 
             #結果を返す
-            return [target_idx, _type]
+            return (target_idx, _type)
 
+#単体テスト
+if __name__ == "__main__":
+    instance = InfluenceConsiderationModule(None, None, None)
     
