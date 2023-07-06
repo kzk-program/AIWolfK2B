@@ -51,6 +51,10 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
         #言及があるか確認
         result = self.analyze(speeches, debugging)
         
+        if debugging:
+            print("結果：")
+            print(result)
+        
     def get_speeches(self) -> List[Tuple[str, str, int]]:
         """
         出力：(発言者名, 発言内容, そのインデックス)のタプルのリスト。直近n件が含まれ、インデックス0が最新。
@@ -230,6 +234,49 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
             return (target_idx, _type)
 
 #単体テスト
+from aiwolf.gameinfo import _GameInfo
+from aiwolf.agent import Status
+from aiwolf.utterance import Talk
+
 if __name__ == "__main__":
     instance = InfluenceConsiderationModule(None, None, None)
     
+    #テスト用GameInfo
+    dummy: _GameInfo = {
+        "agent": 0,
+        "attackVoteList": [],
+        "attackedAgent": 0,
+        "cursedFox": 0,
+        "day": 0,
+        "divineResult": None,
+        "executedAgent": 0,
+        "existingRoleList": [],
+        "guardedAgent": 0,
+        "lastDeadAgentList": [],
+        "latestAttackVoteList": [],
+        "latestExecutedAgent": 0,
+        "latestVoteList": [],
+        "mediumResult": None,
+        "remainTalkMap": {},
+        "remainWhisperMap": {},
+        "roleMap": {},
+        "statusMap": {},
+        "talkList": [],
+        "voteList": [],
+        "whisperList": []
+    }
+    
+    game_info_test = GameInfo(dummy)
+    
+    game_info_test.status_map =  {Agent(k): Status("ALIVE") for k in range(5)}
+    game_info_test.day = 1
+    game_info_test.me = Agent(0)
+    game_info_test.talk_list = [
+        Talk(1, Agent(4), 1, "私は占い師です"),
+        Talk(1, Agent(0), 1, "Agent2は人狼だと思います"),
+        Talk(1, Agent(1), 1, "なぜそう思いますか？"),
+        Talk(1, Agent(2), 1, "Agent0が人狼くさいですね"),
+        Talk(1, Agent(3), 1, "これは面白いぞ")
+    ]
+    
+    instance.check_influence(game_info_test, None, True)
