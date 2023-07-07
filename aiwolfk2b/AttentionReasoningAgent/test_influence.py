@@ -108,6 +108,8 @@ if __name__ == '__main__':
     test_influence_module(influence_module,talk_list,me)
     talk_list = [Talk(agent=Agent(4),text="私が皆さんに勝利をもたらします！",turn=1,idx=1)]
     test_influence_module(influence_module,talk_list,me)
+    talk_list = [Talk(agent=Agent(4),text=">>Agent[02] Agent[01]を占ったのはなぜなんじゃ？おしえてくれませんかのう",turn=1,idx=1)]
+    test_influence_module(influence_module,talk_list,me)
     
         
         
