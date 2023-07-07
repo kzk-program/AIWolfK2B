@@ -108,48 +108,50 @@ class InfluenceConsiderationModule(AbstractInfluenceConsiderationModule):
         InfluenceType
             要求か質問・その他を表す列挙型
         """
-        #テキストの前処理として、自分以外のAgent[数字]をAgentに置き換える
-        text = re.sub(r"Agent\[(\d+)\]",lambda m: f"Agent" if int(m.group(1)) != game_info.me.agent_idx else f"{game_info.me}" ,text)
+        #テキストの前処理として、自分以外のAgent[数字]をAgentに置き換え、自分の番号はMYSELFに置き換える
+        text = re.sub(r"Agent\[(\d+)\]",lambda m: f"Agent" if int(m.group(1)) != game_info.me.agent_idx else "MYSELF" ,text)
         
         if positively_mentioned:
             prompt = f"""以下のテキストは、
-1.{game_info.me}への質問
-2.{game_info.me}への要求
-3.{game_info.me}へのその他の投げかけ
-に分類されます。ただし、全体への投げかけ（みんな、皆など）も{game_info.me}への言及と考えます。以下で与える文章を分類して数字で答えなさい\n"""
+1.MYSELFへの質問
+2.MYSELFへの要求
+3.MYSELFへのその他の投げかけ
+に分類されます。ただし、全体への投げかけ（みんな、皆など）もMYSELFへの言及と考えます。以下で与える文章を分類して数字で答えなさい\n"""
         else:
             prompt = f"""以下のテキストは、
-0.{game_info.me}への投げかけではない
-1.{game_info.me}への質問
-2.{game_info.me}への要求
-3.{game_info.me}へのその他の投げかけ
-に分類されます。ただし、全体への投げかけ（みんな、皆など）も{game_info.me}への言及と考えます。以下で与える文章を分類して数字で答えなさい\n"""
+0.MYSELFへの投げかけではない
+1.MYSELFへの質問
+2.MYSELFへの要求
+3.MYSELFへのその他の投げかけ
+に分類されます。ただし、全体への投げかけ（みんな、皆など）もMYSELFへの言及と考えます。「>>Agent」を含む文はMYSELF以外への言及と考えます。以下で与える文章を分類して数字で答えなさい\n"""
 
         dics={
-            f"{game_info.me}が人狼だと思う":0,
-            "俺は村人だ、信じてくれ":2,
-            f"なぜ{game_info.me}はAgentを占ったのですか":1,
-            f"今日は{game_info.me}を占うよ":0,
+            f"MYSELFが人狼だと思う":0,
+            "Agentを占ってほしい":2,
+            "皆さん頑張りましょう":3,
+            "私に投票しないでくれ":2,
+            "俺は占い師だ、信じてほしい":2,
+            "誰が人狼だと思いますか":1,
+            "みんな頑張ろう！":3,
             "俺に投票しないでほしい":2,
-            "頑張ってほしい":0,
-            "みんなは誰つり予定？":1,
             "Agentは人狼だと思います":0,
             "みんな元気？":3,
             "頑張りたいと思います":0,
             "占い師です。占った結果Agentが人狼でした":0,
             "お前ら頑張るぞ":3,
+            f"なぜMYSELFはAgentを占ったのですか":1,
+            "みんなは誰つり予定？":1,
             "皆さんは誰に投票しますか":1,
-            "Agentに投票してほしい":2,
             "誰に投票しますか":1,
-            "みんな頑張ろう！":3,
             "皆さんは誰が人狼だと思いますか":1,
-            "誰が人狼だと思いますか":1,
-            f"{game_info.me}はAgentを占ってほしい":2,
-            "俺は占い師だ、信じてほしい":2,
-            "Agentを占ってほしい":2,
-            "私に投票しないでくれ":2,
-            "皆さん頑張りましょう":3,
+            "頑張ってほしい":0,
+            "俺は村人だ、信じてくれ":2,
+            "Agentに投票してほしい":2,
+            f"MYSELFはAgentを占ってほしい":2,
+            f"今日はMYSELFを占うよ":0,
             "お前ら調子はどうよ？":3,
+            ">>Agent なぜAgentを占った？": 0,
+            ">>Agent MYSELFに投票してほしい": 0,
         }
         
         #GPTによって分類
