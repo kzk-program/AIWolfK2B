@@ -211,9 +211,11 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
 
         sentence_attens:List[Tuple[float,Agent,Union[Agent,str,Species],str]] = []
         accum_text=""
+        accum_text_list =[]
         phase = ""
         day = 0
         accum_attens = 0.0
+        accum_attens_list = []  
         print(estimate_text)
         
         for word,atten in zip(words,attens):
@@ -230,6 +232,84 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
                 else:
                     word_split = accum_text.split(",")
                     if phase == "talk":
+                        # # agent_idx = accum_text.split(",")[0]
+                        # # #talkが開始されるindexを取得
+                        # # print(accum_text_list)
+                        # # # try:
+                        # # #     talk_begin_idx = accum_text_list.index(",") + 1
+                        # # #     talk_words = accum_text_list[talk_begin_idx:]
+                        # # #     talk_attentions = np.array(accum_attens_list[talk_begin_idx:])
+                        # # # except ValueError:
+                        # # #     #もし単体で","が存在せず何らかの文字があとにくっついてしまっている場合、
+                        # # talk_begin_idx = 2
+                        # # if accum_text_list[1] != ",":
+                        # #     accum_text_list.insert(2,accum_text_list[1][1:]) #,以降のwordを挿入
+                        # #     accum_attens_list.insert(2,accum_attens_list[1]) #,以降のattenを挿入
+                        # # talk_words = accum_text_list[talk_begin_idx:]
+                        # # talk_attentions = np.array(accum_attens_list[talk_begin_idx:])
+                        # # # しきい値を決めて、それ以上のattentionを持つ単語を取得
+                        # # # 抽出したときに連続した単語は文としてまとめる
+                        # # # 文のattentionは単語のattentionの総和とする
+                        # # threshold = 0.001
+                        # # pickup_idx = talk_attentions > threshold
+                        # # #1が連続している部分を取り出してまとめる
+                        # # one_phrase = ""
+                        # # one_phrase_attention = 0.0
+                        # # one_phrase_attention_list = []
+                        # # for idx,word in enumerate(talk_words):
+                        # #     if pickup_idx[idx]:
+                        # #         one_phrase += word
+                        # #         one_phrase_attention += talk_attentions[idx]
+                        # #         one_phrase_attention_list.append(talk_attentions[idx])
+                        # #     else:
+                        # #         one_phrase = agent_idx + "," + one_phrase #エージェント番号を追加
+                        # #         talk = self.decompose_talk_text(one_phrase,agent,game_setting)
+                        # #         attention = np.average(np.array(one_phrase_attention_list))
+                        # #         if not np.isnan(attention) and talk.text != "":
+                        # #             sentence_attens.append((attention,talk.agent,talk.text,"talk"))
+                        # #         one_phrase = ""
+                        # #         one_phrase_attention = 0.0
+                        # # #最後に残ったものを処理
+                        # # if one_phrase !="":
+                        # #     one_phrase = agent_idx + "," + one_phrase #エージェント番号を追加
+                        # #     talk = self.decompose_talk_text(one_phrase,agent,game_setting)
+                        # #     sentence_attens.append((one_phrase_attention,talk.agent,talk.text,"talk")) 
+                        
+                        
+                        # agent_idx = accum_text.split(",")[0]
+                        # #talkが開始されるindexを取得
+                        # print(accum_text_list)
+                        # # try:
+                        # #     talk_begin_idx = accum_text_list.index(",") + 1
+                        # #     talk_words = accum_text_list[talk_begin_idx:]
+                        # #     talk_attentions = np.array(accum_attens_list[talk_begin_idx:])
+                        # # except ValueError:
+                        # #     #もし単体で","が存在せず何らかの文字があとにくっついてしまっている場合、
+                        # talk_begin_idx = 2
+                        # if accum_text_list[1] != ",":
+                        #     accum_text_list.insert(2,accum_text_list[1][1:]) #,以降のwordを挿入
+                        #     accum_attens_list.insert(2,accum_attens_list[1]) #,以降のattenを挿入
+                        # talk_words = accum_text_list[talk_begin_idx:]
+                        # talk_attentions = np.array(accum_attens_list[talk_begin_idx:])
+                        # # しきい値を決めて、それ以上のattentionを持つ単語を取得して連結
+                        # # 文のattentionは単語のattentionの総和とする
+                        # threshold = 0.001
+                        # pickup_idx = talk_attentions > threshold
+                        # #1が連続している部分を取り出してまとめる
+                        # one_phrase = ""
+                        # one_phrase_attention = 0.0
+                        # one_phrase_attention_list = []
+                        # for idx,word in enumerate(talk_words):
+                        #     if pickup_idx[idx]:
+                        #         one_phrase += word
+                        #         one_phrase_attention += talk_attentions[idx]
+                        #         one_phrase_attention_list.append(talk_attentions[idx])
+                        # #最後に残ったものを処理
+                        # if one_phrase !="":
+                        #     one_phrase = agent_idx + "," + one_phrase #エージェント番号を追加
+                        #     talk = self.decompose_talk_text(one_phrase,agent,game_setting)
+                        #     sentence_attens.append((one_phrase_attention,talk.agent,talk.text,"talk")) 
+                             
                         talk = self.decompose_talk_text(accum_text,agent,game_setting)
                         sentence_attens.append((accum_attens,talk.agent,talk.text,"talk"))
                     elif phase == "vote":
@@ -253,10 +333,14 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
                         else:
                             raise Exception(f"想定外のaction_type:{action_type}")
                 accum_text = ""
+                accum_text_list = []
                 accum_attens = 0.0
+                accum_attens_list = []
             else:
                 accum_text += word
+                accum_text_list.append(word)
                 accum_attens += atten
+                accum_attens_list.append(atten)
                 
         return sentence_attens
     
@@ -352,8 +436,15 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
         all_attens = np.zeros((seq_len))
 
         all_attens = np.average(attention_weight[:,0,:], axis=0)
+        #all_attens = attention_weight[10,0,:]
         # #そのままだと大きすぎる値のせいで潰れてしまうので2乗根をとる
         #all_attens = np.power(all_attens,1/2)
+        
+        # #attentionを移動平均で平滑化
+        # window = 5 # 移動平均の範囲
+        # w = np.ones(window)/window  
+        # all_attens = np.convolve(all_attens, w, mode='same')
+        
         
         #最大値を1,最小値を0として正規化
         min_val = all_attens.min()
@@ -379,6 +470,7 @@ class BERTRoleEstimationModel(AbstractRoleEstimationModel):
                 #連続しない場合
                 agg_words.append(token)
                 agg_attens.append(all_attens[idx+1])
+                
         
         return (agg_words,agg_attens)
     
@@ -453,6 +545,32 @@ def unit_test_estimate(estimated_agent_idx):
     result = estimator.estimate(estimated_agent,game_info_list,game_setting)
     print(result.probs)
         
+def unit_test_parse_atttention(estimate_idx:int):
+    import os
+    from aiwolfk2b.utils.helper import load_default_GameInfo,load_default_GameSetting,load_config
+    from aiwolfk2b.AttentionReasoningAgent.Modules.ParseRuruLogToGameAttribution import load_sample_GameAttirbution
+
+    config_path = current_dir.parent / "config.ini"
+    config_ini = load_config(config_path)
+    
+    game_info_list,game_setting = load_sample_GameAttirbution(estimate_idx)
+    
+    estimator = BERTRoleEstimationModel(config_ini)
+
+    estimator.initialize(game_info_list,game_setting)
+    
+    agent = Agent(estimate_idx)
+    #推論に用いる入力の作成
+    estimate_text = estimator.preprocessor.create_estimation_text(agent,game_info_list,game_setting)
+    #役職推定の実行
+    result = estimator.estimate_from_text([estimate_text],game_setting)[0]
+    
+    sentence_attens = estimator.parse_estimate_text(estimate_text,result,agent,game_setting)
+    #attentionの大きい順にソートする
+    sentence_attens.sort(key=lambda x:x[0],reverse=True)
+    for sentence_atten in sentence_attens:
+        print(sentence_atten)
+
 def unit_test_attention_vizualizer(estimate_idx:int):
     import os
     from aiwolfk2b.utils.helper import load_default_GameInfo,load_default_GameSetting,load_config
@@ -491,7 +609,8 @@ def unit_test_attention_vizualizer(estimate_idx:int):
         f.write(html)
 
 if __name__ == "__main__":
-    unit_test_estimate_from_text()
-    unit_test_estimate(1)
+    # unit_test_estimate_from_text()
+    # unit_test_estimate(1)
     unit_test_attention_vizualizer(1)
+    unit_test_parse_atttention(3)
         
