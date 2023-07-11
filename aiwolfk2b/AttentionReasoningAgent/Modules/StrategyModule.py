@@ -57,15 +57,15 @@ class GameLog:
         self._talk_list_updated = True
         self.truncate_words = truncate_words
         #一度記録したTalkの内容は保存しておく
-        self.saved_text_idx:Set[Tuple[int,int]] = set()
+        self.saved_text_idx_set:Set[Tuple[int,int]] = set()
     
     def update(self, game_info:GameInfo, game_setting:GameSetting)->None:
         #更新されるものがあるときだけ更新
         for talk in game_info.talk_list:
             talk_day,talk_idx = talk.day,talk.idx
-            if  (talk_day,talk_idx)  in self.saved_text_idx:
+            if  (talk_day,talk_idx)  in self.saved_text_idx_set:
                 self._talk_list.append(talk)
-                self.saved_text_idx.add((talk_day,talk_idx))
+                self.saved_text_idx_set.add((talk_day,talk_idx))
                 self._talk_list_updated = True
             else:
                 print("already saved")
