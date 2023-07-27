@@ -111,6 +111,10 @@ if __name__ == '__main__':
     talk_list = [Talk(agent=Agent(4),text=">>Agent[02] Agent[01]を占ったのはなぜなんじゃ？おしえてくれませんかのう",turn=1,idx=1)]
     test_influence_module(influence_module,talk_list,me)
     
-        
+    ### 一度返答したら、再度同じ内容を返答しないかのテスト
+    talk_list = [Talk(agent=Agent(4),text=">> Agent[01] Agent[03]を占ってほしい",turn=1,idx=1)]
+    test_influence_module(influence_module,talk_list,me)
+    talk_list = [Talk(agent=Agent(4),text=">> Agent[01] Agent[03]を占ってほしい",turn=1,idx=1)]
+    test_influence_module(influence_module,talk_list,me)
         
         
