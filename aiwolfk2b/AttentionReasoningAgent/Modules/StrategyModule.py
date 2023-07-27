@@ -63,7 +63,8 @@ class GameLog:
         #更新されるものがあるときだけ更新
         for talk in game_info.talk_list:
             talk_day,talk_idx = talk.day,talk.idx
-            if  (talk_day,talk_idx)  in self.saved_text_idx_set:
+            if  (talk_day,talk_idx) not in self.saved_text_idx_set:
+                #print("new talk")
                 self._talk_list.append(talk)
                 self.saved_text_idx_set.add((talk_day,talk_idx))
                 self._talk_list_updated = True
@@ -590,14 +591,24 @@ if __name__=="__main__":
     game_info = load_default_GameInfo()
     game_setting = load_default_GameSetting()
     
-    role_estimation_model = RandomRoleEstimationModel(config_ini)
-    role_inference_module = SimpleRoleInferenceModule(config_ini, role_estimation_model)
+    # role_estimation_model = RandomRoleEstimationModel(config_ini)
+    # role_inference_module = SimpleRoleInferenceModule(config_ini, role_estimation_model)
     
-    strategy_module = StrategyModule(config_ini, role_estimation_model, role_inference_module)
-    strategy_module.initialize(game_info, game_setting)
+    # strategy_module = StrategyModule(config_ini, role_estimation_model, role_inference_module)
+    # strategy_module.initialize(game_info, game_setting)
     game_info.status_map= {Agent(1):Status.ALIVE, Agent(2):Status.ALIVE, Agent(3):Status.ALIVE, Agent(4):Status.ALIVE, Agent(5):Status.ALIVE}
     game_info.talk_list = [Talk(day=1,agent=game_info.agent_list[0], idx=1, text="占い師COします。占い結果はAgent[02]が白でした。", turn=1),Talk(day=1,agent=game_info.agent_list[1], idx=2, text="1占いCO把握", turn=1),Talk(day=1,agent=game_info.agent_list[2], idx=3, text="占い師COします。Agent[01]を占って黒でした。", turn=1) , Talk(day=1,agent=game_info.agent_list[3], idx=4, text="村人です", turn=1), Talk(day=1,agent=game_info.agent_list[4], idx=5, text="村人です。", turn=1)]
     game_info.day = 1
-    print(strategy_module.talk(game_info, game_setting))
-    print(strategy_module.talk(game_info, game_setting))
-    print(strategy_module.comingout_status.all_comingout_status)
+    # print(strategy_module.talk(game_info, game_setting))
+    # print(strategy_module.talk(game_info, game_setting))
+    # print(strategy_module.comingout_status.all_comingout_status)
+    
+    # GameLogクラスの単体テスト
+    ## 重複した発言が追加されないことを確認する
+    game_logger = GameLog(game_info,game_setting)
+    print("update_0:何も出力されない",game_logger.log,sep="\n")
+    game_logger.update(game_info, game_setting) #ここで追加
+    print("update_1:会話ログが出力される",game_logger.log,sep="\n")
+    game_logger.update(game_info, game_setting) #ここで追加されない
+    print("update_2:update_1と同じ会話ログが出力される(重複して保存されない)",game_logger.log,sep="\n")
+    
