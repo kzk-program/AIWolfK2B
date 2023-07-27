@@ -113,7 +113,7 @@ class ComingOutStatus:
             for talk in game_info.talk_list:
                 talk_day,talk_idx = talk.day,talk.idx
                 #一度処理したTalkはスキップ
-                if (talk_day,talk_idx)  in self.processed_text_idx:
+                if (talk_day,talk_idx) in self.processed_text_idx:
                     continue
                 #一度処理したTalkの内容は保存しておく
                 self.processed_text_idx.add((talk_day,talk_idx))
@@ -513,6 +513,7 @@ class StrategyModule(AbstractStrategyModule):
         if not self.comingout_status.is_all_comingout():
             has_seer,agents = self.comingout_status.has_seer()
             if has_seer:
+                
                 text = f"{agents[0]}さん"
                 for a in agents[1:]:
                     text += f"、{a}さん"
@@ -583,32 +584,143 @@ class StrategyModule(AbstractStrategyModule):
         self.future_plan.append(one_step_plan)
 
 
-if __name__=="__main__":
+def test_strategy_module(strategy_module:StrategyModule, talk_list:List[Talk],me:Agent,my_role:Role):
     from aiwolf.agent import Status
     from aiwolfk2b.AttentionReasoningAgent.SimpleModules import RandomRoleEstimationModel, SimpleRoleInferenceModule
     
-    config_ini = load_default_config()
     game_info = load_default_GameInfo()
     game_setting = load_default_GameSetting()
-    
-    # role_estimation_model = RandomRoleEstimationModel(config_ini)
-    # role_inference_module = SimpleRoleInferenceModule(config_ini, role_estimation_model)
-    
-    # strategy_module = StrategyModule(config_ini, role_estimation_model, role_inference_module)
-    # strategy_module.initialize(game_info, game_setting)
-    game_info.status_map= {Agent(1):Status.ALIVE, Agent(2):Status.ALIVE, Agent(3):Status.ALIVE, Agent(4):Status.ALIVE, Agent(5):Status.ALIVE}
-    game_info.talk_list = [Talk(day=1,agent=game_info.agent_list[0], idx=1, text="占い師COします。占い結果はAgent[02]が白でした。", turn=1),Talk(day=1,agent=game_info.agent_list[1], idx=2, text="1占いCO把握", turn=1),Talk(day=1,agent=game_info.agent_list[2], idx=3, text="占い師COします。Agent[01]を占って黒でした。", turn=1) , Talk(day=1,agent=game_info.agent_list[3], idx=4, text="村人です", turn=1), Talk(day=1,agent=game_info.agent_list[4], idx=5, text="村人です。", turn=1)]
+    game_info.me = me
     game_info.day = 1
-    # print(strategy_module.talk(game_info, game_setting))
-    # print(strategy_module.talk(game_info, game_setting))
-    # print(strategy_module.comingout_status.all_comingout_status)
+    game_info.role_map = {me:my_role}
+    game_info.status_map= {Agent(1):Status.ALIVE, Agent(2):Status.ALIVE, Agent(3):Status.ALIVE, Agent(4):Status.ALIVE, Agent(5):Status.ALIVE}
+    game_info.talk_list = talk_list
     
+    print(strategy_module.talk(game_info, game_setting))
+    print(strategy_module.talk(game_info, game_setting))
+    print(strategy_module.comingout_status.all_comingout_status)
+    
+def test_gamelog():
     # GameLogクラスの単体テスト
     ## 重複した発言が追加されないことを確認する
+    game_info = load_default_GameInfo()
+    game_setting = load_default_GameSetting()
+    game_info.day = 1
+    game_info.status_map={
+        Agent(1):Status.ALIVE, 
+        Agent(2):Status.ALIVE, 
+        Agent(3):Status.ALIVE, 
+        Agent(4):Status.ALIVE, 
+        Agent(5):Status.ALIVE
+        }
+    game_info.me = Agent(1)
+    talk_list = [
+        Talk(day=1,agent=game_info.agent_list[0], idx=1, text="占い師COします。占い結果はAgent[02]が白でした。", turn=1),
+        Talk(day=1,agent=game_info.agent_list[1], idx=2, text="1占いCO把握", turn=1),
+        Talk(day=1,agent=game_info.agent_list[2], idx=3, text="占い師COします。Agent[01]を占って黒でした。", turn=1) , 
+        Talk(day=1,agent=game_info.agent_list[3], idx=4, text="村人です", turn=1), 
+        Talk(day=1,agent=game_info.agent_list[4], idx=5, text="村人です。", turn=1)
+    ]
+    
+    game_info.talk_list = talk_list
+    
     game_logger = GameLog(game_info,game_setting)
     print("update_0:何も出力されない",game_logger.log,sep="\n")
     game_logger.update(game_info, game_setting) #ここで追加
     print("update_1:会話ログが出力される",game_logger.log,sep="\n")
     game_logger.update(game_info, game_setting) #ここで追加されない
     print("update_2:update_1と同じ会話ログが出力される(重複して保存されない)",game_logger.log,sep="\n")
+    
+def test_commingout_status():
+    # GameLogクラスの単体テスト
+    def show_debug_log(commingout_status:ComingOutStatus,text:str = ""):
+        print(text)
+        print("commingout_status")
+        for agent,role in commingout_status.all_comingout_status.items():
+            print(str(agent),role)
+        print("is_all_comingout?:",comingout_status.is_all_comingout())
+        print("has_seer?:",comingout_status.has_seer()[0])
+        for agent in comingout_status.has_seer()[1]:
+            print(str(agent))
+        print("")
+        
+    
+    
+    ## 重複した発言が追加されないことを確認する
+    game_info = load_default_GameInfo()
+    game_setting = load_default_GameSetting()
+    game_info.day = 1
+    game_info.status_map= {
+        Agent(1):Status.ALIVE, 
+        Agent(2):Status.ALIVE, 
+        Agent(3):Status.ALIVE, 
+        Agent(4):Status.ALIVE, 
+        Agent(5):Status.ALIVE
+        }
+    talk_list = [
+        Talk(day=1,agent=game_info.agent_list[0], idx=1, text="占い師COします。占い結果はAgent[02]が白でした。", turn=1),
+        Talk(day=1,agent=game_info.agent_list[1], idx=2, text="やあ", turn=1),
+        Talk(day=1,agent=game_info.agent_list[2], idx=3, text="占い師COします。Agent[01]を占って黒でした。", turn=1) , 
+        Talk(day=1,agent=game_info.agent_list[3], idx=4, text="村人です", turn=1), 
+        Talk(day=1,agent=game_info.agent_list[4], idx=5, text="村人です", turn=1),
+    ]
+    
+    game_info.talk_list = talk_list
+    
+    comingout_status = ComingOutStatus(game_info,game_setting)
+    show_debug_log(comingout_status,"update_0:全員の役職が不明なとき")
+    
+    comingout_status.update(game_info, game_setting) #ここで追加
+    show_debug_log(comingout_status,"update_1:[02]の役職が不明で他は対応する役職がわかっているとき")
+
+    #現状では一周目の会話のみでを見ているので、2週目以降のカミングアウトは無視される
+    game_info.talk_list.append(Talk(day=1,agent=game_info.agent_list[1], idx=6, text="わたしは人狼です", turn=2))
+    game_info.talk_list.append(Talk(day=1,agent=game_info.agent_list[4], idx=7, text="僕は実は狂人でした。さっきのは嘘です", turn=2))
+    comingout_status.update(game_info, game_setting)
+    show_debug_log(comingout_status,"update_2:update_1と同じ会話ログが出力される")
+
+
+if __name__=="__main__":
+    from aiwolf.agent import Status
+    from aiwolfk2b.AttentionReasoningAgent.SimpleModules import RandomRoleEstimationModel, SimpleRoleInferenceModule
+    
+    # StrategyModuleクラスの単体テスト
+    ## 初期化処理
+    config_ini = load_default_config()
+    game_info = load_default_GameInfo()
+    game_setting = load_default_GameSetting()
+    
+    role_estimation_model = RandomRoleEstimationModel(config_ini)
+    role_inference_module = SimpleRoleInferenceModule(config_ini, role_estimation_model)
+    
+    strategy_module = StrategyModule(config_ini, role_estimation_model, role_inference_module)
+    strategy_module.initialize(game_info, game_setting)
+    game_info.day = 1
+    game_info.status_map= {
+        Agent(1):Status.ALIVE, 
+        Agent(2):Status.ALIVE, 
+        Agent(3):Status.ALIVE, 
+        Agent(4):Status.ALIVE, 
+        Agent(5):Status.ALIVE
+    }
+    talk_list = [
+        Talk(day=1,agent=game_info.agent_list[0], idx=1, text="占い師COします。占い結果はAgent[02]が白でした。", turn=1),
+        Talk(day=1,agent=game_info.agent_list[1], idx=2, text="1占いCO把握", turn=1),
+        Talk(day=1,agent=game_info.agent_list[2], idx=3, text="占い師COします。Agent[01]を占って黒でした。", turn=1) , 
+        Talk(day=1,agent=game_info.agent_list[3], idx=4, text="村人です。", turn=1), 
+        Talk(day=1,agent=game_info.agent_list[4], idx=5, text="村人です。", turn=1)
+    ]
+    
+    test_strategy_module(strategy_module, talk_list,Agent(1),Role.VILLAGER)
+    
+    
+    # GameLogクラスの単体テスト
+    ## 重複した発言が追加されないことを確認する
+    test_gamelog()
+    
+    # ComingOutStatusクラスの単体テスト
+    ## 重複した発言が追加されないことを確認する
+    test_commingout_status()
+    
+    
     
